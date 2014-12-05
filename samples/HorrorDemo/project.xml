@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<meta title="Horror Demo" description="General functionality" package="com.eliasku.horror.samples" version="0.0.1" company="Elias Ku" />
+	<app main="Main" path="export" file="HorrorDemo" />
+
+	<window width="800" height="600" background="0x550000"/>
+	<window hardware="true" allow-shaders="true" require-shaders="true" depth-buffer="false" stencil-buffer="false" antialiasing="0" />
+	<window fullscreen="false" />
+	<window fps="100" vsync="true" />
+
+	<source path="src" />
+
+	<haxelib name="horror"/>
+
+	<assets path="assets" embed="false" exclude="lime.svg" />
+	<icon path="assets/lime.svg" />
+
+	<certificate path="C:\Dropbox\dev\auth\fdkey.keystore" alias="fdkey" password="KungFuPanda" if="android" unless="debug"/>
+
+
+	<!-- all -->
+	<haxeflag name="--no-traces" unless="debug" />
+	<haxedef name="no_debug" unless="debug" />
+	<haxeflag name="-dce full" unless="debug" />
+
+	<haxedef name="haxe3" />
+	<haxedef name="generic" />
+	<haxedef name="next" />
+
+	<!-- cpp -->
+	<!--<haxedef name="HXCPP_STACK_TRACE" />-->
+	<!-- <haxedef name="HXCPP_FLOAT32" if="cpp" />-->
+
+	<!-- html5 -->
+	<window fps="0" if="html5" />
+	<!--<haxedef name="webgl" if="html5" />-->
+	<haxedef name="dom" if="html5" />
+
+	<!-- flash -->
+	<app min-swf-version="12.0" />
+
+	<!-- <haxedef name="advanced-telemetry" if="flash release"/>-->
+	<!--<haxedef name="fdb" if="flash debug" />-->
+	<haxedef name="fdb" if="flash" />
+	<haxedef name="flash_memory_domain" if="flash" />
+	<haxedef name="native_trace" if="flash" />
+	<haxedef name="network-sandbox" if="flash" />
+
+
+
+</project>

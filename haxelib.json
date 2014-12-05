@@ -1,0 +1,15 @@
+{
+	"name" : "horror",
+	"url" : "http://eliasku.tumblr.com",
+	"license" : "MIT",
+    "description" : "Low-level GPU framework based on OpenFL",
+    "version" : "0.0.1",
+	"releasenote" : "",
+	"contributors" : [
+		"eliasku"
+	],
+	"dependencies" : {
+		"openfl" : "",
+		"format" : ""
+	}
+}
