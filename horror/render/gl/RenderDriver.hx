@@ -70,6 +70,7 @@ class GLMemoryRange implements IMemoryRange {
 /*** CONTEXT ***/
 class RenderDriver implements IDisposable {
 	var _currentShader:RawShader;
+	var _enabledAttributes:Int = 0;
 
 	public function new() {}
 
@@ -100,9 +101,8 @@ class RenderDriver implements IDisposable {
 	public function end():Void {
 	}
 
-	public function drawIndexedTriangles(mesh:RawMesh, indexCount:Int):Void {
-		GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
-		GL.drawElements(GL.TRIANGLES, indexCount, GL.UNSIGNED_SHORT, 0);
+	public function drawIndexedTriangles(triangles:Int):Void {
+		GL.drawElements(GL.TRIANGLES, triangles*3, GL.UNSIGNED_SHORT, 0);
 	}
 
 	public function setTexture(texture:RawTexture) {
@@ -133,7 +133,9 @@ class RenderDriver implements IDisposable {
 
 	/*** SHADERS ***/
 
-	public function createShader(vertexStructure:VertexStructure, vertexShaderCode:String, fragmentShaderCode:String):RawShader {
+
+
+	public function createShader(vertexShaderCode:String, fragmentShaderCode:String):RawShader {
 		var vertexShader = _compileShader(vertexShaderCode, GL.VERTEX_SHADER);
 		var fragmentShader = _compileShader(fragmentShaderCode, GL.FRAGMENT_SHADER);
 
@@ -147,9 +149,11 @@ class RenderDriver implements IDisposable {
 		}
 
 		var shader = new RawShader();
-		for(i in 0...vertexStructure.size()) {
-			shader.vertexAttributes.push(GL.getAttribLocation (program, vertexStructure.getAt(i).name));
+
+		for(attr in GLParserUtil.extractAttributes(vertexShaderCode)) {
+			shader.vertexAttributes.push(GL.getAttribLocation (program, attr));
 		}
+
 		shader.projectionMatrixUniform = GL.getUniformLocation (program, "uProjectionMatrix");
 		shader.modelViewMatrixUniform = GL.getUniformLocation (program, "uModelViewMatrix");
 		shader.imageUniform = GL.getUniformLocation (program, "uImage0");
@@ -162,8 +166,14 @@ class RenderDriver implements IDisposable {
 		_currentShader = shader;
 
 		GL.useProgram (shader.program);
-		for(va in shader.vertexAttributes) {
-			GL.enableVertexAttribArray(va);
+
+		var attrLength = shader.vertexAttributes.length;
+		for(i in _enabledAttributes...attrLength) {
+			GL.enableVertexAttribArray(i);
+			_enabledAttributes++;
+		}
+		while(_enabledAttributes > attrLength) {
+			GL.disableVertexAttribArray(--_enabledAttributes);
 		}
 	}
 
@@ -177,8 +187,9 @@ class RenderDriver implements IDisposable {
 		GL.uniform1i (_currentShader.imageUniform, 0);
 	}
 
-	public function setVertexBuffer(mesh:RawMesh):Void {
+	public function setMesh(mesh:RawMesh):Void {
 		GL.bindBuffer(GL.ARRAY_BUFFER, mesh.vertexBuffer);
+		GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
 		var vertexStructure = mesh.vertexStructure;
 		var stride = vertexStructure.stride;
 		var vas = _currentShader.vertexAttributes;

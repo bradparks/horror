@@ -44,5 +44,16 @@ class Texture implements IDisposable {
 		}
 	}
 
+	public static function createFromColor(width:Int, height:Int, color:Int):Texture {
+		var texture = new Texture();
+		var bytes = new ByteArray();
+		for(i in 0...width*height) {
+			bytes.writeUInt32(color);
+		}
+		texture.loadFromBytes(1, 1, bytes.data);
+		bytes.clear();
+		return texture;
+	}
+
 
 }

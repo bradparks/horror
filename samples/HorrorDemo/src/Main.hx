@@ -1,18 +1,15 @@
 package;
 
+import horror.memory.ByteArray;
 import horror.input.MouseEventType;
 import horror.input.MouseEvent;
-import horror.render.Texture;
+
 import horror.loaders.BaseLoader;
 import horror.loaders.BytesLoader;
-import horror.render.Material;
 import horror.Horror;
 
 import horror.app.ScreenManager;
 import horror.app.LoopManager;
-
-import horror.memory.ByteArray;
-import horror.memory.UnsafeBytesBuffer;
 
 import horror.render.VertexData;
 import horror.render.Mesh;
@@ -20,6 +17,9 @@ import horror.render.RenderManager;
 import horror.render.Matrix3D;
 import horror.render.VertexStructure;
 import horror.render.Shader;
+import horror.render.MeshBuffer;
+import horror.render.Texture;
+import horror.render.Material;
 
 class Main {
 
@@ -29,16 +29,11 @@ class Main {
 	var _modelViewMatrix:Matrix3D;
 	var _vertexStructure:VertexStructure;
 	var _mesh:Mesh;
-	var _indexBytes:UnsafeBytesBuffer;
-	var _vertexBytes:UnsafeBytesBuffer;
+	var _meshBuffer:MeshBuffer;
 	var _texture:Texture;
 
 	var _time:Float = 0;
 	var _segmentsCount:Int = 64;
-	var _indexCount:Int = 0;
-	var _indexSize:Int = 2;
-	var _vertexCount:Int = 0;
-	var _vertexSize:Int = 0;
 
 	public function new () {
 		Horror.initialize(start);
@@ -64,7 +59,7 @@ class Main {
 		_texture.loadPngFromBytes(loader.getContent(ByteArray));
 
 		_material= new Material();
-		_material.shader = SimpleShader.create(_vertexStructure);
+		_material.shader = SimpleShader.create();
 		_material.texture = _texture;
 
 		Horror.input.onMouse.add(onMouse);
@@ -86,15 +81,8 @@ class Main {
 	function init() {
 		_modelViewMatrix = Matrix3D.create2D(0, 0, 1, 0);
 
-		_indexCount = _segmentsCount*3;
-		_indexSize = 2;
-		_vertexCount = (1 + _segmentsCount);
-		_vertexSize = _vertexStructure.stride;
-
-		_indexBytes = UnsafeBytesBuffer.fromSize(_indexCount * _indexSize);
-		_vertexBytes = UnsafeBytesBuffer.fromSize(_vertexCount * _vertexSize);
-
 		_mesh = new Mesh(_vertexStructure);
+		_meshBuffer = new MeshBuffer();
 
 		Horror.loop.updated.add(update);
 		Horror.screen.resized.add(resize);
@@ -103,7 +91,6 @@ class Main {
 
 	function resize(screen:ScreenManager) {
 		_projectionMatrix = Matrix3D.createOrtho(0, screen.width, screen.height, 0, 1000, -1000);
-		_render.resize(screen.width, screen.height);
 	}
 
 	function update(loop:LoopManager) {
@@ -116,21 +103,19 @@ class Main {
 
 		drawBlob(_time);
 
-		_mesh.uploadVertices(_vertexBytes.data, _vertexCount * _vertexSize);
-		_mesh.uploadIndices(_indexBytes.data, _indexCount * _indexSize);
-
 		_render.setMaterial(_material);
 		_render.setMatrix(_projectionMatrix, _modelViewMatrix);
-		_render.setVertexBuffer(_mesh);
-		_render.drawIndexedTriangles(_mesh, _indexCount);
+		_render.setMesh(_mesh);
+		_render.drawIndexedTriangles(_segmentsCount);
 
 		_render.end();
 	}
 
 	function drawBlob(t:Float) {
 
-		var unsafeBytes = _indexBytes.getUnsafeBytes();
-		var bytesPosition = 0;
+		_meshBuffer.begin(_mesh);
+		var unsafeBytes = _meshBuffer.unsafeBytes;
+		var bytesPosition = _meshBuffer.indexBytesPosition;
 		for(i in 0..._segmentsCount) {
 			unsafeBytes.setUInt16_aligned(bytesPosition, 0);
 			unsafeBytes.setUInt16_aligned(bytesPosition + 2, i+1);
@@ -141,8 +126,7 @@ class Main {
 		var centerX = Horror.screen.width / 2;
 		var centerY = Horror.screen.height / 2;
 
-		unsafeBytes = _vertexBytes.getUnsafeBytes();
-		bytesPosition = 0;
+		bytesPosition = _meshBuffer.vertexBytesPosition;
 		unsafeBytes.setFloat32_aligned(bytesPosition, centerX);
 		unsafeBytes.setFloat32_aligned(bytesPosition + 4, centerY);
 		unsafeBytes.setFloat32_aligned(bytesPosition + 8, 0.5);
@@ -154,10 +138,13 @@ class Main {
 			var r = 100.0 + 6.0 * Math.sin(-t*4 + angle*5) - 10.0 * Math.sin(5*t + 2*angle);
 			unsafeBytes.setFloat32_aligned(bytesPosition, centerX + r*Math.cos(angle));
 			unsafeBytes.setFloat32_aligned(bytesPosition + 4, centerY + r*Math.sin(angle));
-			unsafeBytes.setFloat32_aligned(bytesPosition + 8, 0.0);
+			unsafeBytes.setFloat32_aligned(bytesPosition + 8, 0.5);
 			unsafeBytes.setFloat32_aligned(bytesPosition + 12, 0.0);
 			unsafeBytes.setUInt32_aligned(bytesPosition + 16, 0xff00ff00);
 			bytesPosition += 20;
 		}
+
+		_meshBuffer.grow(_segmentsCount + 1, _segmentsCount*3);
+		_meshBuffer.end();
 	}
 }

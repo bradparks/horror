@@ -1,12 +1,11 @@
 package ;
 
-import horror.render.VertexStructure;
 import horror.render.Shader;
 
 class SimpleShader {
 
-	public static function create(vertexStructure:VertexStructure):Shader {
-		var shader = new Shader("simple", vertexStructure);
+	public static function create():Shader {
+		var shader = new Shader("simple");
 		shader.loadFromCode(VERTEX_CODE, FRAGMENT_CODE);
 		return shader;
 	}

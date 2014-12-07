@@ -31,12 +31,7 @@
 	<!--<haxedef name="HXCPP_STACK_TRACE" />-->
 	<!-- <haxedef name="HXCPP_FLOAT32" if="cpp" />-->
 
-	<!-- html5 -->
 	<window fps="0" if="html5" />
-	<!--<haxedef name="webgl" if="html5" />-->
-	<haxedef name="dom" if="html5" />
-
-	<!-- flash -->
 	<app min-swf-version="12.0" />
 
 	<!-- <haxedef name="advanced-telemetry" if="flash release"/>-->
@@ -45,7 +40,6 @@
 	<haxedef name="flash_memory_domain" if="flash" />
 	<haxedef name="native_trace" if="flash" />
 	<haxedef name="network-sandbox" if="flash" />
-
 
 
 </project>

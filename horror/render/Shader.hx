@@ -6,18 +6,20 @@ import horror.render.RenderManager;
 class Shader implements IDisposable {
 
 	public var name(default, null):String;
-	public var vertexStructure(default, null):VertexStructure;
+
+	// premultiply alpha blend by default
+	public var sourceBlendFactor:BlendFactor = BlendFactor.ONE;
+	public var destinationBlendFactor:BlendFactor = BlendFactor.ONE_MINUS_SOURCE_ALPHA;
 
 	@:allow(horror.render.RenderManager)
 	var _rawData:RawShader;
 
-	public function new(name:String, vertexStructure:VertexStructure) {
+	public function new(name:String) {
 		this.name = name;
-		this.vertexStructure = vertexStructure;
 	}
 
 	public function loadFromCode(vertexShaderCode:String, fragmentShaderCode:String) {
-		_rawData = RenderManager.driver.createShader(vertexStructure, vertexShaderCode, fragmentShaderCode);
+		_rawData = RenderManager.driver.createShader(vertexShaderCode, fragmentShaderCode);
 	}
 
 	public function dispose() {

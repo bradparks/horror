@@ -6,4 +6,7 @@
 
 	<sample path="samples" if="create" />
 
+	<haxedef name="flash_memory_domain" if="flash" />
+	<haxedef name="dom" if="html5" />
+
 </extension>

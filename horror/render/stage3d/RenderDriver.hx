@@ -1,11 +1,9 @@
 package horror.render.stage3d;
 
-import horror.render.VertexStructure;
-import flash.globalization.StringTools;
-import horror.utils.IDisposable;
-import flash.errors.Error;
+import horror.debug.Debug;
 import flash.Lib;
 import flash.events.Event;
+import flash.errors.Error;
 import flash.utils.ByteArray in FlashByteArray;
 import flash.geom.Matrix3D in FlashMatrix3D;
 
@@ -24,6 +22,8 @@ import flash.display3D.IndexBuffer3D;
 import flash.display3D.Program3D;
 import flash.display3D.textures.Texture;
 
+import horror.render.VertexStructure;
+import horror.utils.IDisposable;
 import horror.memory.ByteArray;
 
 using StringTools;
@@ -66,6 +66,7 @@ class RenderDriver implements IDisposable {
 	var _cbInitialized:Void->Void;
 	var _currentShader:RawShader;
 	var _oldFlash:Bool;
+	var _currentIndexBuffer:IndexBuffer3D;
 
 	static var TEMP_MATRIX:FlashMatrix3D = new FlashMatrix3D();
 
@@ -76,12 +77,12 @@ class RenderDriver implements IDisposable {
 		_cbInitialized = callback;
 		_stage3d = Lib.current.stage.stage3Ds[0];
 		_stage3d.addEventListener(Event.CONTEXT3D_CREATE, onContextReady);
-		_oldFlash = (untyped _stage3d.requestContext3D.length) == 1;
+		_oldFlash = untyped (_stage3d.requestContext3D.length) == 1;
 		if(_oldFlash) {
-			_stage3d.requestContext3D("auto");
+			_stage3d.requestContext3D(cast "auto");
 		}
 		else {
-			_stage3d.requestContext3D("auto", cast "baseline");//Context3DProfile.BASELINE);
+			_stage3d.requestContext3D(cast "auto", cast "baseline");//Context3DProfile.BASELINE);
 		}
 	}
 
@@ -129,8 +130,9 @@ class RenderDriver implements IDisposable {
 		_context.present();
 	}
 
-	public function drawIndexedTriangles(mesh:RawMesh, indexCount:Int):Void {
-		_context.drawTriangles(mesh.indexBuffer, 0, Std.int(indexCount / 3));
+	public function drawIndexedTriangles(triangles:Int):Void {
+		Debug.assert(_currentIndexBuffer != null);
+		_context.drawTriangles(_currentIndexBuffer, 0, triangles);
 	}
 
 	public function setTexture(texture:RawTexture) {
@@ -139,7 +141,7 @@ class RenderDriver implements IDisposable {
 
 	/*** SHADERS ***/
 
-	public function createShader(vertexStructure:VertexStructure, vertexShaderCode:String, fragmentShaderCode:String):RawShader {
+	public function createShader(vertexShaderCode:String, fragmentShaderCode:String):RawShader {
 		var vertexProgram:AGALMiniAssembler = new AGALMiniAssembler();
 		var pixelProgram:AGALMiniAssembler = new AGALMiniAssembler();
 
@@ -173,7 +175,8 @@ class RenderDriver implements IDisposable {
 		_context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 4, TEMP_MATRIX, true);
 	}
 
-	public function setVertexBuffer(mesh:RawMesh):Void {
+	public function setMesh(mesh:RawMesh):Void {
+		_currentIndexBuffer = mesh.indexBuffer;
 		var vb3d = mesh.vertexBuffer;
 		var vas = mesh.vertexStructure;
 		var vertexStructure = mesh.vertexStructure;

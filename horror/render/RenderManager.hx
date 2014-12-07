@@ -34,11 +34,12 @@ class RenderManager implements IDisposable {
 
 	public var blankTexture(default, null):Texture;
 
-	public var trianglesPerFrame(default, null):Int = 0;
-	public var drawCallsPerFrame(default, null):Int = 0;
-
 	public var isInitialized(default, null):Bool = false;
 	var _cbOnReady:Void->Void;
+
+	var _currentShader:Shader;
+	var _currentTexture:Texture;
+	var _currentMesh:Mesh;
 
 	public function new() {
 		driver = new RenderDriver();
@@ -62,15 +63,7 @@ class RenderManager implements IDisposable {
 			_cbOnReady = null;
 		}
 
-		blankTexture = new Texture();
-		uploadBlankTexture();
-	}
-
-	function uploadBlankTexture() {
-		var bytes = new ByteArray();
-		bytes.writeUInt32(0xffffffff);
-		blankTexture.loadFromBytes(1, 1, bytes.data);
-		bytes.clear();
+		blankTexture = Texture.createFromColor(1, 1, 0xffffffff);
 	}
 
 	function onScreenResized(screen:ScreenManager):Void {
@@ -89,8 +82,8 @@ class RenderManager implements IDisposable {
 
 	public function begin():Void {
 		driver.begin();
-		trianglesPerFrame = 0;
-		drawCallsPerFrame = 0;
+
+		resetFrameStats();
 	}
 
 	public function end():Void {
@@ -98,29 +91,29 @@ class RenderManager implements IDisposable {
 	}
 
 	public function setMaterial(material:Material):Void {
-		setShader(material.shader);
-		setTexture(material.texture);
-		setBlendMode(material.sourceBlendFactor, material.destinationBlendFactor);
-	}
-
-	public function setBlendMode(sourceBlendFactor:BlendFactor, destinationBlendFactor:BlendFactor):Void {
-		driver.setBlendMode(sourceBlendFactor, destinationBlendFactor);
-	}
-
-	public function setTexture(texture:Texture):Void {
-		driver.setTexture(texture != null ? texture._rawData : null);
-	}
-
-	function setShader(shader:Shader):Void {
-		driver.setShader(shader != null ? shader._rawData : null);
+		var texture = material.texture;
+		if(texture == null) {
+			texture = blankTexture;
+		}
+		if(texture != _currentTexture) {
+			driver.setTexture(texture._rawData);
+			_currentTexture = texture;
+		}
+		var shader = material.shader;
+		if(shader != _currentShader) {
+			driver.setShader(shader._rawData);
+			driver.setBlendMode(shader.sourceBlendFactor, shader.destinationBlendFactor);
+			_currentShader = shader;
+		}
 	}
 
 	public function setMatrix(projectionMatrix:Matrix3D, modelViewMatrix:Matrix3D):Void {
 		driver.setMatrix(projectionMatrix, modelViewMatrix);
 	}
 
-	public function setVertexBuffer(vertexBuffer:Mesh):Void {
-		driver.setVertexBuffer(vertexBuffer._rawData);
+	// after mesh modification you must to re set it
+	public function setMesh(mesh:Mesh):Void {
+		driver.setMesh(mesh._rawData);
 	}
 
 	public function resize(width:Int, height:Int):Void {
@@ -131,12 +124,24 @@ class RenderManager implements IDisposable {
 		}
 	}
 
-	public function drawIndexedTriangles(indexBuffer:Mesh, indexCount:Int):Void {
-		driver.drawIndexedTriangles(indexBuffer._rawData, indexCount);
-
-		// stats
-		trianglesPerFrame += Std.int(indexCount / 3);
-		++drawCallsPerFrame;
+	public function drawIndexedTriangles(triangles:Int):Void {
+		Debug.assert(triangles >= 1);
+		driver.drawIndexedTriangles(triangles);
+		addFrameDrawCall(triangles);
 	}
 
+	// STATS
+
+	public var trianglesPerFrame(default, null):Int = 0;
+	public var drawCallsPerFrame(default, null):Int = 0;
+
+	function resetFrameStats():Void {
+		trianglesPerFrame = 0;
+		drawCallsPerFrame = 0;
+	}
+
+	function addFrameDrawCall(triangles:Int):Void {
+		trianglesPerFrame += triangles;
+		++drawCallsPerFrame;
+	}
 }
