@@ -9,4 +9,10 @@
 	<haxedef name="flash_memory_domain" if="flash" />
 	<haxedef name="dom" if="html5" />
 
+	<haxedef name="haxe3" />
+	<haxedef name="generic" />
+	<haxedef name="next" />
+
+	<window hardware="true" allow-shaders="true" require-shaders="true" depth-buffer="false" stencil-buffer="false" antialiasing="0" fullscreen="false" />
+
 </extension>

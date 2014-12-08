@@ -4,9 +4,8 @@
 	<app main="Main" path="export" file="HorrorDemo" />
 
 	<window width="800" height="600" background="0x550000"/>
-	<window hardware="true" allow-shaders="true" require-shaders="true" depth-buffer="false" stencil-buffer="false" antialiasing="0" />
-	<window fullscreen="false" />
 	<window fps="100" vsync="true" />
+	<window fps="0" if="html5" />
 
 	<source path="src" />
 
@@ -15,23 +14,17 @@
 	<assets path="assets" embed="false" exclude="lime.svg" />
 	<icon path="assets/lime.svg" />
 
-	<certificate path="C:\Dropbox\dev\auth\fdkey.keystore" alias="fdkey" password="KungFuPanda" if="android" unless="debug"/>
-
+	<certificate path="path_to_your_key" alias="your_login" password="your_password" if="android" unless="debug"/>
 
 	<!-- all -->
 	<haxeflag name="--no-traces" unless="debug" />
 	<haxedef name="no_debug" unless="debug" />
 	<haxeflag name="-dce full" unless="debug" />
 
-	<haxedef name="haxe3" />
-	<haxedef name="generic" />
-	<haxedef name="next" />
-
 	<!-- cpp -->
 	<!--<haxedef name="HXCPP_STACK_TRACE" />-->
 	<!-- <haxedef name="HXCPP_FLOAT32" if="cpp" />-->
 
-	<window fps="0" if="html5" />
 	<app min-swf-version="12.0" />
 
 	<!-- <haxedef name="advanced-telemetry" if="flash release"/>-->

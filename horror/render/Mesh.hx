@@ -23,11 +23,11 @@ class Mesh implements IDisposable {
 		}
 	}
 
-	public function uploadVertices(data:ByteArrayData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
+	function uploadVertices(data:ByteArrayData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
 		RenderManager.driver.uploadVertices(_rawData, data, bytesLength, bytesOffset);
 	}
 
-	public function uploadIndices(data:ByteArrayData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
+	function uploadIndices(data:ByteArrayData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
 		RenderManager.driver.uploadIndices(_rawData, data, bytesLength, bytesOffset);
 	}
 }

@@ -9,6 +9,7 @@ import js.html.Uint16Array;
 import js.html.Uint8Array;
 import js.html.ArrayBuffer;
 
+@:extern
 class JSFastBytesIO
 {
     public var data:Uint8Array;

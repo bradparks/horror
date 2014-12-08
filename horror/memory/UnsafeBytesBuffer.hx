@@ -26,7 +26,7 @@ import horror.memory.JSFastBytesData;
 **/
 
 @:access(horror.memory.ByteArray)
-class UnsafeBytesBuffer {
+@:extern class UnsafeBytesBuffer {
 
     public var length(get, null):Int = 0;
     public var position:Int = 0;
