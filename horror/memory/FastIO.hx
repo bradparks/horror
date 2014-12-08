@@ -1,15 +1,29 @@
 package horror.memory;
 
-#if flash_memory_domain
-import flash.Memory;
+/**
+*   Underliying data for efficiently data access
+**/
+
+#if html5
+typedef FastIOInner = horror.memory.JSFastBytesData;
+
+#elseif flash_memory_domain
+typedef FastIOInner = Int;
+
+#elseif cpp
+typedef FastIOInner = haxe.io.BytesData;
+
+#else
+typedef FastIOInner = horror.memory.ByteArray.ByteArrayData;
+
 #end
 
 /**
 *   Class provides efficiently typed access in fixed memory snapshot
 **/
-abstract UnsafeBytes(UnsafeBytesData) from UnsafeBytesData {
+abstract FastIO(FastIOInner) from FastIOInner {
 
-    inline public function new(data:UnsafeBytesData) {
+    inline public function new(data:FastIOInner) {
         this = data;
     }
 
@@ -33,8 +47,8 @@ abstract UnsafeBytes(UnsafeBytesData) from UnsafeBytesData {
 		untyped __global__.__hxcpp_memory_set_float(this, pos, x);
 #elseif html5
         this.setFloat32(pos, x);
-#elseif flash_memory_domain
-	    Memory.setFloat(pos, x);
+#elseif flash
+		flash.Memory.setFloat(pos, x);
 #else
         this.position = pos;
         this.writeFloat(x);
@@ -44,10 +58,10 @@ abstract UnsafeBytes(UnsafeBytesData) from UnsafeBytesData {
     public inline function setUInt32(pos:Int, x:Int):Void {
 #if cpp
 		untyped __global__.__hxcpp_memory_set_ui32(this, pos, x);
-	#elseif html5
+#elseif html5
         this.setUInt32(pos, x);
-#elseif flash_memory_domain
-	    Memory.setI32(pos, x);
+#elseif flash
+		flash.Memory.setI32(pos, x);
 #else
         this.position = pos;
         this.writeUnsignedInt(x);
@@ -59,9 +73,9 @@ abstract UnsafeBytes(UnsafeBytesData) from UnsafeBytesData {
 		untyped __global__.__hxcpp_memory_set_ui16(this, pos, x);
 #elseif html5
         this.setUInt16(pos, x);
-#elseif flash_memory_domain
-	    Memory.setI16(pos, x);
-    #else
+#elseif flash
+		flash.Memory.setI16(pos, x);
+#else
         this.position = pos;
         this.writeShort(x);
 #end
@@ -72,8 +86,8 @@ abstract UnsafeBytes(UnsafeBytesData) from UnsafeBytesData {
 		untyped this[pos] = x;
 #elseif html5
         this.setUInt8(pos, x);
-#elseif flash_memory_domain
-	    Memory.setByte(pos, x);
+#elseif flash
+		flash.Memory.setByte(pos, x);
 #else
         this.position = pos;
         this.writeByte(x);
@@ -85,8 +99,8 @@ abstract UnsafeBytes(UnsafeBytesData) from UnsafeBytesData {
 		return untyped __global__.__hxcpp_memory_get_float(this, pos);
 #elseif html5
         return this.getFloat32(pos);
-#elseif flash_memory_domain
-	    return Memory.getFloat(pos);
+#elseif flash
+	    return flash.Memory.getFloat(pos);
 #else
         this.position = pos;
         return this.readFloat();
@@ -96,10 +110,10 @@ abstract UnsafeBytes(UnsafeBytesData) from UnsafeBytesData {
     public inline function getUInt32(pos:Int):Int {
 #if cpp
 		return untyped __global__.__hxcpp_memory_get_ui32(this, pos);
-	#elseif html5
+#elseif html5
         return this.getUInt32(pos);
-#elseif flash_memory_domain
-	    return Memory.getI32(pos);
+#elseif flash
+	    return flash.Memory.getI32(pos);
 #else
         this.position = pos;
         return this.readUnsignedInt();
@@ -111,8 +125,8 @@ abstract UnsafeBytes(UnsafeBytesData) from UnsafeBytesData {
 		return untyped __global__.__hxcpp_memory_get_ui16(this, pos);
 #elseif html5
         return this.getUInt16(pos);
-#elseif flash_memory_domain
-	    return Memory.getUI16(pos);
+#elseif flash
+	    return flash.Memory.getUI16(pos);
 #else
         this.position = pos;
         return this.readShort();
@@ -124,8 +138,8 @@ abstract UnsafeBytes(UnsafeBytesData) from UnsafeBytesData {
 		return untyped this[pos];
 #elseif html5
         return this.getUInt8(pos);
-#elseif flash_memory_domain
-	    return Memory.getByte(pos);
+#elseif flash
+	    return flash.Memory.getByte(pos);
 #else
         this.position = pos;
         return this.readUnsignedByte();

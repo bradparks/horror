@@ -33,6 +33,4 @@
 	<haxedef name="flash_memory_domain" if="flash" />
 	<haxedef name="native_trace" if="flash" />
 	<haxedef name="network-sandbox" if="flash" />
-
-
 </project>

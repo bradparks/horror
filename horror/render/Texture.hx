@@ -15,11 +15,11 @@ class Texture implements IDisposable {
 	public function new() {
 	}
 
-	public function loadFromBytes(width:Int, height:Int, pixels:ByteArrayData) {
+	public function loadFromBytes(width:Int, height:Int, pixels:ByteArray) {
 		dispose();
 		this.width = width;
 		this.height = height;
-		_rawData = RenderManager.driver.createTextureFromByteArray(width, height, pixels);
+		_rawData = RenderManager.driver.createTextureFromByteArray(width, height, pixels.data);
 	}
 
 	public function loadPngFromBytes(bytes:ByteArray) {
@@ -46,11 +46,11 @@ class Texture implements IDisposable {
 
 	public static function createFromColor(width:Int, height:Int, color:Int):Texture {
 		var texture = new Texture();
-		var bytes = new ByteArray();
+		var bytes = new ByteArray(width*height*4);
 		for(i in 0...width*height) {
 			bytes.writeUInt32(color);
 		}
-		texture.loadFromBytes(1, 1, bytes.data);
+		texture.loadFromBytes(1, 1, bytes);
 		bytes.clear();
 		return texture;
 	}

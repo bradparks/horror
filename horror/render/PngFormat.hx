@@ -1,15 +1,17 @@
 package horror.render;
 
-import format.png.Reader;
 import haxe.io.BytesInput;
-import format.png.Tools;
 import haxe.io.Bytes;
+
+import format.png.Reader;
+import format.png.Tools;
+
 import horror.memory.ByteArray;
-import horror.memory.UnsafeBytesBuffer;
+import horror.memory.FastMemory;
 
 class PngFormat {
 
-	public var imageBytes:ByteArrayData;
+	public var imageBytes:ByteArray;
 	public var width:Int;
 	public var height:Int;
 
@@ -19,39 +21,40 @@ class PngFormat {
 
 	public function decode(bytes:ByteArray):Bool {
 		readInfo(bytes);
-		var pixelData = UnsafeBytesBuffer.fromBytes(_pngBytes);
-		var unsafeBytes = pixelData.getUnsafeBytes();
-		var len:Int = pixelData.length;
-		var i:Int = 0;
+		var pixelsMemory = FastMemory.fromBytes(_pngBytes);
+		var pixels = pixelsMemory.lock();
+		var len = pixelsMemory.length;
+		var i = 0;
 		while (i < len) {
-			var a:Int = unsafeBytes[i + 3];
+			var a:Int = pixels[i + 3];
 			var k:Float = a / 255.0;
-			var r:Int = Std.int(k*unsafeBytes[i + 2]);
-			var g:Int = Std.int(k*unsafeBytes[i + 1]);
-			var b:Int = Std.int(k*unsafeBytes[i    ]);
+			var r:Int = Std.int(k*pixels[i + 2]);
+			var g:Int = Std.int(k*pixels[i + 1]);
+			var b:Int = Std.int(k*pixels[i    ]);
 			#if flash
-			unsafeBytes[i    ] = b;
-			unsafeBytes[i + 1] = g;
-			unsafeBytes[i + 2] = r;
-			unsafeBytes[i + 3] = a;
+			pixels[i    ] = b;
+			pixels[i + 1] = g;
+			pixels[i + 2] = r;
+			pixels[i + 3] = a;
 			#else
-			unsafeBytes[i    ] = r;
-			unsafeBytes[i + 1] = g;
-			unsafeBytes[i + 2] = b;
-			unsafeBytes[i + 3] = a;
+			pixels[i    ] = r;
+			pixels[i + 1] = g;
+			pixels[i + 2] = b;
+			pixels[i + 3] = a;
 			#end
 
 			i+= 4;
 		}
 
-		imageBytes = pixelData.data;
+		pixelsMemory.unlock();
+		imageBytes = ByteArray.fromData(pixelsMemory.data);
 		_pngBytes = null;
 
 		return true;
 	}
 
 	public function readInfo(bytes:ByteArray):Void {
-		var byteInput = new BytesInput (bytes.getBytes(), 0, bytes.length);
+		var byteInput = new BytesInput (bytes.toBytes(), 0, bytes.length);
 		var d = new Reader(byteInput).read();
 		var hdr = Tools.getHeader(d);
 		_pngBytes = Tools.extract32(d);

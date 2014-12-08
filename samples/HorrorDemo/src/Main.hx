@@ -81,6 +81,7 @@ class Main {
 
 		_mesh = new Mesh(_vertexStructure);
 		_meshBuffer = new MeshBuffer();
+		_meshBuffer.vertexStructure = _vertexStructure;
 
 		Horror.loop.updated.add(update);
 		Horror.screen.resized.add(resize);
@@ -101,11 +102,12 @@ class Main {
 		_render.clear(0.1, 0.2, 0.3);
 		_render.begin();
 
-		_meshBuffer.reset();
+		_meshBuffer.begin();
 		for(blob in _blobs) {
 			blob.update(dt);
 			blob.draw(_meshBuffer);
 		}
+		_meshBuffer.end();
 		_meshBuffer.flush(_mesh);
 
 		_render.setMaterial(_material);

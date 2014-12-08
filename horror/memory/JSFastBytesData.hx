@@ -52,26 +52,23 @@ class JSFastBytesData
         data[pos] = v;
     }
 
-    public inline function setFloat32(pos:Int, v:Float) : Void
-    {
+    public inline function setFloat32(pos:Int, v:Float):Void {
         io.setFloat32(pos, v);
     }
 
-    public inline function setUInt16(pos:Int, v:Int) : Void
-    {
+    public inline function setUInt16(pos:Int, v:Int):Void {
         io.setUInt16(pos, v);
     }
 
-    public inline function setUInt32(pos:Int, v:Int) : Void
-    {
+    public inline function setUInt32(pos:Int, v:Int):Void {
         io.setUInt32(pos, v);
     }
 
-    public inline function getFloat32_aligned(pos:Int) : Float {
+    public inline function getFloat32_aligned(pos:Int):Float {
         return arrayFloat[pos>>2];
     }
 
-    public inline function getUInt16_aligned(pos:Int) : Int {
+    public inline function getUInt16_aligned(pos:Int):Int {
         return arrayUShort[pos>>1];
     }
 
@@ -79,18 +76,15 @@ class JSFastBytesData
         return arrayUInt[pos>>2];
     }
 
-    public inline function setFloat32_aligned(pos:Int, v:Float) : Void
-    {
+    public inline function setFloat32_aligned(pos:Int, v:Float):Void {
         arrayFloat[pos>>2] = v;
     }
 
-    public inline function setUInt16_aligned(pos:Int, v:Int) : Void
-    {
+    public inline function setUInt16_aligned(pos:Int, v:Int):Void {
         arrayUShort[pos>>1] = v;
     }
 
-    public inline function setUInt32_aligned(pos:Int, v:Int) : Void
-    {
+    public inline function setUInt32_aligned(pos:Int, v:Int):Void {
         arrayUInt[pos>>2] = v;
     }
 }

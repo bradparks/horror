@@ -1,5 +1,6 @@
 package horror.loaders;
 
+import horror.memory.ByteArray;
 import openfl.Assets;
 import openfl.net.URLLoader;
 import openfl.net.URLRequest;
@@ -52,17 +53,16 @@ class BytesLoader extends BaseLoader
     }
 
     function onComplete(_):Void {
-        var data = cast (_loader.data, ByteArrayData);
-        content = new ByteArray(data);
+		content = ByteArray.fromData(_loader.data);
 		cleanup();
         performComplete();
     }
 
-	function onAssetsLoaded(data:ByteArrayData):Void {
-		content = new ByteArray(data);
+	/*function onAssetsLoaded(data:ByteArray):Void {
+		content = data;
 		cleanup();
 		performComplete();
-	}
+	}*/
 
 	function cleanup():Void {
 		if(_loader != null) {

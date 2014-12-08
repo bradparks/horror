@@ -1,5 +1,6 @@
 package horror.memory;
 
+import flash.utils.ByteArray;
 import haxe.io.BytesData;
 import haxe.io.Bytes;
 
@@ -10,41 +11,20 @@ typedef ByteArrayData = openfl.utils.ByteArray;
 class ByteArray {
 
 	public var data(default, null):ByteArrayData;
-
     public var bigEndian(get, set):Bool;
-    public var length(get, null):Int;
+    public var length(get, set):Int;
     public var position(get, set):Int;
 
-	public function new(?data:ByteArrayData) {
-		this.data = data != null ? data : new ByteArrayData();
-		this.data.endian = Endian.LITTLE_ENDIAN;
-	}
-
-    inline static function bufferFromSize(length:Int):ByteArrayData {
-#if (flash || html5)
-        var data = new ByteArrayData();
-        data.length = length;
-        return data;
-#else
-		return new ByteArrayData(length);
-#end
-    }
-
-    inline static function bufferFromBytes(bytes:Bytes):ByteArrayData {
+	public function new(size:Int = 0) {
+		if(size >= 0) {
 #if flash
-        return untyped bytes.b;
+			setData(new ByteArrayData());
+			data.length = size;
 #else
-        return ByteArrayData.fromBytes(bytes);
+			setData(new ByteArrayData(size));
 #end
-    }
-
-    public static function fromSize(length:Int):ByteArray {
-        return new ByteArray(bufferFromSize(length));
-    }
-
-    public static function fromBytes(bytes:Bytes):ByteArray {
-        return new ByteArray(bufferFromBytes(bytes));
-    }
+		}
+	}
 
 	public inline function readBytes(outData:ByteArray, offset:Int, length:Int):Void {
 		data.readBytes(outData.data, offset, length);
@@ -127,7 +107,7 @@ class ByteArray {
     }
 
     inline function set_bigEndian(value:Bool):Bool {
-        data.endian = cast (value ? Endian.BIG_ENDIAN : Endian.LITTLE_ENDIAN);
+		data.endian = cast (value ? Endian.BIG_ENDIAN : Endian.LITTLE_ENDIAN);
         return value;
     }
 
@@ -135,8 +115,17 @@ class ByteArray {
         return data.length;
     }
 
+	inline function set_length(value:Int):Int {
+		#if (flash || js)
+		data.length = value;
+		#else
+		data.setLength(value);
+		#end
+		return value;
+	}
+
     public function clear():Void {
-        data.clear();
+		data.clear();
     }
 
     inline function get_position():Int {
@@ -147,31 +136,47 @@ class ByteArray {
         return data.position = value;
     }
 
-	public inline function getBytes():Bytes {
+	function setData(data:ByteArrayData):Void {
+		this.data = data;
+		this.data.endian = Endian.LITTLE_ENDIAN;
+	}
+
+	public inline static function fromData(data:ByteArrayData):ByteArray {
+		var ba = new ByteArray(-1);
+		ba.setData(data);
+		return ba;
+	}
+
+	public inline static function fromBytes(bytes:Bytes):ByteArray {
+		#if flash
+		return ByteArray.fromData(untyped bytes.b);
+		#else
+		return ByteArray.fromData(ByteArrayData.fromBytes(bytes));
+		#end
+	}
+
+	public inline function toBytes():Bytes {
 		// HTML5: very expensive :(
 		#if html5
 			var bytesData:BytesData = new BytesData();
-			for(i in 0 ... data.byteView.length) {
-				bytesData.push(data.byteView[i]);
+			var byteView = data.byteView;
+			for(i in 0 ... byteView.length) {
+				bytesData.push(byteView[i]);
 			}
 			return Bytes.ofData(bytesData);
 			//return Bytes.ofData(data.byteView);
 		#elseif flash
 		return Bytes.ofData(data);
 		#else
-		return data;
+		return data.b;
 		#end
 	}
 
-    public inline function getBytesData():BytesData {
+    public inline function toBytesData():BytesData {
         #if flash
 		return data;
         #else
-        return getBytes().getData();
+        return toBytes().getData();
         #end
     }
-
-
-
-
 }

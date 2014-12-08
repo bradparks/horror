@@ -1,22 +1,22 @@
 package horror.render;
 
-import horror.memory.UnsafeBytes;
+import horror.memory.FastIO;
+import horror.memory.FastMemory;
 import horror.debug.Debug;
 import horror.render.Mesh;
-import horror.memory.UnsafeBytesBuffer;
 
 
 // init: set vertex structure
-// 1. 'reset' the buffer
+// 1. 'begin' the buffer
 // 2. fill your data:
 //   use generic way: unsafeBytes + grow
 //   or use the fastest way: use writeMethods + push
-// 3. 'flush' to the mesh
+// 3. 'end' and 'flush' to the mesh
 
 @:access(horror.render.Mesh)
 class MeshBuffer {
 
-	public var unsafeBytes(default, null):UnsafeBytes;
+	public var io(default, null):FastIO;
 
 	public var vertexBytesPosition(default, null):Int;
 	public var indexBytesPosition(default, null):Int;
@@ -30,7 +30,9 @@ class MeshBuffer {
 	public var vertexStructure(default, set):VertexStructure;
 	public var stride(default, null):Int;
 
-	var _bytes:UnsafeBytesBuffer;
+	public var isStarted(default, null):Bool = false;
+
+	var _mem:FastMemory;
 	var _vertexBytesTotal:Int;
 	var _indexBytesTotal:Int;
 
@@ -40,7 +42,7 @@ class MeshBuffer {
 		_vertexBytesTotal = 0xFFFF * maxVertexSize;
 		_indexBytesTotal = 0x100000 * 2;
 
-		_bytes = UnsafeBytesBuffer.fromSize(_vertexBytesTotal + _indexBytesTotal);
+		_mem = FastMemory.fromSize(_vertexBytesTotal + _indexBytesTotal);
 	}
 
 	function set_vertexStructure(value:VertexStructure):VertexStructure {
@@ -51,14 +53,23 @@ class MeshBuffer {
 		return value;
 	}
 
-	public function reset():Void {
-		Debug.assert(vertexStructure != null && stride > 0);
+	public function begin():Void {
+		Debug.assert(isStarted == false && vertexStructure != null && stride > 0);
 
-		unsafeBytes = _bytes.getUnsafeBytes();
+		io = _mem.lock();
+		isStarted = true;
+
 		nextVertex = 0;
 		nextIndex = 0;
 		vertexBytesPosition = getVertexStartPosition();
 		indexBytesPosition = getIndexStartPosition();
+	}
+
+	inline public function end():Void {
+		Debug.assert(isStarted == true);
+
+		isStarted = false;
+		_mem.unlock();
 	}
 
 	@:extern public inline function grow(verticesTotal:Int, indicesTotal:Int):Void {
@@ -68,10 +79,17 @@ class MeshBuffer {
 		indexBytesPosition += indicesTotal << 1;
 	}
 
-	public function flush(mesh:Mesh):Void {
-		Debug.assert(mesh.vertexStructure.stride == stride);
+	@:extern public inline function growFast(verticesTotal:Int, indicesTotal:Int, vertexBytesWritten:Int, indexBytesWritten:Int):Void {
+		nextVertex += verticesTotal;
+		nextIndex += indicesTotal;
+		vertexBytesPosition += vertexBytesWritten;
+		indexBytesPosition += indexBytesWritten;
+	}
 
-		var bytesData = _bytes.data;
+	public function flush(mesh:Mesh):Void {
+		Debug.assert(isStarted == false && mesh.vertexStructure.stride == stride);
+
+		var bytesData = _mem.data;
 		var indexStartPosition = getIndexStartPosition();
 		var vertexStartPosition = getVertexStartPosition();
 
@@ -98,31 +116,31 @@ class MeshBuffer {
 	@:extern public inline function writeTriangle(index1:Int, index2:Int, index3:Int):Void {
 		var p:Int = indexBytesPosition;
 		var baseVertex:Int = nextVertex;
-		unsafeBytes.setUInt16_aligned(p,     baseVertex+index1);
-		unsafeBytes.setUInt16_aligned(p + 2, baseVertex+index2);
-		unsafeBytes.setUInt16_aligned(p + 4, baseVertex+index3);
+		io.setUInt16_aligned(p,     baseVertex+index1);
+		io.setUInt16_aligned(p + 2, baseVertex+index2);
+		io.setUInt16_aligned(p + 4, baseVertex+index3);
 		indexBytesPosition += 6;
 	}
 
 	@:extern public inline function writeFloat2(x:Float, y:Float):Void {
 		var p:Int = vertexBytesPosition;
-		unsafeBytes.setFloat32_aligned(p,     x);
-		unsafeBytes.setFloat32_aligned(p + 4, y);
+		io.setFloat32_aligned(p,     x);
+		io.setFloat32_aligned(p + 4, y);
 		vertexBytesPosition += 8;
 	}
 
 	@:extern public inline function writeFloat4(x:Float, y:Float, z:Float, w:Float):Void {
 		var p:Int = vertexBytesPosition;
-		unsafeBytes.setFloat32_aligned(p,     x);
-		unsafeBytes.setFloat32_aligned(p + 4, y);
-		unsafeBytes.setFloat32_aligned(p + 8, z);
-		unsafeBytes.setFloat32_aligned(p + 12, w);
+		io.setFloat32_aligned(p,     x);
+		io.setFloat32_aligned(p + 4, y);
+		io.setFloat32_aligned(p + 8, z);
+		io.setFloat32_aligned(p + 12, w);
 		vertexBytesPosition += 16;
 	}
 
 	@:extern public inline function writePackedColor(colorABGR:Int):Void {
 		var p:Int = vertexBytesPosition;
-		unsafeBytes.setUInt32_aligned(p, colorABGR);
+		io.setUInt32_aligned(p, colorABGR);
 		vertexBytesPosition += 4;
 	}
 
