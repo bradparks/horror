@@ -6,8 +6,6 @@ import horror.memory.ByteArray;
 
 #if flash_memory_domain
 import flash.system.ApplicationDomain;
-#elseif html5
-import horror.memory.JSFastBytesData;
 #end
 
 /**
@@ -31,7 +29,7 @@ class FastMemory {
     public var length(get, never):Int;
     public var data(default, null):ByteArrayData;
 #if html5
-	var jsIO:JSFastBytesData;
+	var jsIO:JsBytesWrapper;
 #end
 
     public function new(?data:ByteArrayData) {
@@ -39,7 +37,7 @@ class FastMemory {
         this.data.endian = openfl.utils.Endian.LITTLE_ENDIAN;
 
 #if html5
-        jsIO = new JSFastBytesData();
+        jsIO = new JsBytesWrapper();
         jsIO.data = data.byteView;
 #end
     }
@@ -90,13 +88,13 @@ class FastMemory {
 		return select();
 	}
 
-	static var _stack:Array<FastMemory> = new Array<FastMemory>();
-	static var _current:FastMemory;
-
 	public function unlock():Void {
 		_current = _stack.pop();
 		if(_current != null) {
 			_current.select();
 		}
 	}
+
+	static var _stack:Array<FastMemory> = new Array<FastMemory>();
+	static var _current:FastMemory;
 }

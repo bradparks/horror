@@ -36,11 +36,13 @@ class MeshBuffer {
 	var _vertexBytesTotal:Int;
 	var _indexBytesTotal:Int;
 
-	public function new(maxVertexSize:Int = 24) {
+	public function new(maxVertexSize:Int = 24, maxVertices:Int = 0xFFFF, maxIndices:Int = 0x100000) {
 		Debug.assert(maxVertexSize > 0 && maxVertexSize % 4 == 0);
+		Debug.assert(maxVertices <= 0xFFFF && maxVertices > 0);
+		Debug.assert(maxIndices <= 0x100000 && maxIndices > 0);
 
-		_vertexBytesTotal = 0xFFFF * maxVertexSize;
-		_indexBytesTotal = 0x100000 * 2;
+		_vertexBytesTotal = maxVertices * maxVertexSize;
+		_indexBytesTotal = maxIndices << 1;
 
 		_mem = FastMemory.fromSize(_vertexBytesTotal + _indexBytesTotal);
 	}
@@ -97,22 +99,6 @@ class MeshBuffer {
 		mesh.uploadIndices(bytesData, indexBytesPosition - indexStartPosition, indexStartPosition);
 	}
 
-	@:extern inline function get_isEmpty():Bool {
-		return nextIndex == 0;
-	}
-
-	@:extern inline function get_numTriangles():Int {
-		return Std.int(nextIndex / 3);
-	}
-
-	@:extern inline function getIndexStartPosition():Int {
-		return _vertexBytesTotal;
-	}
-
-	@:extern inline function getVertexStartPosition():Int {
-		return 0;
-	}
-
 	@:extern public inline function writeTriangle(index1:Int, index2:Int, index3:Int):Void {
 		var p:Int = indexBytesPosition;
 		var baseVertex:Int = nextVertex;
@@ -147,5 +133,21 @@ class MeshBuffer {
 	@:extern public inline function push(verticesTotal:Int, indicesTotal:Int):Void {
 		nextVertex += verticesTotal;
 		nextIndex += indicesTotal;
+	}
+
+	@:extern inline function get_isEmpty():Bool {
+		return nextIndex == 0;
+	}
+
+	@:extern inline function get_numTriangles():Int {
+		return Std.int(nextIndex / 3);
+	}
+
+	@:extern inline function getIndexStartPosition():Int {
+		return _vertexBytesTotal;
+	}
+
+	@:extern inline function getVertexStartPosition():Int {
+		return 0;
 	}
 }

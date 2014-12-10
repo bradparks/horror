@@ -12,7 +12,7 @@
 	<haxelib name="horror"/>
 
 	<assets path="assets" embed="false" exclude="lime.svg" />
-	<icon path="assets/lime.svg" />
+	<icon path="assets/lime.svg" unless="debug" />
 
 	<certificate path="path_to_your_key" alias="your_login" password="your_password" if="android" unless="debug"/>
 
@@ -22,13 +22,13 @@
 	<haxeflag name="-dce full" unless="debug" />
 
 	<!-- cpp -->
-	<!--<haxedef name="HXCPP_STACK_TRACE" />-->
-	<!-- <haxedef name="HXCPP_FLOAT32" if="cpp" />-->
+	<!-- <haxedef name="HXCPP_STACK_TRACE" /> -->
+	<!-- <haxedef name="HXCPP_FLOAT32" if="cpp" /> -->
 
 	<app min-swf-version="12.0" />
 
-	<!-- <haxedef name="advanced-telemetry" if="flash release"/>-->
-	<!--<haxedef name="fdb" if="flash debug" />-->
+	<!-- <haxedef name="advanced-telemetry" if="flash release"/> -->
+	<!-- <haxedef name="fdb" if="flash debug" /> -->
 	<haxedef name="fdb" if="flash" />
 	<haxedef name="flash_memory_domain" if="flash" />
 	<haxedef name="native_trace" if="flash" />

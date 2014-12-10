@@ -70,7 +70,6 @@ class GLMemoryRange implements IMemoryRange {
 /*** CONTEXT ***/
 class RenderDriver implements IDisposable {
 	var _currentShader:RawShader;
-	var _enabledAttributes:Int = 0;
 
 	public function new() {}
 
@@ -96,10 +95,10 @@ class RenderDriver implements IDisposable {
 		GL.depthMask(false);
 		GL.disable(GL.DEPTH_TEST);
 		GL.enable (GL.BLEND);
+		setShader(null);
 	}
 
-	public function end():Void {
-	}
+	public function end():Void { }
 
 	public function drawIndexedTriangles(triangles:Int):Void {
 		GL.drawElements(GL.TRIANGLES, triangles*3, GL.UNSIGNED_SHORT, 0);
@@ -163,18 +162,22 @@ class RenderDriver implements IDisposable {
 	}
 
 	public function setShader(shader:RawShader):Void {
+		// TODO: optimize enabling/disabling
+		if(_currentShader != null) {
+			for(i in _currentShader.vertexAttributes) {
+				GL.disableVertexAttribArray(i);
+			}
+		}
+
+		if(shader != null) {
+			GL.useProgram (shader.program);
+			for(i in shader.vertexAttributes) {
+				GL.enableVertexAttribArray(i);
+			}
+			GL.uniform1i (shader.imageUniform, 0);
+		}
+
 		_currentShader = shader;
-
-		GL.useProgram (shader.program);
-
-		var attrLength = shader.vertexAttributes.length;
-		for(i in _enabledAttributes...attrLength) {
-			GL.enableVertexAttribArray(i);
-			_enabledAttributes++;
-		}
-		while(_enabledAttributes > attrLength) {
-			GL.disableVertexAttribArray(--_enabledAttributes);
-		}
 	}
 
 	public function setBlendMode(src:BlendFactor, dst:BlendFactor):Void {
@@ -184,7 +187,6 @@ class RenderDriver implements IDisposable {
 	public function setMatrix(projectionMatrix:Matrix3D, modelViewMatrix:Matrix3D):Void {
 		GL.uniformMatrix4fv (_currentShader.projectionMatrixUniform, false, projectionMatrix.rawData);
 		GL.uniformMatrix4fv (_currentShader.modelViewMatrixUniform, false, modelViewMatrix.rawData);
-		GL.uniform1i (_currentShader.imageUniform, 0);
 	}
 
 	public function setMesh(mesh:RawMesh):Void {

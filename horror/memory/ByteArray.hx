@@ -1,6 +1,5 @@
 package horror.memory;
 
-import flash.utils.ByteArray;
 import haxe.io.BytesData;
 import haxe.io.Bytes;
 
@@ -168,7 +167,7 @@ class ByteArray {
 		#elseif flash
 		return Bytes.ofData(data);
 		#else
-		return data.b;
+		return data;
 		#end
 	}
 

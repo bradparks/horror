@@ -23,6 +23,12 @@ class Matrix3D {
         #end
     }
 
+	public function toString():String {
+		var str = '';
+		for(v in rawData) str += v + ' ';
+		return str;
+	}
+
     public static function create2D(x:Float, y:Float, scale:Float = 1, rotation:Float = 0):Matrix3D
     {
         var theta = rotation * Math.PI / 180.0;

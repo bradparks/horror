@@ -81,9 +81,11 @@ class RenderManager implements IDisposable {
 	}
 
 	public function begin():Void {
+		_currentShader = null;
+		_currentTexture = null;
+		_currentMesh = null;
 		driver.begin();
-
-		resetFrameStats();
+		__resetFrameStats();
 	}
 
 	public function end():Void {
@@ -91,6 +93,12 @@ class RenderManager implements IDisposable {
 	}
 
 	public function setMaterial(material:Material):Void {
+		var shader = material.shader;
+		if(shader != _currentShader) {
+			driver.setBlendMode(shader.sourceBlendFactor, shader.destinationBlendFactor);
+			driver.setShader(shader._rawData);
+			_currentShader = shader;
+		}
 		var texture = material.texture;
 		if(texture == null) {
 			texture = blankTexture;
@@ -98,12 +106,6 @@ class RenderManager implements IDisposable {
 		if(texture != _currentTexture) {
 			driver.setTexture(texture._rawData);
 			_currentTexture = texture;
-		}
-		var shader = material.shader;
-		if(shader != _currentShader) {
-			driver.setShader(shader._rawData);
-			driver.setBlendMode(shader.sourceBlendFactor, shader.destinationBlendFactor);
-			_currentShader = shader;
 		}
 	}
 
@@ -127,7 +129,7 @@ class RenderManager implements IDisposable {
 	public function drawIndexedTriangles(triangles:Int):Void {
 		Debug.assert(triangles >= 1);
 		driver.drawIndexedTriangles(triangles);
-		addFrameDrawCall(triangles);
+		__trackDrawCall(triangles);
 	}
 
 	// STATS
@@ -135,12 +137,12 @@ class RenderManager implements IDisposable {
 	public var trianglesPerFrame(default, null):Int = 0;
 	public var drawCallsPerFrame(default, null):Int = 0;
 
-	function resetFrameStats():Void {
+	function __resetFrameStats():Void {
 		trianglesPerFrame = 0;
 		drawCallsPerFrame = 0;
 	}
 
-	function addFrameDrawCall(triangles:Int):Void {
+	function __trackDrawCall(triangles:Int):Void {
 		trianglesPerFrame += triangles;
 		++drawCallsPerFrame;
 	}

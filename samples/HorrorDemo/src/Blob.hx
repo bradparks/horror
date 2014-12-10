@@ -28,8 +28,7 @@ class Blob {
 		for(i in 0...segmentsCount-1) {
 			buffer.writeTriangle(0, i+1, i+2);
 		}
-		buffer.writeTriangle(0, segmentsCount,  1);
-
+		buffer.writeTriangle(0, segmentsCount, 1);
 
 		buffer.writeFloat4(x, y, 0.5, 0.5);
 		buffer.writePackedColor(0xff00ffff);

@@ -9,14 +9,14 @@ import js.html.Uint16Array;
 import js.html.ArrayBuffer;
 
 @:extern
-class JSFastBytesData
+class JsBytesWrapper
 {
     public var data(default, set):Uint8Array;
 
     var arrayUShort: Uint16Array;
     var arrayUInt: Uint32Array;
     var arrayFloat: Float32Array;
-    var io:JSFastBytesIO = new JSFastBytesIO();
+    var io:JsBytesConverter = new JsBytesConverter();
 
     public function new() {}
 

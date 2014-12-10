@@ -1,5 +1,6 @@
 package;
 
+import horror.debug.Debug;
 import horror.memory.ByteArray;
 import horror.input.MouseEventType;
 import horror.input.MouseEvent;
@@ -32,6 +33,7 @@ class Main {
 	var _meshBuffer:MeshBuffer;
 	var _texture:Texture;
 
+	var _time:Float = 0;
 	var _blobs:Array<Blob> = [];
 
 	public function new () {
@@ -62,21 +64,6 @@ class Main {
 
 		Horror.input.onMouse.add(onMouse);
 
-		init();
-	}
-
-	function onMouse(e:MouseEvent) {
-		if(e.type == MouseEventType.DOWN) {
-			if(_material.texture == _texture) {
-				_material.texture = _render.blankTexture;
-			}
-			else {
-				_material.texture = _texture;
-			}
-		}
-	}
-
-	function init() {
 		_modelViewMatrix = Matrix3D.create2D(0, 0, 1, 0);
 
 		_mesh = new Mesh(_vertexStructure);
@@ -94,12 +81,16 @@ class Main {
 
 	function resize(screen:ScreenManager) {
 		_projectionMatrix = Matrix3D.createOrtho(0, screen.width, screen.height, 0, 1000, -1000);
+		trace('resize: ${screen.width}x${screen.height}');
 	}
+
 
 	function update(loop:LoopManager) {
 		var dt = loop.deltaTime;
+		_time += dt;
 
-		_render.clear(0.1, 0.2, 0.3);
+		// shows that clear is actually worked and frames updated
+		_render.clear(0.2 + 0.2 * Math.sin(_time), 0.2, 0.3);
 		_render.begin();
 
 		_meshBuffer.begin();
@@ -116,5 +107,11 @@ class Main {
 		_render.drawIndexedTriangles(_meshBuffer.numTriangles);
 
 		_render.end();
+	}
+
+	function onMouse(e:MouseEvent) {
+		if(e.type == MouseEventType.DOWN) {
+			_material.texture = _material.texture == _texture ? null : _texture;
+		}
 	}
 }

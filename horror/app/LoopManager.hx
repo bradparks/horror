@@ -28,9 +28,19 @@ class LoopManager implements IDisposable {
 		_stage = Lib.current.stage;
 		_stage.scaleMode = StageScaleMode.NO_SCALE;
 		_stage.align = StageAlign.TOP_LEFT;
+		_stage.addEventListener(openfl.display.OpenGLView.CONTEXT_LOST, onContextLost);
+		_stage.addEventListener(openfl.display.OpenGLView.CONTEXT_RESTORED, onContextRestored);
 
 		initLoop();
 		timeStamp = getTimeStamp();
+	}
+
+	function onContextLost(_) {
+		trace("lost");
+	}
+
+	function onContextRestored(_) {
+		trace("restored");
 	}
 
 	public function dispose():Void {

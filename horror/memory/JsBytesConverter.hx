@@ -10,7 +10,7 @@ import js.html.Uint8Array;
 import js.html.ArrayBuffer;
 
 @:extern
-class JSFastBytesIO
+class JsBytesConverter
 {
     public var data:Uint8Array;
     var _buffer: ArrayBuffer;
