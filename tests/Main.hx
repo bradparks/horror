@@ -6,5 +6,7 @@ class Main {
 		//b.run();
 		var b = new TraversalBenchmark();
 		b.run();
+		b.run();
+		b.run();
 	}
 }

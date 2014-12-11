@@ -4,3 +4,7 @@
 --next
 -js js/test.js
 -main Main
+
+--next
+-swf swf/test.swf
+-main Main

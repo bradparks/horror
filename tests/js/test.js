@@ -31,6 +31,9 @@ Benchmark.prototype = {
 			time = (haxe.Timer.stamp() - time) * 1000;
 			console.log("[Benchmark] " + test.name + " : " + time + " ms");
 		}
+		this.onEnd();
+	}
+	,onEnd: function() {
 	}
 };
 var BenchmarkTest = function(name,func) {
@@ -41,37 +44,38 @@ var Main = function() { };
 Main.main = function() {
 	var b = new TraversalBenchmark();
 	b.run();
+	b.run();
+	b.run();
 };
 var TraversalBenchmark = function() {
-	this.visitCount = 20;
 	this.quadCount = 20;
 	this.mcCount = 30000;
+	this.stack_ll_count = [0,0];
 	this.stack_count = [0,0];
+	this.rec_ll_count = [0,0];
 	this.rec_count = [0,0];
 	Benchmark.call(this);
-	TraversalBenchmark.INSTANCE = this;
 	this.initGraph();
-	var _g = 0;
-	while(_g < 65535) {
-		var i = _g++;
-		TraversalBenchmark.NODE_STACK.push(null);
-	}
-	this.add("recursive",$bind(this,this.runRec));
-	this.add("recursive_2",$bind(this,this.runRec2));
 	this.add("stack",$bind(this,this.runStack));
+	this.add("stack_ll",$bind(this,this.runStackLL));
+	this.add("recursive",$bind(this,this.runRec));
+	this.add("recursive_ll",$bind(this,this.runRecLL));
 };
 TraversalBenchmark.__super__ = Benchmark;
 TraversalBenchmark.prototype = $extend(Benchmark.prototype,{
 	onEnd: function() {
 	}
 	,runRec: function() {
-		this.graph.rec_visitChildren(0);
+		this.graph.rec_visitChildren(0,this);
 	}
-	,runRec2: function() {
-		this.graph.rec2_visitChildren(0,this);
+	,runRecLL: function() {
+		this.graph.rec_ll_visitChildren(0,this);
 	}
 	,runStack: function() {
 		this.graph.stack_visitChildren(0,this);
+	}
+	,runStackLL: function() {
+		this.graph.stack_ll_visitChildren(0,this);
 	}
 	,initGraph: function() {
 		this.graph = new _TraversalBenchmark.SceneNode();
@@ -86,10 +90,8 @@ TraversalBenchmark.prototype = $extend(Benchmark.prototype,{
 				var j = _g3++;
 				var quad = new _TraversalBenchmark.RenderableNode();
 				mc.addChild(quad);
-				++this.visitCount;
 			}
 			this.graph.addChild(mc);
-			++this.visitCount;
 		}
 	}
 });
@@ -101,59 +103,72 @@ _TraversalBenchmark.SceneNode = function(initChildren) {
 	this._active = true;
 	if(initChildren) this._children = new Array(); else this._children = null;
 };
+_TraversalBenchmark.SceneNode._initNodeStack = function() {
+	var arr = new Array();
+	var _g = 0;
+	while(_g < 65535) {
+		var i = _g++;
+		arr.push(null);
+	}
+	return arr;
+};
 _TraversalBenchmark.SceneNode.prototype = {
 	addChild: function(child) {
 		this._children.push(child);
+		if(this._firstChild == null) {
+			child.getHead().linkNext(this._next);
+			this._next = child;
+			if(child != null) child._prev = this;
+			this._firstChild = this._lastChild = child;
+		} else {
+			var oldHead = this.getHead();
+			child.getHead().linkNext(oldHead._next);
+			oldHead._next = child;
+			if(child != null) child._prev = oldHead;
+			this._lastChild._nextSibling = child;
+			child._prevSibling = this._lastChild;
+			this._lastChild = child;
+		}
 	}
-	,rec_visit: function() {
-		TraversalBenchmark.INSTANCE.rec_count[0]++;
-		var df = this._dirtyFlags;
-		this._dirtyFlags = 0;
-		this.rec_visitChildren(df);
+	,getHead: function() {
+		if(this._nextSibling != null) return this._nextSibling._prev; else if(this._firstChild == null) return this;
+		return this._lastChild.getHead();
 	}
-	,rec_visitChildren: function(parentDirtyFlags) {
+	,linkNext: function(node) {
+		this._next = node;
+		if(node != null) node._prev = this;
+	}
+	,rec_visit: function(bm) {
+		this.rec_visitChildren(0,bm);
+	}
+	,rec_visitChildren: function(dirtyFlags,bm) {
 		var children = this._children;
 		if(children != null) {
 			var len = children.length;
 			var i = 0;
 			while(i < len) {
 				var child = children[i];
-				if(child._active) {
-					child._dirtyFlags |= parentDirtyFlags;
-					child.rec_visit();
-				}
+				if(child._active) child.rec_visit(bm);
 				++i;
 			}
 		}
 	}
-	,rec2_visit: function(bm) {
-		bm.rec_count[0]++;
-		var df = this._dirtyFlags;
-		this._dirtyFlags = 0;
-		this.rec2_visitChildren(df,bm);
+	,rec_ll_visit: function(bm) {
+		this.rec_ll_visitChildren(0,bm);
 	}
-	,rec2_visitChildren: function(dirtyFlags,bm) {
-		var children = this._children;
-		if(children != null) {
-			var len = children.length;
-			var i = 0;
-			while(i < len) {
-				var child = children[i];
-				if(child._active) {
-					child._dirtyFlags |= dirtyFlags;
-					child.rec2_visit(bm);
-				}
-				++i;
-			}
+	,rec_ll_visitChildren: function(dirtyFlags,bm) {
+		var child = this._firstChild;
+		while(child != null) {
+			if(child._active) child.rec_ll_visit(bm);
+			child = child._nextSibling;
 		}
 	}
 	,stack_visit: function(bm) {
-		bm.stack_count[0]++;
 	}
 	,stack_visitChildren: function(dirtyFlags,bm) {
 		if(this._children == null) return;
 		var top = 0;
-		var stack = TraversalBenchmark.NODE_STACK;
+		var stack = _TraversalBenchmark.SceneNode.NODE_STACK;
 		var i = 0;
 		var num = 0;
 		var children;
@@ -173,7 +188,6 @@ _TraversalBenchmark.SceneNode.prototype = {
 		while(top > 0) {
 			--top;
 			node = stack[top];
-			dirtyFlags = node._dirtyFlags;
 			node.stack_visit(bm);
 			children = node._children;
 			if(children != null) {
@@ -190,6 +204,18 @@ _TraversalBenchmark.SceneNode.prototype = {
 			}
 		}
 	}
+	,stack_ll_visit: function(bm) {
+	}
+	,stack_ll_visitChildren: function(dirtyFlags,bm) {
+		var node = this._next;
+		while(node != null) {
+			if(node._active) {
+				node._dirtyFlags |= dirtyFlags;
+				node.stack_ll_visit(bm);
+			}
+			node = node._next;
+		}
+	}
 };
 _TraversalBenchmark.RenderableNode = function() {
 	_TraversalBenchmark.SceneNode.call(this,false);
@@ -197,18 +223,13 @@ _TraversalBenchmark.RenderableNode = function() {
 };
 _TraversalBenchmark.RenderableNode.__super__ = _TraversalBenchmark.SceneNode;
 _TraversalBenchmark.RenderableNode.prototype = $extend(_TraversalBenchmark.SceneNode.prototype,{
-	rec_visit: function() {
-		var bm = TraversalBenchmark.INSTANCE;
-		bm.rec_count[0]++;
-		bm.rec_count[1]++;
+	rec_visit: function(bm) {
 	}
-	,rec2_visit: function(bm) {
-		bm.rec_count[0]++;
-		bm.rec_count[1]++;
+	,rec_ll_visit: function(bm) {
 	}
 	,stack_visit: function(bm) {
-		bm.stack_count[0]++;
-		bm.stack_count[1]++;
+	}
+	,stack_ll_visit: function(bm) {
 	}
 });
 var haxe = {};
@@ -218,6 +239,6 @@ haxe.Timer.stamp = function() {
 };
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
-TraversalBenchmark.NODE_STACK = new Array();
+_TraversalBenchmark.SceneNode.NODE_STACK = _TraversalBenchmark.SceneNode._initNodeStack();
 Main.main();
 })();

@@ -26,8 +26,10 @@ class Benchmark {
 			trace('[Benchmark] ${test.name} : ${time} ms');
 
 		}
-		//trace('[Benchmark] --------------');
+		onEnd();
 	}
+
+	function onEnd():Void { }
 
 }
 
