@@ -250,7 +250,7 @@ class RenderDriver implements IDisposable {
 /***** GL BYTES UTILITY ****/
 
 	#if html5
-	static inline function getGLBufferData(data:ByteArrayData, length:Int = 0, offset:Int = 0):UInt8Array {
+	static inline function getGLBufferData(data:ByteArrayData, length:Int = 0, offset:Int = 0):ArrayBufferView {
 		if((length == 0 || data.byteView.length == length) && offset == 0) {
 			return data.byteView;
 		}
