@@ -21,6 +21,8 @@ class RawMesh {
 	public var vertexStructure:VertexStructure;
 	public var vertexBuffer:GLBuffer;
 	public var indexBuffer:GLBuffer;
+	public var vertexBufferLength:Int = 0;
+	public var indexBufferLength:Int = 0;
 
 	public function new(vertexStructure:VertexStructure) {
 		this.vertexStructure = vertexStructure;
@@ -69,6 +71,8 @@ class GLMemoryRange implements IMemoryRange {
 
 /*** CONTEXT ***/
 class RenderDriver implements IDisposable {
+	inline static var MESH_UPLOAD_TECHNIQUE:Int = GL.DYNAMIC_DRAW;
+
 	var _currentShader:RawShader;
 
 	public function new() {}
@@ -240,12 +244,24 @@ class RenderDriver implements IDisposable {
 
 	public function uploadVertices(mesh:RawMesh, data:ByteArrayData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
 		GL.bindBuffer(GL.ARRAY_BUFFER, mesh.vertexBuffer);
-		GL.bufferData(GL.ARRAY_BUFFER, getGLBufferData(data, bytesLength, bytesOffset), GL.DYNAMIC_DRAW);
+		if(bytesLength > mesh.vertexBufferLength) {
+			GL.bufferData(GL.ARRAY_BUFFER, getGLBufferData(data, bytesLength, bytesOffset), MESH_UPLOAD_TECHNIQUE);
+			mesh.vertexBufferLength = bytesLength;
+		}
+		else {
+			GL.bufferSubData(GL.ARRAY_BUFFER, 0, getGLBufferData(data, bytesLength, bytesOffset));
+		}
 	}
 
 	public function uploadIndices(mesh:RawMesh, data:ByteArrayData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
 		GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
-		GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, getGLBufferData(data, bytesLength, bytesOffset), GL.DYNAMIC_DRAW);
+		if(bytesLength > mesh.indexBufferLength) {
+			GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, getGLBufferData(data, bytesLength, bytesOffset), MESH_UPLOAD_TECHNIQUE);
+			mesh.indexBufferLength = bytesLength;
+		}
+		else {
+			GL.bufferSubData(GL.ELEMENT_ARRAY_BUFFER, 0, getGLBufferData(data, bytesLength, bytesOffset));
+		}
 	}
 
 	public function disposeMesh(mesh:RawMesh):Void {
