@@ -48,27 +48,6 @@ class RawShader {
 	public function new() { }
 }
 
-
-
-class GLMemoryRange implements IMemoryRange {
-
-	public var bytes:LimeByteArray;
-	public var length:Int;
-	public var offset:Int;
-
-	public function new() {}
-
-	public inline function set(bytes:LimeByteArray, offset:Int, length:Int):Void {
-		this.bytes = bytes;
-		this.length = length;
-		this.offset = offset;
-	}
-
-	public function getByteBuffer ():LimeByteArray { return bytes; }
-	public function getStart ():Int { return offset; }
-	public function getLength ():Int { return length; }
-}
-
 /*** CONTEXT ***/
 class RenderDriver implements IDisposable {
 	inline static var MESH_UPLOAD_TECHNIQUE:Int = GL.DYNAMIC_DRAW;
@@ -123,7 +102,7 @@ class RenderDriver implements IDisposable {
 		GL.bindTexture (GL.TEXTURE_2D, texture);
 		GL.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
 		GL.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
-		GL.texImage2D (GL.TEXTURE_2D, 0, GL.RGBA, width, height, 0, GL.RGBA, GL.UNSIGNED_BYTE, getGLImageData(pixels));
+		GL.texImage2D (GL.TEXTURE_2D, 0, GL.RGBA, width, height, 0, GL.RGBA, GL.UNSIGNED_BYTE, getGLBufferData(pixels));
 		GL.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
 		GL.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR);
 		GL.bindTexture (GL.TEXTURE_2D, null);
@@ -271,28 +250,23 @@ class RenderDriver implements IDisposable {
 /***** GL BYTES UTILITY ****/
 
 	#if html5
-	static inline function getGLBufferData(data:ByteArrayData, length:Int, offset:Int = 0):UInt8Array {
+	static inline function getGLBufferData(data:ByteArrayData, length:Int = 0, offset:Int = 0):UInt8Array {
 		if((length == 0 || data.byteView.length == length) && offset == 0) {
 			return data.byteView;
 		}
 		return data.byteView.subarray(offset, offset+length);
 	}
 	#else
-	static var _memoryRange:GLMemoryRange = new GLMemoryRange();
-	static inline function getGLBufferData(data:ByteArrayData, length:Int, offset:Int = 0):GLMemoryRange {
-		_memoryRange.set(data, offset, length);
-		return _memoryRange;
+	static var _memoryRange:ArrayBufferView = untyped new ArrayBufferView(0);
+	static inline function getGLBufferData(data:ByteArrayData, length:Int = 0, offset:Int = 0):ArrayBufferView {
+		length = length > 0 ? length : data.byteLength;
+		var mr = _memoryRange;
+		untyped mr.buffer = data;
+		untyped mr.byteLength = length;
+		untyped mr.byteOffset = offset;
+		return mr;
 	}
 	#end
-
-
-	static inline function getGLImageData(data:ByteArrayData):UInt8Array {
-		#if html5
-		return data.byteView;
-		#else
-		return new UInt8Array(data);
-		#end
-	}
 
 	public static function convertBlendFactor(blendMode:BlendFactor):Int {
 		return switch(blendMode) {
