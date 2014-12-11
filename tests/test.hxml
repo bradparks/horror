@@ -1,2 +1,6 @@
 -cpp cpp
 -main Main
+
+--next
+-js js/test.js
+-main Main
