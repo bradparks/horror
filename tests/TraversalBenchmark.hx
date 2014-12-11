@@ -11,7 +11,6 @@ class TraversalBenchmark extends Benchmark  {
 	// traversal results, to check we traverses all nodes by all modes
 	public var rec_count:Array<Int> = [0, 0];
 	public var rec_ll_count:Array<Int> = [0, 0];
-	public var stack_count:Array<Int> = [0, 0];
 	public var stack_ll_count:Array<Int> = [0, 0];
 
 	var mcCount:Int = 30000;
@@ -23,18 +22,24 @@ class TraversalBenchmark extends Benchmark  {
 
 		initGraph();
 
-		add('stack', runStack);
 		add('stack_ll', runStackLL);
-		add('recursive', runRec);
 		add('recursive_ll', runRecLL);
+		add('recursive', runRec);
 	}
 
 	override function onEnd() {
-		// Trace traversal results
-		//trace("rec_arr: " +rec_count[0] + " "  +rec_count[1]);
-		//trace("rec_ll: " +rec_ll_count[0] + " "  +rec_ll_count[1]);
-		//trace("stack_arr: " +stack_count[0] + " "  +stack_count[1]);
-		//trace("stack_ll: " +stack_ll_count[0] + " "  +stack_ll_count[1]);
+		// Trace traversal results if have error;
+		var a1 = rec_count[0]; var a2 = rec_ll_count[0]; var a3 = stack_ll_count[0];
+		var b1 = rec_count[1]; var b2 = rec_ll_count[1]; var b3 = stack_ll_count[1];
+		if(a1 != a2 || a2 != a3 || b1 != b2 || b2 != b3) {
+			trace("ERROR: ");
+			trace("rec_arr: " + rec_count[0] + " " + rec_count[1]);
+			trace("rec_ll: " + rec_ll_count[0] + " "  + rec_ll_count[1]);
+			trace("stack_ll: " + stack_ll_count[0] + " " + stack_ll_count[1]);
+		}
+		else {
+			trace("SUCCESS: " + (a1 + b1) + " nodes total processed");
+		}
 	}
 
 	function runRec():Void {
@@ -43,10 +48,6 @@ class TraversalBenchmark extends Benchmark  {
 
 	function runRecLL():Void {
 		graph.rec_ll_visitChildren(0, this);
-	}
-
-	function runStack():Void {
-		graph.stack_visitChildren(0, this);
 	}
 
 	function runStackLL():Void {
@@ -130,12 +131,26 @@ private class SceneNode {
 	}
 
 	/*** RECURSIVE ARRAYS ***/
-
 	public function rec_visit(bm:TraversalBenchmark):Void {
-		//bm.rec_count[0]++;
+		bm.rec_count[0]++;
 		//var df = _dirtyFlags;
 		//_dirtyFlags = 0;
-		rec_visitChildren(0, bm);
+
+		// INLINE by hands (haxe can't inline this even with @:extern)
+		// rec_visitChildren(0, bm);
+		var children:PArray<SceneNode> = _children;
+		if(children != null) {
+			var len = children.length;
+			var i = 0;
+			while(i < len) {
+				var child:SceneNode = children[i];
+				if(child._active) {
+					//child._dirtyFlags |= dirtyFlags;
+					child.rec_visit(bm);
+				}
+				++i;
+			}
+		}
 	}
 
 	public function rec_visitChildren(dirtyFlags:Int, bm:TraversalBenchmark):Void {
@@ -155,12 +170,21 @@ private class SceneNode {
 	}
 
 	/*** RECURSIVE LINKED-LISTS ***/
-
 	public function rec_ll_visit(bm:TraversalBenchmark):Void {
-		//bm.rec_ll_count[0]++;
+		bm.rec_ll_count[0]++;
 		//var df = _dirtyFlags;
 		//_dirtyFlags = 0;
-		rec_ll_visitChildren(0, bm);
+
+		// INLINE by hands (haxe can't inline this even with @:extern)
+		// rec_ll_visitChildren(0, bm);
+		var child = _firstChild;
+		while(child != null) {
+			if(child._active) {
+				//child._dirtyFlags |= dirtyFlags;
+				child.rec_ll_visit(bm);
+			}
+			child = child._nextSibling;
+		}
 	}
 
 	public function rec_ll_visitChildren(dirtyFlags:Int, bm:TraversalBenchmark):Void {
@@ -174,8 +198,32 @@ private class SceneNode {
 		}
 	}
 
-	/*** TRAVERSAL WITH ARRAYS AND NON-RECURSIVE ***/
+	/*** TRAVERSAL WITH LINKED-LISTS AND NON-RECURSIVE **/
+	public function stack_ll_visit(bm:TraversalBenchmark):Void {
+		bm.stack_ll_count[0]++;
+	}
 
+	public function stack_ll_validateParent(bm:TraversalBenchmark):Void {
+
+	}
+
+	public function stack_ll_visitChildren(dirtyFlags:Int, bm:TraversalBenchmark):Void {
+		var node = _next;
+		while(node != null) {
+			if(node._active) {
+				// NOT CORRECTLY NOW, we lose ability to propaganate right flags in parent-children dependency
+				// this logic is must be out and will be additional overhead, one additional non-deterministic call
+				node.stack_ll_validateParent(bm);
+				//node._dirtyFlags |= dirtyFlags;
+				node.stack_ll_visit(bm);
+			}
+			node = node._next;
+		}
+	}
+
+	/*** TRAVERSAL WITH ARRAYS AND NON-RECURSIVE ***/
+	// very slow in all test and finally EXCLUDED
+	/*
 	public function stack_visit(bm:TraversalBenchmark):Void {
 		//bm.stack_count[0]++;
 	}
@@ -237,25 +285,7 @@ private class SceneNode {
 				}
 			}
 		}
-	}
-
-	/*** TRAVERSAL WITH LINKED-LISTS AND NON-RECURSIVE **/
-
-	public function stack_ll_visit(bm:TraversalBenchmark):Void {
-		//bm.stack_ll_count[0]++;
-	}
-
-	public function stack_ll_visitChildren(dirtyFlags:Int, bm:TraversalBenchmark):Void {
-		var node = _next;
-		while(node != null) {
-			if(node._active) {
-				node._dirtyFlags |= dirtyFlags;
-				node.stack_ll_visit(bm);
-			}
-			node = node._next;
-		}
-	}
-
+	}*/
 }
 
 private class RenderableNode extends SceneNode {
@@ -265,22 +295,26 @@ private class RenderableNode extends SceneNode {
 	}
 
 	public override function rec_visit(bm:TraversalBenchmark):Void {
-		//bm.rec_count[0]++;
-		//bm.rec_count[1]++;
+		// and expensive render logic
+		bm.rec_count[0]++;
+		bm.rec_count[1]++;
 	}
 
 	public override function rec_ll_visit(bm:TraversalBenchmark):Void {
-		//bm.rec_ll_count[0]++;
-		//bm.rec_ll_count[1]++;
-	}
-
-	public override function stack_visit(bm:TraversalBenchmark):Void {
-		//bm.stack_count[0]++;
-		//bm.stack_count[1]++;
+		// and expensive render logic
+		bm.rec_ll_count[0]++;
+		bm.rec_ll_count[1]++;
 	}
 
 	public override function stack_ll_visit(bm:TraversalBenchmark):Void {
-		//bm.stack_ll_count[0]++;
-		//bm.stack_ll_count[1]++;
+		// and expensive render logic
+		bm.stack_ll_count[0]++;
+		bm.stack_ll_count[1]++;
 	}
+
+	/*public override function stack_visit(bm:TraversalBenchmark):Void {
+		// and expensive render logic
+		bm.stack_count[0]++;
+		bm.stack_count[1]++;
+	}*/
 }

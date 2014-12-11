@@ -51,28 +51,35 @@ var TraversalBenchmark = function() {
 	this.quadCount = 20;
 	this.mcCount = 30000;
 	this.stack_ll_count = [0,0];
-	this.stack_count = [0,0];
 	this.rec_ll_count = [0,0];
 	this.rec_count = [0,0];
 	Benchmark.call(this);
 	this.initGraph();
-	this.add("stack",$bind(this,this.runStack));
 	this.add("stack_ll",$bind(this,this.runStackLL));
-	this.add("recursive",$bind(this,this.runRec));
 	this.add("recursive_ll",$bind(this,this.runRecLL));
+	this.add("recursive",$bind(this,this.runRec));
 };
 TraversalBenchmark.__super__ = Benchmark;
 TraversalBenchmark.prototype = $extend(Benchmark.prototype,{
 	onEnd: function() {
+		var a1 = this.rec_count[0];
+		var a2 = this.rec_ll_count[0];
+		var a3 = this.stack_ll_count[0];
+		var b1 = this.rec_count[1];
+		var b2 = this.rec_ll_count[1];
+		var b3 = this.stack_ll_count[1];
+		if(a1 != a2 || a2 != a3 || b1 != b2 || b2 != b3) {
+			console.log("ERROR: ");
+			console.log("rec_arr: " + this.rec_count[0] + " " + this.rec_count[1]);
+			console.log("rec_ll: " + this.rec_ll_count[0] + " " + this.rec_ll_count[1]);
+			console.log("stack_ll: " + this.stack_ll_count[0] + " " + this.stack_ll_count[1]);
+		} else console.log("SUCCESS: " + (a1 + b1) + " nodes total processed");
 	}
 	,runRec: function() {
 		this.graph.rec_visitChildren(0,this);
 	}
 	,runRecLL: function() {
 		this.graph.rec_ll_visitChildren(0,this);
-	}
-	,runStack: function() {
-		this.graph.stack_visitChildren(0,this);
 	}
 	,runStackLL: function() {
 		this.graph.stack_ll_visitChildren(0,this);
@@ -103,15 +110,6 @@ _TraversalBenchmark.SceneNode = function(initChildren) {
 	this._active = true;
 	if(initChildren) this._children = new Array(); else this._children = null;
 };
-_TraversalBenchmark.SceneNode._initNodeStack = function() {
-	var arr = new Array();
-	var _g = 0;
-	while(_g < 65535) {
-		var i = _g++;
-		arr.push(null);
-	}
-	return arr;
-};
 _TraversalBenchmark.SceneNode.prototype = {
 	addChild: function(child) {
 		this._children.push(child);
@@ -139,7 +137,17 @@ _TraversalBenchmark.SceneNode.prototype = {
 		if(node != null) node._prev = this;
 	}
 	,rec_visit: function(bm) {
-		this.rec_visitChildren(0,bm);
+		bm.rec_count[0]++;
+		var children = this._children;
+		if(children != null) {
+			var len = children.length;
+			var i = 0;
+			while(i < len) {
+				var child = children[i];
+				if(child._active) child.rec_visit(bm);
+				++i;
+			}
+		}
 	}
 	,rec_visitChildren: function(dirtyFlags,bm) {
 		var children = this._children;
@@ -154,7 +162,12 @@ _TraversalBenchmark.SceneNode.prototype = {
 		}
 	}
 	,rec_ll_visit: function(bm) {
-		this.rec_ll_visitChildren(0,bm);
+		bm.rec_ll_count[0]++;
+		var child = this._firstChild;
+		while(child != null) {
+			if(child._active) child.rec_ll_visit(bm);
+			child = child._nextSibling;
+		}
 	}
 	,rec_ll_visitChildren: function(dirtyFlags,bm) {
 		var child = this._firstChild;
@@ -163,54 +176,16 @@ _TraversalBenchmark.SceneNode.prototype = {
 			child = child._nextSibling;
 		}
 	}
-	,stack_visit: function(bm) {
-	}
-	,stack_visitChildren: function(dirtyFlags,bm) {
-		if(this._children == null) return;
-		var top = 0;
-		var stack = _TraversalBenchmark.SceneNode.NODE_STACK;
-		var i = 0;
-		var num = 0;
-		var children;
-		var node;
-		var child;
-		children = this._children;
-		num = children.length;
-		i = 0;
-		while(i < num) {
-			child = children[i];
-			if(child._active) {
-				stack[top] = child;
-				++top;
-			}
-			++i;
-		}
-		while(top > 0) {
-			--top;
-			node = stack[top];
-			node.stack_visit(bm);
-			children = node._children;
-			if(children != null) {
-				num = children.length;
-				i = 0;
-				while(i < num) {
-					child = children[i];
-					if(child._active) {
-						stack[top] = child;
-						++top;
-					}
-					++i;
-				}
-			}
-		}
-	}
 	,stack_ll_visit: function(bm) {
+		bm.stack_ll_count[0]++;
+	}
+	,stack_ll_validateParent: function(bm) {
 	}
 	,stack_ll_visitChildren: function(dirtyFlags,bm) {
 		var node = this._next;
 		while(node != null) {
 			if(node._active) {
-				node._dirtyFlags |= dirtyFlags;
+				node.stack_ll_validateParent(bm);
 				node.stack_ll_visit(bm);
 			}
 			node = node._next;
@@ -224,12 +199,16 @@ _TraversalBenchmark.RenderableNode = function() {
 _TraversalBenchmark.RenderableNode.__super__ = _TraversalBenchmark.SceneNode;
 _TraversalBenchmark.RenderableNode.prototype = $extend(_TraversalBenchmark.SceneNode.prototype,{
 	rec_visit: function(bm) {
+		bm.rec_count[0]++;
+		bm.rec_count[1]++;
 	}
 	,rec_ll_visit: function(bm) {
-	}
-	,stack_visit: function(bm) {
+		bm.rec_ll_count[0]++;
+		bm.rec_ll_count[1]++;
 	}
 	,stack_ll_visit: function(bm) {
+		bm.stack_ll_count[0]++;
+		bm.stack_ll_count[1]++;
 	}
 });
 var haxe = {};
@@ -239,6 +218,5 @@ haxe.Timer.stamp = function() {
 };
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
-_TraversalBenchmark.SceneNode.NODE_STACK = _TraversalBenchmark.SceneNode._initNodeStack();
 Main.main();
 })();
