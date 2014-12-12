@@ -8,8 +8,7 @@ class Shader implements IDisposable {
 
 	public var name(default, null):String;
 
-	// premultiply alpha blend by default
-	public var sourceBlendFactor:BlendFactor = BlendFactor.ONE;
+	public var sourceBlendFactor:BlendFactor = BlendFactor.SOURCE_ALPHA;
 	public var destinationBlendFactor:BlendFactor = BlendFactor.ONE_MINUS_SOURCE_ALPHA;
 
 	var _rawData:RawShader;

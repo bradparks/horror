@@ -21,6 +21,34 @@ class PngFormat {
 
 	public function decode(bytes:ByteArray):Bool {
 		readInfo(bytes);
+
+		#if flash
+		imageBytes = ByteArray.fromBytes(_pngBytes);
+		#else
+		imageBytes = ByteArray.fromData(convertARGB_ABGR(_pngBytes));
+		#end
+
+		_pngBytes = null;
+		return true;
+	}
+
+	function convertARGB_ABGR(bytes:Bytes):ByteArrayData {
+		var pixelsMemory = FastMemory.fromBytes(bytes);
+		var pixels = pixelsMemory.lock();
+		var len = pixelsMemory.length;
+		var i = 0;
+		while (i < len) {
+			var r:Int = pixels[i + 2];
+			var b:Int = pixels[i    ];
+			pixels[i    ] = r;
+			pixels[i + 2] = b;
+			i += 4;
+		}
+		pixelsMemory.unlock();
+		return pixelsMemory.data;
+	}
+
+	/*function convertToPMA():Void {
 		var pixelsMemory = FastMemory.fromBytes(_pngBytes);
 		var pixels = pixelsMemory.lock();
 		var len = pixelsMemory.length;
@@ -47,11 +75,7 @@ class PngFormat {
 		}
 
 		pixelsMemory.unlock();
-		imageBytes = ByteArray.fromData(pixelsMemory.data);
-		_pngBytes = null;
-
-		return true;
-	}
+	}*/
 
 	public function readInfo(bytes:ByteArray):Void {
 		var byteInput = new BytesInput (bytes.toBytes(), 0, bytes.length);
