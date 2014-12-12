@@ -7,7 +7,7 @@ package horror.memory;
 #if html5
 typedef FastIOInner = horror.memory.JsBytesWrapper;
 
-#elseif flash_memory_domain
+#elseif flash
 typedef FastIOInner = Int;
 
 #elseif cpp

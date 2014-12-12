@@ -7,6 +7,7 @@ import horror.render.RenderManager;
 class Mesh implements IDisposable {
 
 	public var vertexStructure(default, null):VertexStructure;
+	public var numTriangles(default, null):Int = 0;
 
 	@:allow(horror.render.RenderManager)
 	var _rawData:RawMesh;

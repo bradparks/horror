@@ -40,6 +40,13 @@ class RenderManager implements IDisposable {
 	var _currentShader:Shader;
 	var _currentTexture:Texture;
 	var _currentMesh:Mesh;
+	var _currentBlendModeHash:Int = 0;
+
+	var _projectionMatrix:Matrix3D = new Matrix3D();
+	var _modelViewMatrix:Matrix3D;
+	var _mvpMatrix:Matrix3D = new Matrix3D();
+	var _dirtyMVP:Bool = true;
+	var _needToUploadMVP:Bool = true;
 
 	public function new() {
 		driver = new RenderDriver();
@@ -66,10 +73,6 @@ class RenderManager implements IDisposable {
 		blankTexture = Texture.createFromColor(1, 1, 0xffffffff);
 	}
 
-	function onScreenResized(screen:ScreenManager):Void {
-		resize(screen.width, screen.height);
-	}
-
 	public function dispose():Void {
 		DisposeUtil.dispose(driver);
 		driver = null;
@@ -84,6 +87,7 @@ class RenderManager implements IDisposable {
 		_currentShader = null;
 		_currentTexture = null;
 		_currentMesh = null;
+		_currentBlendModeHash = 0;
 		driver.begin();
 		__resetFrameStats();
 	}
@@ -92,12 +96,64 @@ class RenderManager implements IDisposable {
 		driver.end();
 	}
 
-	public function setMaterial(material:Material):Void {
+	public function setOrthographicProjection(width:Int, height:Int):Void {
+		_projectionMatrix.setOrthoProjection(0, width, height, 0, 1000, -1000);
+		_dirtyMVP = true;
+	}
+
+	public function setMatrix(modelViewMatrix:Matrix3D):Void {
+		_modelViewMatrix = modelViewMatrix;
+		_dirtyMVP = true;
+	}
+
+	public function resize(width:Int, height:Int):Void {
+		if(this.width != width || this.height != height) {
+			driver.resize(width, height);
+			this.width = width;
+			this.height = height;
+		}
+	}
+
+	public function drawMesh(mesh:Mesh, material:Material):Void {
+		Debug.assert(mesh != null && mesh.numTriangles > 0 && material != null);
+
+		setMaterial(material);
+		setModelViewProjection();
+		setMesh(mesh);
+
+		var triangles:Int = mesh.numTriangles;
+		driver.drawIndexedTriangles(triangles);
+		__trackDrawCall(triangles);
+	}
+
+	function setModelViewProjection():Void {
+		if(_dirtyMVP) {
+			if(_modelViewMatrix != null) {
+				Matrix3D.multiply(_projectionMatrix, _modelViewMatrix, _mvpMatrix);
+			}
+			else {
+				_mvpMatrix.copyFromMatrix(_projectionMatrix);
+			}
+			_dirtyMVP = false;
+			_needToUploadMVP = true;
+		}
+		if(_needToUploadMVP) {
+			driver.setMatrix(_mvpMatrix);
+			_needToUploadMVP = false;
+		}
+	}
+
+	function setMaterial(material:Material):Void {
 		var shader = material.shader;
 		if(shader != _currentShader) {
-			driver.setBlendMode(shader.sourceBlendFactor, shader.destinationBlendFactor);
+			var blendModeHash:Int = shader.getBlendModeHash();
+			if(_currentBlendModeHash != blendModeHash) {
+				driver.setBlendMode(shader.sourceBlendFactor, shader.destinationBlendFactor);
+				_currentBlendModeHash = blendModeHash;
+			}
 			driver.setShader(shader._rawData);
 			_currentShader = shader;
+			_needToUploadMVP = true;
 		}
 		var texture = material.texture;
 		if(texture == null) {
@@ -109,31 +165,15 @@ class RenderManager implements IDisposable {
 		}
 	}
 
-	public function setMatrix(projectionMatrix:Matrix3D, modelViewMatrix:Matrix3D):Void {
-		driver.setMatrix(projectionMatrix, modelViewMatrix);
-	}
-
-	// after mesh modification you must to re set it
-	public function setMesh(mesh:Mesh):Void {
+	function setMesh(mesh:Mesh):Void {
 		driver.setMesh(mesh._rawData);
 	}
 
-	public function resize(width:Int, height:Int):Void {
-		if(this.width != width || this.height != height) {
-			driver.resize(width, height);
-			this.width = width;
-			this.height = height;
-		}
+	function onScreenResized(screen:ScreenManager):Void {
+		resize(screen.width, screen.height);
 	}
 
-	public function drawIndexedTriangles(triangles:Int):Void {
-		Debug.assert(triangles >= 1);
-		driver.drawIndexedTriangles(triangles);
-		__trackDrawCall(triangles);
-	}
-
-	// STATS
-
+	/*** STATS ***/
 	public var trianglesPerFrame(default, null):Int = 0;
 	public var drawCallsPerFrame(default, null):Int = 0;
 

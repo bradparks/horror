@@ -18,8 +18,7 @@ mul oc, ft0, v1
 ";
 
 	private static var VERTEX_CODE:String =
-	"m44 vt0, va0, vc0
-m44 op, vt0, vc4
+	"m44 op, va0, vc0
 mov v0, va1
 mov v1, va2
 ";
@@ -42,13 +41,12 @@ mov v1, va2
 			varying vec2 vTexCoord;
 			varying vec4 vColorMult;
 
-			uniform mat4 uModelViewMatrix;
-			uniform mat4 uProjectionMatrix;
+			uniform mat4 uModelViewProjection;
 
 			void main() {
 				vTexCoord = aTexCoord;
 				vColorMult = aColorMult;
-				gl_Position = uProjectionMatrix * uModelViewMatrix * vec4 (aVertexPosition, 0.0, 1.0);
+				gl_Position = uModelViewProjection * vec4 (aVertexPosition, 0.0, 1.0);
 			}";
 
 

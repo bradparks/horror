@@ -26,8 +26,7 @@ class Main {
 
 	var _render:RenderManager;
 	var _material:Material;
-	var _projectionMatrix:Matrix3D;
-	var _modelViewMatrix:Matrix3D;
+	var _cameraMatrix:Matrix3D = new Matrix3D();
 	var _vertexStructure:VertexStructure;
 	var _mesh:Mesh;
 	var _meshBuffer:MeshBuffer;
@@ -64,7 +63,7 @@ class Main {
 
 		Horror.input.onMouse.add(onMouse);
 
-		_modelViewMatrix = Matrix3D.create2D(0, 0, 1, 0);
+		_cameraMatrix.setTransform2D(0, 0, 1, 0);
 
 		_mesh = new Mesh(_vertexStructure);
 		_meshBuffer = new MeshBuffer();
@@ -80,7 +79,7 @@ class Main {
 	}
 
 	function resize(screen:ScreenManager) {
-		_projectionMatrix = Matrix3D.createOrtho(0, screen.width, screen.height, 0, 1000, -1000);
+		_render.setOrthographicProjection(screen.width, screen.height);
 		trace('resize: ${screen.width}x${screen.height}');
 	}
 
@@ -89,6 +88,10 @@ class Main {
 		var dt = loop.deltaTime;
 		_time += dt;
 
+		//var hw:Int = Horror.screen.width >> 1;
+		//var hh:Int = Horror.screen.height >> 1;
+		//_cameraMatrix.setTransform2D(-hw, -hh, 1.0 + 0.2* Math.sin(_time*5), 0);
+		_cameraMatrix.setTransform2D(0, 0, 1.0 + 0.2* Math.sin(_time*5), 0);
 		// shows that clear is actually worked and frames updated
 		_render.clear(0.2 + 0.2 * Math.sin(_time), 0.2, 0.3);
 		_render.begin();
@@ -101,10 +104,8 @@ class Main {
 		_meshBuffer.end();
 		_meshBuffer.flush(_mesh);
 
-		_render.setMaterial(_material);
-		_render.setMatrix(_projectionMatrix, _modelViewMatrix);
-		_render.setMesh(_mesh);
-		_render.drawIndexedTriangles(_meshBuffer.numTriangles);
+		_render.setMatrix(_cameraMatrix);
+		_render.drawMesh(_mesh, _material);
 
 		_render.end();
 	}

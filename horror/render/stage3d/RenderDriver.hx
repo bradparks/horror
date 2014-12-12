@@ -168,11 +168,9 @@ class RenderDriver implements IDisposable {
 		_context.setBlendFactors(convertBlendFactor(src), convertBlendFactor(dst));
 	}
 
-	public function setMatrix(projectionMatrix:Matrix3D, modelViewMatrix:Matrix3D):Void {
-		TEMP_MATRIX.rawData = projectionMatrix.rawData;
-		_context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, TEMP_MATRIX, true);
+	public function setMatrix(modelViewMatrix:Matrix3D):Void {
 		TEMP_MATRIX.rawData = modelViewMatrix.rawData;
-		_context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 4, TEMP_MATRIX, true);
+		_context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, TEMP_MATRIX, true);
 	}
 
 	public function setMesh(mesh:RawMesh):Void {

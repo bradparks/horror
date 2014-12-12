@@ -30,7 +30,6 @@
 	<!-- <haxedef name="advanced-telemetry" if="flash release"/> -->
 	<!-- <haxedef name="fdb" if="flash debug" /> -->
 	<haxedef name="fdb" if="flash" />
-	<haxedef name="flash_memory_domain" if="flash" />
 	<haxedef name="native_trace" if="flash" />
 	<haxedef name="network-sandbox" if="flash" />
 </project>

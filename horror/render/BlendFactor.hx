@@ -1,6 +1,6 @@
 package horror.render;
 
-@:enum abstract BlendFactor(Int) {
+@:enum abstract BlendFactor(Int) to Int {
 	var ZERO = 0;
 	var ONE = 1;
 	var DESTINATION_ALPHA = 2;

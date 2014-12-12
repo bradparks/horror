@@ -97,6 +97,7 @@ class MeshBuffer {
 
 		mesh.uploadVertices(bytesData, vertexBytesPosition - vertexStartPosition, vertexStartPosition);
 		mesh.uploadIndices(bytesData, indexBytesPosition - indexStartPosition, indexStartPosition);
+		mesh.numTriangles = numTriangles;
 	}
 
 	@:extern public inline function writeTriangle(index1:Int, index2:Int, index3:Int):Void {

@@ -3,6 +3,7 @@ package horror.render;
 import horror.utils.IDisposable;
 import horror.render.RenderManager;
 
+@:allow(horror.render.RenderManager)
 class Shader implements IDisposable {
 
 	public var name(default, null):String;
@@ -11,7 +12,6 @@ class Shader implements IDisposable {
 	public var sourceBlendFactor:BlendFactor = BlendFactor.ONE;
 	public var destinationBlendFactor:BlendFactor = BlendFactor.ONE_MINUS_SOURCE_ALPHA;
 
-	@:allow(horror.render.RenderManager)
 	var _rawData:RawShader;
 
 	public function new(name:String) {
@@ -27,5 +27,9 @@ class Shader implements IDisposable {
 			RenderManager.driver.disposeShader(_rawData);
 			_rawData = null;
 		}
+	}
+
+	function getBlendModeHash():Int {
+		return (sourceBlendFactor << 16) | destinationBlendFactor;
 	}
 }

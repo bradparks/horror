@@ -4,7 +4,7 @@ import openfl.utils.Endian;
 import haxe.io.Bytes;
 import horror.memory.ByteArray;
 
-#if flash_memory_domain
+#if flash
 import flash.system.ApplicationDomain;
 #end
 
@@ -56,13 +56,9 @@ class FastMemory {
         data.clear();
     }
 
-    inline function get_length():Int {
+	@:extern inline function get_length():Int {
         return data.length;
     }
-
-#if flash
-    static var appDomain:ApplicationDomain = ApplicationDomain.currentDomain;
-#end
 
     @:extern inline function select():FastIO {
 #if html5
@@ -71,7 +67,7 @@ class FastMemory {
 		if(data.length < 1024) {
 			data.length = 1024;
 		}
-		appDomain.domainMemory = data;
+		APPLICATION_DOMAIN.domainMemory = data;
         return 0;
 #elseif cpp
         return untyped data.b;
@@ -97,4 +93,8 @@ class FastMemory {
 
 	static var _stack:Array<FastMemory> = new Array<FastMemory>();
 	static var _current:FastMemory;
+
+	#if flash
+	static var APPLICATION_DOMAIN:ApplicationDomain = ApplicationDomain.currentDomain;
+	#end
 }

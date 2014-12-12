@@ -42,8 +42,7 @@ class RawShader {
 	public var vertexAttributes:Array<Int> = [];
 	public var program:GLProgram;
 	public var imageUniform:GLUniformLocation;
-	public var modelViewMatrixUniform:GLUniformLocation;
-	public var projectionMatrixUniform:GLUniformLocation;
+	public var mvpUniform:GLUniformLocation;
 
 	public function new() { }
 }
@@ -136,8 +135,7 @@ class RenderDriver implements IDisposable {
 			shader.vertexAttributes.push(GL.getAttribLocation (program, attr));
 		}
 
-		shader.projectionMatrixUniform = GL.getUniformLocation (program, "uProjectionMatrix");
-		shader.modelViewMatrixUniform = GL.getUniformLocation (program, "uModelViewMatrix");
+		shader.mvpUniform = GL.getUniformLocation (program, "uModelViewProjection");
 		shader.imageUniform = GL.getUniformLocation (program, "uImage0");
 		shader.program = program;
 
@@ -167,9 +165,8 @@ class RenderDriver implements IDisposable {
 		GL.blendFunc(convertBlendFactor(src), convertBlendFactor(dst));
 	}
 
-	public function setMatrix(projectionMatrix:Matrix3D, modelViewMatrix:Matrix3D):Void {
-		GL.uniformMatrix4fv (_currentShader.projectionMatrixUniform, false, projectionMatrix.rawData);
-		GL.uniformMatrix4fv (_currentShader.modelViewMatrixUniform, false, modelViewMatrix.rawData);
+	public function setMatrix(modelViewProjection:Matrix3D):Void {
+		GL.uniformMatrix4fv (_currentShader.mvpUniform, false, modelViewProjection.rawData);
 	}
 
 	public function setMesh(mesh:RawMesh):Void {
