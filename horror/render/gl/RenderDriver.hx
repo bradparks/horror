@@ -55,6 +55,15 @@ class RenderDriver {
 	public function new() {}
 
 	public function initialize(callback:Void->Void):Void {
+		#if html5
+		GL.pixelStorei(GL.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
+		#end
+
+		GL.cullFace(GL.FRONT_AND_BACK);
+		GL.depthMask(false);
+		GL.disable(GL.DEPTH_TEST);
+		GL.enable (GL.BLEND);
+
 		if(callback != null) {
 			callback();
 		}
@@ -72,14 +81,12 @@ class RenderDriver {
 	}
 
 	public function begin():Void {
-		GL.cullFace(GL.FRONT_AND_BACK);
-		GL.depthMask(false);
-		GL.disable(GL.DEPTH_TEST);
-		GL.enable (GL.BLEND);
-		setShader(null);
+
 	}
 
-	public function end():Void { }
+	public function end():Void {
+		setShader(null);
+	}
 
 	public function drawIndexedTriangles(triangles:Int):Void {
 		GL.drawElements(GL.TRIANGLES, triangles*3, GL.UNSIGNED_SHORT, 0);
