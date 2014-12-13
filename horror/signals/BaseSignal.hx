@@ -1,10 +1,8 @@
 package horror.signals;
 
-import horror.utils.IDisposable;
-
 import Reflect;
 
-class BaseSignal<T> implements IDisposable {
+class BaseSignal<T> {
 
 	var _name:String = null;
 	var _slots:Array<SignalSlot<T>> = new Array<SignalSlot<T>>();
@@ -37,9 +35,24 @@ class BaseSignal<T> implements IDisposable {
 	}
 
 	public function remove(listener:T):Void {
+		// elegant but we need to check copying
+		//while(_slots.remove(listener)) {};
+
 		var i:Int = 0;
 		while(i < _slots.length) {
-			if(Reflect.compareMethods(_slots[i], listener)) {
+			if(
+
+			#if neko
+
+			Reflect.compareMethods(_slots[i].listener, listener)
+
+			#else
+
+			_slots[i].listener == listener
+
+			#end
+
+			) {
 				if(_slotsNeedCopying) {
 					_slots = _slots.copy();
 					_slotsNeedCopying = false;

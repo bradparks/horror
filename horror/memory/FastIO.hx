@@ -23,6 +23,12 @@ typedef FastIOInner = horror.memory.ByteArray.ByteArrayData;
 **/
 abstract FastIO(FastIOInner) from FastIOInner {
 
+	#if flash
+	public inline static var NULL:FastIOInner = 0;
+	#else
+	public inline static var NULL:FastIOInner = null;
+	#end
+
     inline public function new(data:FastIOInner) {
         this = data;
     }

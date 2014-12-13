@@ -1,5 +1,6 @@
 package horror.memory;
 
+import horror.debug.Debug;
 import openfl.utils.Endian;
 import haxe.io.Bytes;
 import horror.memory.ByteArray;
@@ -32,9 +33,11 @@ class FastMemory {
 	var jsIO:JsBytesWrapper;
 #end
 
-    public function new(?data:ByteArrayData) {
-        this.data = data != null ? data : new ByteArrayData();
-        this.data.endian = openfl.utils.Endian.LITTLE_ENDIAN;
+    public function new(bufferData:ByteArrayData) {
+		Debug.assert(bufferData != null);
+
+        data = bufferData;
+		data.endian = openfl.utils.Endian.LITTLE_ENDIAN;
 
 #if html5
         jsIO = new JsBytesWrapper();
@@ -52,9 +55,32 @@ class FastMemory {
         return new FastMemory(ba.data);
     }
 
-    public function clear():Void {
-        data.clear();
-    }
+	// unlock, deselect memory
+	public function dispose(clearBuffer:Bool = false):Void {
+		Debug.assert(data != null);
+
+		if(_current == this) {
+			unlock();
+		}
+
+		#if flash
+
+		if(APPLICATION_DOMAIN.domainMemory == data) {
+			APPLICATION_DOMAIN.domainMemory == null;
+		}
+
+		#elseif html5
+
+		jsIO.data = null;
+		jsIO = null;
+
+		#end
+
+		if(clearBuffer) {
+			data.clear();
+		}
+		data = null;
+	}
 
 	@:extern inline function get_length():Int {
         return data.length;

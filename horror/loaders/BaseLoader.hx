@@ -1,10 +1,9 @@
 package horror.loaders;
 
-import horror.utils.IDisposable;
 import horror.debug.Debug;
 import horror.signals.Signal1;
 
-class BaseLoader implements IDisposable {
+class BaseLoader {
 
 	public var url(default, null):String;
 	public var content(default, null):Dynamic;

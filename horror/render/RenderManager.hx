@@ -4,7 +4,6 @@ import horror.memory.ByteArray;
 import horror.app.ScreenManager;
 import horror.debug.Debug;
 import horror.utils.DisposeUtil;
-import horror.utils.IDisposable;
 
 #if flash
 
@@ -22,7 +21,7 @@ typedef RawShader = horror.render.gl.RenderDriver.RawShader;
 
 #end
 
-class RenderManager implements IDisposable {
+class RenderManager {
 
 	@:allow(horror.render.Texture)
 	@:allow(horror.render.Shader)

@@ -23,8 +23,10 @@ class PngFormat {
 		readInfo(bytes);
 
 		#if flash
+		// flash works with ARGB textures just fine
 		imageBytes = ByteArray.fromBytes(_pngBytes);
 		#else
+
 		imageBytes = ByteArray.fromData(convertARGB_ABGR(_pngBytes));
 		#end
 

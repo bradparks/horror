@@ -21,14 +21,18 @@ class JsBytesWrapper
     public function new() {}
 
     inline function set_data(value:Uint8Array):Uint8Array {
-        if(data != value) {
-            data = value;
-            var buffer:ArrayBuffer = value.buffer;
-            arrayUShort = new Uint16Array(buffer);
-            arrayUInt = new Uint32Array(buffer);
-            arrayFloat = new Float32Array(buffer);
-            io.data = value;
-        }
+        if(data == value) {
+			return value;
+		}
+
+		data = value;
+		io.data = value;
+
+		var buffer = value.buffer;
+		arrayUShort = new Uint16Array(buffer);
+		arrayUInt = new Uint32Array(buffer);
+		arrayFloat = new Float32Array(buffer);
+
         return value;
     }
 

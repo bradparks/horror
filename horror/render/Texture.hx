@@ -1,10 +1,9 @@
 package horror.render;
 
-import horror.utils.IDisposable;
 import horror.render.RenderManager;
 import horror.memory.ByteArray;
 
-class Texture implements IDisposable {
+class Texture {
 
 	public var width(default, null):Int = 0;
 	public var height(default, null):Int = 0;

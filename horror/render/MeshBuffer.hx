@@ -5,7 +5,6 @@ import horror.memory.FastMemory;
 import horror.debug.Debug;
 import horror.render.Mesh;
 
-
 // init: set vertex structure
 // 1. 'begin' the buffer
 // 2. fill your data:
@@ -47,12 +46,14 @@ class MeshBuffer {
 		_mem = FastMemory.fromSize(_vertexBytesTotal + _indexBytesTotal);
 	}
 
-	function set_vertexStructure(value:VertexStructure):VertexStructure {
-		Debug.assert(value != null && value.stride > 0);
+	public function dispose():Void {
+		Debug.assert(_mem != null);
 
-		vertexStructure = value;
-		stride = value.stride;
-		return value;
+		_mem.dispose(true);
+		_mem = null;
+
+		io = FastIO.NULL;
+		vertexStructure = null;
 	}
 
 	public function begin():Void {
@@ -150,5 +151,12 @@ class MeshBuffer {
 
 	@:extern inline function getVertexStartPosition():Int {
 		return 0;
+	}
+
+	function set_vertexStructure(value:VertexStructure):VertexStructure {
+		Debug.assert(value != null && value.stride > 0);
+
+		stride = value.stride;
+		return vertexStructure = value;
 	}
 }

@@ -1,7 +1,6 @@
 package horror.input;
 
 import horror.utils.DisposeUtil;
-import horror.utils.IDisposable;
 import horror.signals.Signal1;
 
 import openfl.Lib;
@@ -10,7 +9,7 @@ import openfl.events.MouseEvent in FlashMouseEvent;
 import openfl.events.KeyboardEvent in FlashKeyboardEvent;
 import openfl.events.TouchEvent in FlashTouchEvent;
 
-class InputManager implements IDisposable {
+class InputManager {
 
 	public var onMouse(default, null):Signal1<MouseEvent> = new Signal1<MouseEvent>("Mouse Event");
 	public var onKeyboard(default, null):Signal1<KeyboardEvent> = new Signal1<KeyboardEvent>("Keyboard Event");

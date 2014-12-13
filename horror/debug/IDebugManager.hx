@@ -1,9 +1,7 @@
 package horror.debug;
 
-import horror.utils.IDisposable;
+interface IDebugManager {
 
-interface IDebugManager extends IDisposable {
-	
 	public function log(message:String, level:LogLevel):Void;
 
 	public function beginProfile(sample:String):Void;
@@ -13,4 +11,5 @@ interface IDebugManager extends IDisposable {
 	public function nextFrame():Void;
 	public var isPlaying:Bool;
 
+	public function dispose():Void;
 }

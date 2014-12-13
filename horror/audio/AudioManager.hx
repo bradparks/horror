@@ -1,8 +1,6 @@
 package horror.audio;
 
-import horror.utils.IDisposable;
-
-class AudioManager implements IDisposable {
+class AudioManager {
 
 	public function new() {
 	}

@@ -1,10 +1,9 @@
 package horror.loaders;
 
-import horror.utils.IDisposable;
 import horror.debug.Debug;
 import horror.signals.Signal1;
 
-class BatchLoader implements IDisposable {
+class BatchLoader {
 
 	public var progress(get, never):Float;
 	public var loaded(default, null):Signal1<BatchLoader> = new Signal1<BatchLoader>();

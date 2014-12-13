@@ -1,10 +1,9 @@
 package horror.render;
 
-import horror.utils.IDisposable;
 import horror.memory.ByteArray;
 import horror.render.RenderManager;
 
-class Mesh implements IDisposable {
+class Mesh {
 
 	public var vertexStructure(default, null):VertexStructure;
 	public var numTriangles(default, null):Int = 0;

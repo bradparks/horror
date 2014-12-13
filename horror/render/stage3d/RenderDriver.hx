@@ -1,6 +1,5 @@
 package horror.render.stage3d;
 
-import horror.debug.Debug;
 import flash.Lib;
 import flash.events.Event;
 import flash.errors.Error;
@@ -23,8 +22,8 @@ import flash.display3D.Program3D;
 import flash.display3D.textures.Texture;
 
 import horror.render.VertexStructure;
-import horror.utils.IDisposable;
 import horror.memory.ByteArray;
+import horror.debug.Debug;
 
 using StringTools;
 
@@ -58,7 +57,7 @@ class RawShader {
 
 /*** CONTEXT ***/
 
-class RenderDriver implements IDisposable {
+class RenderDriver {
 
 	var _stage3d:Stage3D;
 	var _context:Context3D;

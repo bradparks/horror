@@ -3,7 +3,6 @@ package horror.app;
 import haxe.Timer;
 
 import horror.utils.DisposeUtil;
-import horror.utils.IDisposable;
 import horror.signals.Signal1;
 
 import openfl.Lib;
@@ -13,7 +12,7 @@ import openfl.display.StageAlign;
 import openfl.display.StageScaleMode;
 import openfl.display.OpenGLView;
 
-class LoopManager implements IDisposable {
+class LoopManager {
 
 	public var timeStamp(default, null):Float = 0.0;
 	public var deltaTime(default, null):Float = 0.001;

@@ -1,8 +1,7 @@
 package horror.render.gl;
 
 import horror.render.VertexStructure;
-import horror.utils.IDisposable;
-import horror.memory.ByteArray.ByteArrayData;
+import horror.memory.ByteArray;
 
 import openfl.utils.ArrayBufferView;
 import openfl.utils.IMemoryRange;
@@ -48,7 +47,7 @@ class RawShader {
 }
 
 /*** CONTEXT ***/
-class RenderDriver implements IDisposable {
+class RenderDriver {
 	inline static var MESH_UPLOAD_TECHNIQUE:Int = GL.DYNAMIC_DRAW;
 
 	var _currentShader:RawShader;

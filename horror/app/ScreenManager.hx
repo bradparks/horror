@@ -6,10 +6,9 @@ import openfl.events.Event;
 import openfl.Lib;
 
 import horror.utils.DisposeUtil;
-import horror.utils.IDisposable;
 import horror.signals.Signal1;
 
-class ScreenManager implements IDisposable {
+class ScreenManager {
 
 	// Viewport
 	public var x(default, null):Int = 0;

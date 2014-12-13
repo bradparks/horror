@@ -1,10 +1,9 @@
 package horror.render;
 
-import horror.utils.IDisposable;
 import horror.render.RenderManager;
 
 @:allow(horror.render.RenderManager)
-class Shader implements IDisposable {
+class Shader {
 
 	public var name(default, null):String;
 
