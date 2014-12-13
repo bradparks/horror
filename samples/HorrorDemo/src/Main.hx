@@ -1,5 +1,6 @@
 package;
 
+import horror.loaders.BatchLoader;
 import horror.debug.Debug;
 import horror.memory.ByteArray;
 import horror.input.MouseEventType;
@@ -25,12 +26,17 @@ import horror.render.Material;
 class Main {
 
 	var _render:RenderManager;
-	var _material:Material;
 	var _cameraMatrix:Matrix3D = new Matrix3D();
 	var _vertexStructure:VertexStructure;
 	var _mesh:Mesh;
+	var _mesh2:Mesh;
 	var _meshBuffer:MeshBuffer;
+
+	var _material:Material;
 	var _texture:Texture;
+
+	var _checkerMaterial:Material;
+	var _checkerTexture:Texture;
 
 	var _time:Float = 0;
 	var _blobs:Array<Blob> = [];
@@ -40,12 +46,14 @@ class Main {
 	}
 
 	function start() {
-		var loader:BytesLoader = new BytesLoader("assets/rect.png");
-		loader.loaded.add(onLoaded);
+		var loader = new BatchLoader();
+		loader.add(new BytesLoader("assets/rect.png"));
+		loader.add(new BytesLoader("assets/checker.png"));
+		loader.loaded.addOnce(onLoaded);
 		loader.load();
 	}
 
-	function onLoaded(loader:BaseLoader) {
+	function onLoaded(loader:BatchLoader) {
 		_render = Horror.render;
 
 		_vertexStructure = new VertexStructure();
@@ -55,17 +63,24 @@ class Main {
 		_vertexStructure.compile();
 
 		_texture = new Texture();
-		_texture.loadPngFromBytes(loader.getContent(ByteArray));
+		_texture.loadPngFromBytes(loader.get("assets/rect.png", ByteArray));
+		_checkerTexture = new Texture();
+		_checkerTexture.loadPngFromBytes(loader.get("assets/checker.png", ByteArray));
 
 		_material= new Material();
 		_material.shader = SimpleShader.create();
 		_material.texture = _texture;
+
+		_checkerMaterial = new Material();
+		_checkerMaterial.shader = _material.shader;
+		_checkerMaterial.texture = _checkerTexture;
 
 		Horror.input.onMouse.add(onMouse);
 
 		_cameraMatrix.setTransform2D(0, 0, 1, 0);
 
 		_mesh = new Mesh(_vertexStructure);
+		_mesh2 = new Mesh(_vertexStructure);
 		_meshBuffer = new MeshBuffer();
 		_meshBuffer.vertexStructure = _vertexStructure;
 
@@ -96,16 +111,34 @@ class Main {
 		_render.clear(0.2 + 0.2 * Math.sin(_time), 0.2, 0.3);
 		_render.begin();
 
+		_render.setMatrix(_cameraMatrix);
+
 		_meshBuffer.begin();
+
 		for(blob in _blobs) {
 			blob.update(dt);
 			blob.draw(_meshBuffer);
 		}
+
 		_meshBuffer.end();
 		_meshBuffer.flush(_mesh);
 
-		_render.setMatrix(_cameraMatrix);
 		_render.drawMesh(_mesh, _material);
+
+		_render.setMatrix(null);
+
+		_meshBuffer.begin();
+
+		Quad.drawQuad(_meshBuffer, 8, 8, 128, 16);
+
+		Quad.drawQuad(_meshBuffer, 8, 32, 40, 4, 0x77ff0000);
+		Quad.drawQuad(_meshBuffer, 48, 36, 40, 4, 0x7700ff00);
+		Quad.drawQuad(_meshBuffer, 88, 40, 40, 4, 0x770000ff);
+
+		_meshBuffer.end();
+		_meshBuffer.flush(_mesh2);
+
+		_render.drawMesh(_mesh2, _checkerMaterial);
 
 		_render.end();
 	}
