@@ -1,5 +1,8 @@
 package horror.render.stage3d;
 
+import flash.display3D.Context3DMipFilter;
+import flash.display3D.Context3DTextureFilter;
+import flash.display3D.Context3DWrapMode;
 import flash.Lib;
 import flash.events.Event;
 import flash.errors.Error;
@@ -101,6 +104,7 @@ class RenderDriver {
 		//#else
 		_context.enableErrorChecking = false;
 		//#end
+
 		if (_cbInitialized != null) {
 			_cbInitialized();
 			_cbInitialized = null;
@@ -144,8 +148,6 @@ class RenderDriver {
 		var vertexProgram:AGALMiniAssembler = new AGALMiniAssembler();
 		var pixelProgram:AGALMiniAssembler = new AGALMiniAssembler();
 
-		fragmentShaderCode = fragmentShaderCode.replace("SAMPLING_OPTIONS", _getShaderOptions(false, false, "bilinear"));
-
 		vertexProgram.assemble(Context3DProgramType.VERTEX, vertexShaderCode);
 		pixelProgram.assemble(Context3DProgramType.FRAGMENT, fragmentShaderCode);
 
@@ -161,6 +163,7 @@ class RenderDriver {
 		}
 		_context.setProgram(shader.program);
 		_currentShader = shader;
+		_context.setSamplerStateAt(0, Context3DWrapMode.CLAMP, Context3DTextureFilter.LINEAR, Context3DMipFilter.MIPNONE);
 	}
 
 	public function setBlendMode(src:BlendFactor, dst:BlendFactor):Void {
@@ -210,27 +213,6 @@ class RenderDriver {
 				case VertexData.FloatN(_):
 					throw 'unmatched';
 			}
-	}
-
-	static function _getShaderOptions(repeat:Bool, mipmap:Bool, smoothing:String):String {
-		var options:Array<String> = ["2d"];
-
-		options.push(repeat ? "repeat" : "clamp");
-
-		if (smoothing == "none") {
-			options.push("nearest");
-			options.push(mipmap ? "mipnearest" : "mipnone");
-		}
-		else if (smoothing == "bilinear") {
-			options.push("linear");
-			options.push(mipmap ? "mipnearest" : "mipnone");
-		}
-		else {
-			options.push("linear");
-			options.push(mipmap ? "miplinear" : "mipnone");
-		}
-
-		return options.join(" ");
 	}
 
 	/*** TEXTURES ***/

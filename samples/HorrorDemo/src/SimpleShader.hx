@@ -13,7 +13,7 @@ class SimpleShader {
 	#if flash
 
 	private static var FRAGMENT_CODE:String =
-	"tex ft0, v0, fs0 <SAMPLING_OPTIONS>
+	"tex ft0, v0, fs0 <ignoresampler>
 mul oc, ft0, v1
 ";
 
