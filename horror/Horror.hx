@@ -52,12 +52,6 @@ class Horror {
 		DisposeUtil.dispose(render);
 		DisposeUtil.dispose(audio);
 
-		screen = null;
-		input = null;
-		loop = null;
-		render = null;
-		audio = null;
-
 		_cbOnReady = null;
 	}
 }

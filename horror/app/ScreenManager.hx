@@ -39,8 +39,8 @@ class ScreenManager {
 			_stage.removeEventListener(Event.RESIZE, onStageResized);
 			_stage = null;
 		}
+
 		DisposeUtil.dispose(resized);
-		resized = null;
 	}
 
 	function onStageResized(e:Event):Void {

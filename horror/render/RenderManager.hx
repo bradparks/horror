@@ -74,7 +74,6 @@ class RenderManager {
 
 	public function dispose():Void {
 		DisposeUtil.dispose(driver);
-		driver = null;
 		isInitialized = false;
 	}
 

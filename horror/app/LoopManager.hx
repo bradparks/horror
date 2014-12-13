@@ -47,8 +47,8 @@ class LoopManager {
 			termLoop();
 			_stage = null;
 		}
+
 		DisposeUtil.dispose(updated);
-		updated = null;
 	}
 
 	inline function getTimeStamp():Float {

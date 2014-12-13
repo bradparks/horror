@@ -114,5 +114,10 @@ class Main {
 		if(e.type == MouseEventType.DOWN) {
 			_material.texture = _material.texture == _texture ? null : _texture;
 		}
+
+		/*if(e.type == MouseEventType.UP) {
+			Horror.dispose();
+			openfl.system.System.exit(0);
+		}*/
 	}
 }

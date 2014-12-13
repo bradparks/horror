@@ -88,6 +88,7 @@ class Debug
 	
 	static function set_currentDebugManager(value:IDebugManager):IDebugManager {
 		DisposeUtil.dispose(currentDebugManager);
+
 		currentDebugManager = value;
 		if (currentDebugManager == null) {
 			currentDebugManager = new StdDebugManager();

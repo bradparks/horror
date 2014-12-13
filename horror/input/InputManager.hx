@@ -53,9 +53,6 @@ class InputManager {
 
 		DisposeUtil.dispose(onMouse);
 		DisposeUtil.dispose(onKeyboard);
-
-		onMouse = null;
-		onKeyboard = null;
 	}
 
 	function handleMouseEvent(e:FlashMouseEvent):Void {
