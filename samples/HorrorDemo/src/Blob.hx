@@ -4,6 +4,9 @@ import horror.render.MeshBuffer;
 import horror.Horror;
 
 class Blob {
+
+	public var segmentsCount(default, null):Int = 64;
+
 	var x:Float;
 	var y:Float;
 	var vx:Float;
@@ -11,7 +14,6 @@ class Blob {
 	var color:Int = 0xffffffff;
 	var blowSpeed:Float = 1.;
 	var t:Float = 0.;
-	var segmentsCount:Int = 64;
 
 	public function new() {
 		x = Math.random()*Horror.screen.width;

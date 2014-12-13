@@ -1,5 +1,6 @@
 package;
 
+import horror.render.MeshBatcher;
 import horror.loaders.BatchLoader;
 import horror.debug.Debug;
 import horror.memory.ByteArray;
@@ -28,9 +29,8 @@ class Main {
 	var _render:RenderManager;
 	var _cameraMatrix:Matrix3D = new Matrix3D();
 	var _vertexStructure:VertexStructure;
-	var _mesh:Mesh;
-	var _mesh2:Mesh;
-	var _meshBuffer:MeshBuffer;
+
+	var _batcher:MeshBatcher;
 
 	var _material:Material;
 	var _texture:Texture;
@@ -79,10 +79,7 @@ class Main {
 
 		_cameraMatrix.setTransform2D(0, 0, 1, 0);
 
-		_mesh = new Mesh(_vertexStructure);
-		_mesh2 = new Mesh(_vertexStructure);
-		_meshBuffer = new MeshBuffer();
-		_meshBuffer.vertexStructure = _vertexStructure;
+		_batcher = new MeshBatcher(_vertexStructure);
 
 		Horror.loop.updated.add(update);
 		Horror.screen.resized.add(resize);
@@ -111,34 +108,29 @@ class Main {
 		_render.clear(0.2 + 0.2 * Math.sin(_time), 0.2, 0.3);
 		_render.begin();
 
-		_render.setMatrix(_cameraMatrix);
+		_batcher.begin();
 
-		_meshBuffer.begin();
+		_batcher.changeViewModelMatrix(_cameraMatrix);
+
+		_batcher.setState(_material, 4*3);
 
 		for(blob in _blobs) {
 			blob.update(dt);
-			blob.draw(_meshBuffer);
+			_batcher.setState(_material, blob.segmentsCount + 1);
+			blob.draw(_batcher.buffer);
 		}
 
-		_meshBuffer.end();
-		_meshBuffer.flush(_mesh);
+		_batcher.changeViewModelMatrix(null);
 
-		_render.drawMesh(_mesh, _material);
+		_batcher.setState(_material, 4*3);
+		Quad.drawQuad(_batcher.buffer, 8, 32, 40, 4, 0x77ff0000);
+		Quad.drawQuad(_batcher.buffer, 48, 36, 40, 4, 0x7700ff00);
+		Quad.drawQuad(_batcher.buffer, 88, 40, 40, 4, 0x770000ff);
 
-		_render.setMatrix(null);
+		_batcher.setState(_checkerMaterial, 4);
+		Quad.drawQuad(_batcher.buffer, 8, 8, 128, 16);
 
-		_meshBuffer.begin();
-
-		Quad.drawQuad(_meshBuffer, 8, 8, 128, 16);
-
-		Quad.drawQuad(_meshBuffer, 8, 32, 40, 4, 0x77ff0000);
-		Quad.drawQuad(_meshBuffer, 48, 36, 40, 4, 0x7700ff00);
-		Quad.drawQuad(_meshBuffer, 88, 40, 40, 4, 0x770000ff);
-
-		_meshBuffer.end();
-		_meshBuffer.flush(_mesh2);
-
-		_render.drawMesh(_mesh2, _checkerMaterial);
+		_batcher.end();
 
 		_render.end();
 	}

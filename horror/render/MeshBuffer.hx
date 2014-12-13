@@ -26,7 +26,6 @@ class MeshBuffer {
 	public var numTriangles(get, never):Int;
 	public var isEmpty(get, never):Bool;
 
-	public var vertexStructure(default, set):VertexStructure;
 	public var stride(default, null):Int;
 
 	public var isStarted(default, null):Bool = false;
@@ -53,11 +52,10 @@ class MeshBuffer {
 		_mem = null;
 
 		io = FastIO.NULL;
-		vertexStructure = null;
 	}
 
 	public function begin():Void {
-		Debug.assert(isStarted == false && vertexStructure != null && stride > 0);
+		Debug.assert(isStarted == false);
 
 		io = _mem.lock();
 		isStarted = true;
@@ -153,10 +151,8 @@ class MeshBuffer {
 		return 0;
 	}
 
-	function set_vertexStructure(value:VertexStructure):VertexStructure {
-		Debug.assert(value != null && value.stride > 0);
-
-		stride = value.stride;
-		return vertexStructure = value;
+	public function setVertexStructure(vs:VertexStructure):Void {
+		Debug.assert(vs != null && vs.stride > 0);
+		stride = vs.stride;
 	}
 }
