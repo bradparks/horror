@@ -170,7 +170,7 @@ class RenderDriver {
 		_context.setBlendFactors(convertBlendFactor(src), convertBlendFactor(dst));
 	}
 
-	public function setMatrix(modelViewMatrix:Matrix3D):Void {
+	public function setMatrix(modelViewMatrix:Matrix4):Void {
 		TEMP_MATRIX.rawData = modelViewMatrix.rawData;
 		_context.setProgramConstantsFromMatrix(Context3DProgramType.VERTEX, 0, TEMP_MATRIX, true);
 	}

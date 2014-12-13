@@ -3,7 +3,6 @@ package horror.render;
 import horror.memory.FastIO;
 import horror.memory.FastMemory;
 import horror.debug.Debug;
-import horror.render.Mesh;
 
 // init: set vertex structure
 // 1. 'begin' the buffer
@@ -105,14 +104,14 @@ class MeshBuffer {
 		io.setUInt16_aligned(p,     baseVertex+index1);
 		io.setUInt16_aligned(p + 2, baseVertex+index2);
 		io.setUInt16_aligned(p + 4, baseVertex+index3);
-		indexBytesPosition += 6;
+		indexBytesPosition = p + 6;
 	}
 
 	@:extern public inline function writeFloat2(x:Float, y:Float):Void {
 		var p:Int = vertexBytesPosition;
 		io.setFloat32_aligned(p,     x);
 		io.setFloat32_aligned(p + 4, y);
-		vertexBytesPosition += 8;
+		vertexBytesPosition = p + 8;
 	}
 
 	@:extern public inline function writeFloat4(x:Float, y:Float, z:Float, w:Float):Void {
@@ -121,13 +120,13 @@ class MeshBuffer {
 		io.setFloat32_aligned(p + 4, y);
 		io.setFloat32_aligned(p + 8, z);
 		io.setFloat32_aligned(p + 12, w);
-		vertexBytesPosition += 16;
+		vertexBytesPosition = p + 16;
 	}
 
-	@:extern public inline function writePackedColor(colorABGR:Int):Void {
+	@:extern public inline function writeColor(color:Color32):Void {
 		var p:Int = vertexBytesPosition;
-		io.setUInt32_aligned(p, colorABGR);
-		vertexBytesPosition += 4;
+		io.setUInt32_aligned(p, color);
+		vertexBytesPosition = p + 4;
 	}
 
 	@:extern public inline function push(verticesTotal:Int, indicesTotal:Int):Void {

@@ -19,7 +19,7 @@ class MeshBatcher {
 	var _currentMaterial:Material;
 	var _currentVertexCount:Int;
 
-	var _modelViewMatrix:Matrix3D = new Matrix3D();
+	var _modelViewMatrix:Matrix4 = new Matrix4();
 
 	public function new(vs:VertexStructure) {
 		_render = Horror.render;
@@ -64,7 +64,7 @@ class MeshBatcher {
 		_isStarted = false;
 	}
 
-	public function changeViewModelMatrix(matrix:Matrix3D):Void {
+	public function changeViewModelMatrix(matrix:Matrix4):Void {
 		if(_isStarted) {
 			breakBatching(null);
 		}

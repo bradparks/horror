@@ -17,7 +17,7 @@ import horror.app.LoopManager;
 import horror.render.VertexData;
 import horror.render.Mesh;
 import horror.render.RenderManager;
-import horror.render.Matrix3D;
+import horror.render.Matrix4;
 import horror.render.VertexStructure;
 import horror.render.Shader;
 import horror.render.MeshBuffer;
@@ -27,7 +27,7 @@ import horror.render.Material;
 class Main {
 
 	var _render:RenderManager;
-	var _cameraMatrix:Matrix3D = new Matrix3D();
+	var _cameraMatrix:Matrix4 = new Matrix4();
 	var _vertexStructure:VertexStructure;
 
 	var _batcher:MeshBatcher;
@@ -91,7 +91,7 @@ class Main {
 	}
 
 	function resize(screen:ScreenManager) {
-		_render.setOrthographicProjection(screen.width, screen.height);
+		_render.setOrtho2D(0, 0, screen.width, screen.height);
 		trace('resize: ${screen.width}x${screen.height}');
 	}
 
@@ -100,10 +100,8 @@ class Main {
 		var dt = loop.deltaTime;
 		_time += dt;
 
-		//var hw:Int = Horror.screen.width >> 1;
-		//var hh:Int = Horror.screen.height >> 1;
-		//_cameraMatrix.setTransform2D(-hw, -hh, 1.0 + 0.2* Math.sin(_time*5), 0);
 		_cameraMatrix.setTransform2D(0, 0, 1.0 + 0.2* Math.sin(_time*5), 0);
+
 		// shows that clear is actually worked and frames updated
 		_render.clear(0.2 + 0.2 * Math.sin(_time), 0.2, 0.3);
 		_render.begin();
@@ -123,12 +121,12 @@ class Main {
 		_batcher.changeViewModelMatrix(null);
 
 		_batcher.setState(_material, 4*3);
-		Quad.drawQuad(_batcher.buffer, 8, 32, 40, 4, 0x77ff0000);
-		Quad.drawQuad(_batcher.buffer, 48, 36, 40, 4, 0x7700ff00);
-		Quad.drawQuad(_batcher.buffer, 88, 40, 40, 4, 0x770000ff);
+		Quad.drawHorizontalGradient(_batcher.buffer, 8,  32, 42, 4, 0xffff0000, 0x00ff0000);
+		Quad.drawHorizontalGradient(_batcher.buffer, 50, 32, 42, 4, 0xff00ff00, 0x0000ff00);
+		Quad.drawHorizontalGradient(_batcher.buffer, 92, 32, 42, 4, 0xff0000ff, 0x000000ff);
 
 		_batcher.setState(_checkerMaterial, 4);
-		Quad.drawQuad(_batcher.buffer, 8, 8, 128, 16);
+		Quad.draw(_batcher.buffer, 8, 8, 128, 16);
 
 		_batcher.end();
 

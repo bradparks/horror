@@ -41,9 +41,9 @@ class RenderManager {
 	var _currentMesh:Mesh;
 	var _currentBlendModeHash:Int = 0;
 
-	var _projectionMatrix:Matrix3D = new Matrix3D();
-	var _modelViewMatrix:Matrix3D;
-	var _mvpMatrix:Matrix3D = new Matrix3D();
+	var _projectionMatrix:Matrix4 = new Matrix4();
+	var _modelViewMatrix:Matrix4;
+	var _mvpMatrix:Matrix4 = new Matrix4();
 	var _dirtyMVP:Bool = true;
 	var _needToUploadMVP:Bool = true;
 
@@ -94,12 +94,12 @@ class RenderManager {
 		driver.end();
 	}
 
-	public function setOrthographicProjection(width:Int, height:Int):Void {
-		_projectionMatrix.setOrthoProjection(0, width, height, 0, 1000, -1000);
+	public function setOrtho2D(x:Int, y:Int, width:Int, height:Int):Void {
+		_projectionMatrix.setOrtho2D(0, 0, width, height);
 		_dirtyMVP = true;
 	}
 
-	public function setMatrix(modelViewMatrix:Matrix3D):Void {
+	public function setMatrix(modelViewMatrix:Matrix4):Void {
 		_modelViewMatrix = modelViewMatrix;
 		_dirtyMVP = true;
 	}
@@ -127,7 +127,7 @@ class RenderManager {
 	function setModelViewProjection():Void {
 		if(_dirtyMVP) {
 			if(_modelViewMatrix != null) {
-				Matrix3D.multiply(_projectionMatrix, _modelViewMatrix, _mvpMatrix);
+				Matrix4.multiply(_projectionMatrix, _modelViewMatrix, _mvpMatrix);
 			}
 			else {
 				_mvpMatrix.copyFromMatrix(_projectionMatrix);

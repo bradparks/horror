@@ -171,7 +171,7 @@ class RenderDriver {
 		GL.blendFunc(convertBlendFactor(src), convertBlendFactor(dst));
 	}
 
-	public function setMatrix(modelViewProjection:Matrix3D):Void {
+	public function setMatrix(modelViewProjection:Matrix4):Void {
 		GL.uniformMatrix4fv (_currentShader.mvpUniform, false, modelViewProjection.rawData);
 	}
 

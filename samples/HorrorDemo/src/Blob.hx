@@ -1,5 +1,6 @@
 package ;
 
+import horror.render.Color32;
 import horror.render.MeshBuffer;
 import horror.Horror;
 
@@ -11,7 +12,7 @@ class Blob {
 	var y:Float;
 	var vx:Float;
 	var vy:Float;
-	var color:Int = 0xffffffff;
+	var color:Color32 = 0xffffffff;
 	var blowSpeed:Float = 1.;
 	var t:Float = 0.;
 
@@ -33,12 +34,12 @@ class Blob {
 		buffer.writeTriangle(0, segmentsCount, 1);
 
 		buffer.writeFloat4(x, y, 0.5, 0.5);
-		buffer.writePackedColor(0xff00ffff);
+		buffer.writeColor(0xffffff00);
 		for(i in 0...segmentsCount) {
 			var angle = Math.PI * 2. * (i/segmentsCount);
 			var r = 100. + 6. * Math.sin(-t*4. + angle*5.) - 10. * Math.sin(5.*t + 2.*angle);
 			buffer.writeFloat4(x + r*Math.cos(angle), y + r*Math.sin(angle), 0.5, 0.0);
-			buffer.writePackedColor(0xff00ff00);
+			buffer.writeColor(color);
 		}
 
 		buffer.push(segmentsCount + 1, segmentsCount * 3);

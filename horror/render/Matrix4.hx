@@ -11,7 +11,7 @@ typedef Matrix3D_Data = openfl.utils.Float32Array;
 
 #end
 
-class Matrix3D implements ArrayAccess<Float> {
+class Matrix4 implements ArrayAccess<Float> {
 
     //public var determinant (get, null):Float;
     public var rawData(default, null):Matrix3D_Data;
@@ -41,7 +41,7 @@ class Matrix3D implements ArrayAccess<Float> {
 		}
 	}
 
-	public function copyFromMatrix(matrix:Matrix3D) {
+	public function copyFromMatrix(matrix:Matrix4) {
 		var r1 = rawData;
 		var r2 = matrix.rawData;
 		for(i in 0...16) {
@@ -55,7 +55,7 @@ class Matrix3D implements ArrayAccess<Float> {
 		return str;
 	}
 
-	public static function multiply(left:Matrix3D, right:Matrix3D, destination:Matrix3D):Matrix3D {
+	public static function multiply(left:Matrix4, right:Matrix4, destination:Matrix4):Matrix4 {
 		Debug.assert(left != null && right != null && destination != null);
 
 		var m1 = right.rawData;
@@ -93,7 +93,7 @@ class Matrix3D implements ArrayAccess<Float> {
 		return destination;
 	}
 
-    public function setTransform2D(x:Float, y:Float, scale:Float = 1, rotation:Float = 0):Matrix3D {
+    public function setTransform2D(x:Float, y:Float, scale:Float = 1, rotation:Float = 0):Matrix4 {
 		var theta = rotation * Math.PI / 180.0;
         var cs = Math.cos(theta)*scale;
         var sn = Math.sin(theta)*scale;
@@ -122,7 +122,11 @@ class Matrix3D implements ArrayAccess<Float> {
         return this;
     }
 
-    public function setOrthoProjection(x0:Float, x1:Float,  y0:Float, y1:Float, zNear:Float, zFar:Float):Matrix3D {
+	public function setOrtho2D(x:Float, y:Float, width:Float, height:Float, zNear:Float = -1000, zFar:Float = 1000):Matrix4 {
+		return setOrthoProjection(x, x + width, y + height, y, zNear, zFar);
+	}
+
+    function setOrthoProjection(x0:Float, x1:Float,  y0:Float, y1:Float, zNear:Float, zFar:Float):Matrix4 {
 		var sx = 1.0 / (x1 - x0);
 		var sy = 1.0 / (y1 - y0);
 		var sz = 1.0 / (zFar - zNear);
