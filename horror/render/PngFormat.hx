@@ -81,9 +81,10 @@ class PngFormat {
 
 	public function readInfo(bytes:ByteArray):Void {
 		var byteInput = new BytesInput (bytes.toBytes(), 0, bytes.length);
-		var d = new Reader(byteInput).read();
-		var hdr = Tools.getHeader(d);
-		_pngBytes = Tools.extract32(d);
+		var reader = new Reader(byteInput);
+		var d = reader.read();
+		var hdr = format.png.Tools.getHeader(d);
+		_pngBytes = format.png.Tools.extract32(d);
 		width = hdr.width;
 		height = hdr.height;
 	}

@@ -6,31 +6,31 @@ import horror.utils.DisposeUtil;
 
 class MeshBatcher {
 
+	public var render(default, null):RenderManager;
 	public var buffer(default, null):MeshBuffer;
+	public var vertexStructure(default, null):VertexStructure;
+	public var isStarted(default, null):Bool = false;
 
-	var _render:RenderManager;
-	var _vertexStructure:VertexStructure;
 	var _maxIndex:Int = 0xFFFF - 1;
-
-	var _isStarted:Bool = false;
 	var _meshes:Array<Mesh> = new Array<Mesh>();
 	var _currentMeshIndex:Int;
 	var _currentMesh:Mesh;
 	var _currentMaterial:Material;
 	var _currentVertexCount:Int;
 
-	var _modelViewMatrix:Matrix4 = new Matrix4();
+	var _modelViewMatrix:Matrix4;
 
 	public function new(vs:VertexStructure) {
-		_render = Horror.render;
+		render = Horror.render;
 		buffer = new MeshBuffer(vs.stride);
 		buffer.setVertexStructure(vs);
-		_vertexStructure = vs;
+		vertexStructure = vs;
+
 		_meshes.push(allocMesh());
 	}
 
 	public function dispose():Void {
-		if(_isStarted) {
+		if(isStarted) {
 			end();
 		}
 		DisposeUtil.dispose(buffer);
@@ -38,14 +38,14 @@ class MeshBatcher {
 			mesh.dispose();
 		}
 		_meshes = null;
-		_vertexStructure = null;
-		_render = null;
+		vertexStructure = null;
+		render = null;
 	}
 
 	public function begin():Void {
-		Debug.assert(_isStarted == false);
+		Debug.assert(isStarted == false);
+		isStarted = true;
 
-		_isStarted = true;
 		_currentMeshIndex = 0;
 		_currentMesh = _meshes[0];
 		_currentMaterial = null;
@@ -55,17 +55,17 @@ class MeshBatcher {
 	}
 
 	public function end():Void {
-		Debug.assert(_isStarted == true);
+		Debug.assert(isStarted == true);
 
 		renderBatch(false);
 		if(buffer.isStarted) {
 			buffer.end();
 		}
-		_isStarted = false;
+		isStarted = false;
 	}
 
 	public function changeViewModelMatrix(matrix:Matrix4):Void {
-		if(_isStarted) {
+		if(isStarted) {
 			breakBatching(null);
 		}
 
@@ -102,7 +102,7 @@ class MeshBatcher {
 	}
 
 	@:extern inline function allocMesh():Mesh {
-		return new Mesh(_vertexStructure);
+		return new Mesh(vertexStructure);
 	}
 
 	@:extern inline function checkBatchStateChanged(material:Material, vertexCount:Int):Bool {
@@ -113,7 +113,7 @@ class MeshBatcher {
 		buffer.end();
 		buffer.flush(_currentMesh);
 
-		_render.setMatrix(_modelViewMatrix);
-		_render.drawMesh(_currentMesh, _currentMaterial);
+		render.setMatrix(_modelViewMatrix);
+		render.drawMesh(_currentMesh, _currentMaterial);
 	}
 }

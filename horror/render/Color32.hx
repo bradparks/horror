@@ -26,4 +26,7 @@ abstract Color32(Int) to Int {
 		// swap to ABGR
 		return new Color32((argb & 0xFF00FF00) | ((argb >> 16) & 0xFF) | ((argb & 0xFF) << 16));
 	}
+
+	inline public static var WHITE:Color32 = 0xFFFFFFFF;
+	inline public static var ZERO:Color32 = 0x00000000;
 }
