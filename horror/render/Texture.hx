@@ -1,6 +1,6 @@
 package horror.render;
 
-import horror.render.RenderManager;
+import horror.render.RenderContext;
 import horror.memory.ByteArray;
 
 class Texture {
@@ -8,8 +8,8 @@ class Texture {
 	public var width(default, null):Int = 0;
 	public var height(default, null):Int = 0;
 
-	@:allow(horror.render.RenderManager)
-	var _rawData:RawTexture = null;
+	@:allow(horror.render.RenderContext)
+	var __data:TextureData = null;
 
 	public function new() {
 	}
@@ -18,7 +18,7 @@ class Texture {
 		dispose();
 		this.width = width;
 		this.height = height;
-		_rawData = RenderManager.driver.createTextureFromByteArray(width, height, pixels.data);
+		__data = RenderContext.__driver.createTextureFromByteArray(width, height, pixels.data);
 	}
 
 	public function loadPngFromBytes(bytes:ByteArray) {
@@ -35,9 +35,9 @@ class Texture {
 	}
 
 	public function dispose() {
-		if(_rawData != null) {
-			RenderManager.driver.disposeTexture(_rawData);
-			_rawData = null;
+		if(__data != null) {
+			RenderContext.__driver.disposeTexture(__data);
+			__data = null;
 			width = 0;
 			height = 0;
 		}

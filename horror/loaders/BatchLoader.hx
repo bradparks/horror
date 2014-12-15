@@ -1,13 +1,12 @@
 package horror.loaders;
 
-import horror.debug.Debug;
 import horror.signals.Signal1;
+import horror.utils.Debug;
 
 class BatchLoader {
 
 	public var progress(get, never):Float;
 	public var loaded(default, null):Signal1<BatchLoader> = new Signal1<BatchLoader>();
-
 
 	var loaders:Array<BaseLoader> = new Array<BaseLoader>();
 	var lookup:Map<String, BaseLoader> = new Map<String, BaseLoader>();
@@ -78,19 +77,19 @@ class BatchLoader {
 
 	public function get<T>(url:String, type:Class<T>):T {
 		if(url == null || !lookup.exists(url)) {
-			Debug.logWarning('"$url" not found');
+			Debug.warning('"$url" not found');
 			return null;
 		}
 
 		var loader = lookup.get(url);
 		if(loader == null) {
-			Debug.logWarning('"$url" loader not found');
+			Debug.warning('"$url" loader not found');
 			return null;
 		}
 
 		var content = loader.getContent(type);
 		if(content == null) {
-			Debug.logWarning('"$url" has empty content');
+			Debug.warning('"$url" has empty content');
 			return null;
 		}
 

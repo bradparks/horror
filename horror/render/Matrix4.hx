@@ -1,6 +1,7 @@
 package horror.render;
 
-import horror.debug.Debug;
+import horror.utils.Debug;
+
 #if flash
 
 typedef Matrix3D_Data = flash.Vector<Float>;

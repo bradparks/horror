@@ -1,8 +1,9 @@
 package horror.render;
 
+import horror.utils.DisposeUtil;
 import horror.memory.FastIO;
 import horror.memory.FastMemory;
-import horror.debug.Debug;
+import horror.utils.Debug;
 
 // init: set vertex structure
 // 1. 'begin' the buffer
@@ -47,9 +48,7 @@ class MeshBuffer {
 	public function dispose():Void {
 		Debug.assert(_mem != null);
 
-		_mem.dispose(true);
-		_mem = null;
-
+		DisposeUtil.dispose(_mem, true);
 		io = FastIO.NULL;
 	}
 

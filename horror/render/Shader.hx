@@ -1,8 +1,8 @@
 package horror.render;
 
-import horror.render.RenderManager;
+import horror.render.RenderContext;
 
-@:allow(horror.render.RenderManager)
+@:allow(horror.render.RenderContext)
 class Shader {
 
 	public var name(default, null):String;
@@ -10,20 +10,20 @@ class Shader {
 	public var sourceBlendFactor:BlendFactor = BlendFactor.SOURCE_ALPHA;
 	public var destinationBlendFactor:BlendFactor = BlendFactor.ONE_MINUS_SOURCE_ALPHA;
 
-	var _rawData:RawShader;
+	var __data:ShaderData;
 
 	public function new(name:String) {
 		this.name = name;
 	}
 
 	public function loadFromCode(vertexShaderCode:String, fragmentShaderCode:String) {
-		_rawData = RenderManager.driver.createShader(vertexShaderCode, fragmentShaderCode);
+		__data = RenderContext.__driver.createShader(vertexShaderCode, fragmentShaderCode);
 	}
 
 	public function dispose() {
-		if(_rawData != null) {
-			RenderManager.driver.disposeShader(_rawData);
-			_rawData = null;
+		if(__data != null) {
+			RenderContext.__driver.disposeShader(__data);
+			__data = null;
 		}
 	}
 

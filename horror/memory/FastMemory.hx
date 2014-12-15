@@ -1,13 +1,15 @@
 package horror.memory;
 
-import horror.debug.Debug;
-import openfl.utils.Endian;
 import haxe.io.Bytes;
-import horror.memory.ByteArray;
+
+import openfl.utils.Endian;
 
 #if flash
 import flash.system.ApplicationDomain;
 #end
+
+import horror.memory.ByteArray;
+import horror.utils.Debug;
 
 /**
 *

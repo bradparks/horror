@@ -1,12 +1,12 @@
 package horror.render;
 
-import horror.debug.Debug;
 import horror.Horror;
 import horror.utils.DisposeUtil;
+import horror.utils.Debug;
 
 class MeshBatcher {
 
-	public var render(default, null):RenderManager;
+	public var context(default, null):RenderContext;
 	public var buffer(default, null):MeshBuffer;
 	public var vertexStructure(default, null):VertexStructure;
 	public var isStarted(default, null):Bool = false;
@@ -21,7 +21,7 @@ class MeshBatcher {
 	var _modelViewMatrix:Matrix4;
 
 	public function new(vs:VertexStructure) {
-		render = Horror.render;
+		context = RenderContext.current;
 		buffer = new MeshBuffer(vs.stride);
 		buffer.setVertexStructure(vs);
 		vertexStructure = vs;
@@ -39,7 +39,7 @@ class MeshBatcher {
 		}
 		_meshes = null;
 		vertexStructure = null;
-		render = null;
+		context = null;
 	}
 
 	public function begin():Void {
@@ -113,7 +113,7 @@ class MeshBatcher {
 		buffer.end();
 		buffer.flush(_currentMesh);
 
-		render.setMatrix(_modelViewMatrix);
-		render.drawMesh(_currentMesh, _currentMaterial);
+		context.setMatrix(_modelViewMatrix);
+		context.drawMesh(_currentMesh, _currentMaterial);
 	}
 }

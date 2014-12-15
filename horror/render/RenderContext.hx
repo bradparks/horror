@@ -2,34 +2,40 @@ package horror.render;
 
 import horror.memory.ByteArray;
 import horror.app.ScreenManager;
-import horror.debug.Debug;
+import horror.utils.Debug;
 import horror.utils.DisposeUtil;
 
 #if flash
 
-typedef RenderDriver = horror.render.stage3d.RenderDriver;
-typedef RawMesh = horror.render.stage3d.RenderDriver.RawMesh;
-typedef RawTexture = horror.render.stage3d.RenderDriver.RawTexture;
-typedef RawShader = horror.render.stage3d.RenderDriver.RawShader;
+typedef RenderDriver = horror.render.stage3d.Stage3DDriver;
+typedef MeshData = horror.render.stage3d.Stage3DMeshData;
+typedef TextureData = horror.render.stage3d.Stage3DTextureData;
+typedef ShaderData = horror.render.stage3d.Stage3DShaderData;
 
 #elseif openfl
 
-typedef RenderDriver = horror.render.gl.RenderDriver;
-typedef RawMesh = horror.render.gl.RenderDriver.RawMesh;
-typedef RawTexture = horror.render.gl.RenderDriver.RawTexture;
-typedef RawShader = horror.render.gl.RenderDriver.RawShader;
+typedef RenderDriver = horror.render.gl.GLDriver;
+typedef MeshData = horror.render.gl.GLMeshData;
+typedef TextureData = horror.render.gl.GLTextureData;
+typedef ShaderData = horror.render.gl.GLShaderData;
 
 #end
 
-class RenderManager {
+@:access(horror.render.Texture)
+@:access(horror.render.Shader)
+@:access(horror.render.Mesh)
+class RenderContext {
 
 	@:allow(horror.render.Texture)
 	@:allow(horror.render.Shader)
 	@:allow(horror.render.Mesh)
-	static var driver(default, null):RenderDriver;
+	static var __driver(default, null):RenderDriver;
+
+	public static var current(default, null):RenderContext;
 
 	public var width(default, null):Int = 0;
 	public var height(default, null):Int = 0;
+	public var isLost(get, never):Bool;
 
 	public var blankTexture(default, null):Texture;
 
@@ -48,21 +54,20 @@ class RenderManager {
 	var _needToUploadMVP:Bool = true;
 
 	public function new() {
-		driver = new RenderDriver();
+		__driver = new RenderDriver();
+		current = this;
 	}
 
 	public function initialize(onReady: Void -> Void):Void {
 		Debug.assert(isInitialized == false);
 		_cbOnReady = onReady;
-		driver.initialize(onDriverInitialized);
+		__driver.onInitialize = onDriverInitialized;
+		__driver.onRestore = onDriverRestored;
+		__driver.initialize();
 	}
 
 	function onDriverInitialized():Void {
 		isInitialized = true;
-
-		var screen = Horror.screen;
-		screen.resized.add(onScreenResized);
-		onScreenResized(screen);
 
 		if(_cbOnReady != null) {
 			_cbOnReady();
@@ -72,13 +77,18 @@ class RenderManager {
 		blankTexture = Texture.createFromColor(1, 1, 0xffffffff);
 	}
 
+	function onDriverRestored():Void {
+
+	}
+
 	public function dispose():Void {
-		DisposeUtil.dispose(driver);
+		DisposeUtil.dispose(__driver);
 		isInitialized = false;
+		current = null;
 	}
 
 	public function clear(r:Float, g:Float, b:Float):Void {
-		driver.clear(r, g, b);
+		__driver.clear(r, g, b);
 	}
 
 	public function begin():Void {
@@ -86,12 +96,12 @@ class RenderManager {
 		_currentTexture = null;
 		_currentMesh = null;
 		_currentBlendModeHash = 0;
-		driver.begin();
+		__driver.begin();
 		__resetFrameStats();
 	}
 
 	public function end():Void {
-		driver.end();
+		__driver.end();
 	}
 
 	public function setOrtho2D(x:Int, y:Int, width:Int, height:Int):Void {
@@ -106,7 +116,7 @@ class RenderManager {
 
 	public function resize(width:Int, height:Int):Void {
 		if(this.width != width || this.height != height) {
-			driver.resize(width, height);
+			__driver.resize(width, height);
 			this.width = width;
 			this.height = height;
 		}
@@ -120,7 +130,7 @@ class RenderManager {
 		setMesh(mesh);
 
 		var triangles:Int = mesh.numTriangles;
-		driver.drawIndexedTriangles(triangles);
+		__driver.drawIndexedTriangles(triangles);
 		__trackDrawCall(triangles);
 	}
 
@@ -136,7 +146,7 @@ class RenderManager {
 			_needToUploadMVP = true;
 		}
 		if(_needToUploadMVP) {
-			driver.setMatrix(_mvpMatrix);
+			__driver.setMatrix(_mvpMatrix);
 			_needToUploadMVP = false;
 		}
 	}
@@ -146,10 +156,10 @@ class RenderManager {
 		if(shader != _currentShader) {
 			var blendModeHash:Int = shader.getBlendModeHash();
 			if(_currentBlendModeHash != blendModeHash) {
-				driver.setBlendMode(shader.sourceBlendFactor, shader.destinationBlendFactor);
+				__driver.setBlendMode(shader.sourceBlendFactor, shader.destinationBlendFactor);
 				_currentBlendModeHash = blendModeHash;
 			}
-			driver.setShader(shader._rawData);
+			__driver.setShader(shader.__data);
 			_currentShader = shader;
 			_needToUploadMVP = true;
 		}
@@ -158,17 +168,21 @@ class RenderManager {
 			texture = blankTexture;
 		}
 		if(texture != _currentTexture) {
-			driver.setTexture(texture._rawData);
+			__driver.setTexture(texture.__data);
 			_currentTexture = texture;
 		}
 	}
 
 	function setMesh(mesh:Mesh):Void {
-		driver.setMesh(mesh._rawData);
+		__driver.setMesh(mesh.__data);
 	}
 
 	function onScreenResized(screen:ScreenManager):Void {
 		resize(screen.width, screen.height);
+	}
+
+	inline function get_isLost():Bool {
+		return __driver.isLost;
 	}
 
 	/*** STATS ***/

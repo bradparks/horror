@@ -1,5 +1,6 @@
 package horror.app;
 
+import horror.utils.Debug;
 import haxe.Timer;
 
 import horror.utils.DisposeUtil;
@@ -8,15 +9,13 @@ import horror.signals.Signal1;
 import openfl.Lib;
 import openfl.events.Event;
 import openfl.display.Stage;
-import openfl.display.StageAlign;
-import openfl.display.StageScaleMode;
 import openfl.display.OpenGLView;
 
 class LoopManager {
 
 	public var timeStamp(default, null):Float = 0.0;
 	public var deltaTime(default, null):Float = 0.001;
-	public var frameRate(get, set):Int;
+	public var targetFrameRate(get, set):Int;
 
 	public var updated(default, null):Signal1<LoopManager> = new Signal1<LoopManager>("Update Event");
 
@@ -25,21 +24,9 @@ class LoopManager {
 
 	public function new():Void {
 		_stage = Lib.current.stage;
-		_stage.scaleMode = StageScaleMode.NO_SCALE;
-		_stage.align = StageAlign.TOP_LEFT;
-		_stage.addEventListener(openfl.display.OpenGLView.CONTEXT_LOST, onContextLost);
-		_stage.addEventListener(openfl.display.OpenGLView.CONTEXT_RESTORED, onContextRestored);
 
 		initLoop();
 		timeStamp = getTimeStamp();
-	}
-
-	function onContextLost(_) {
-		trace("lost");
-	}
-
-	function onContextRestored(_) {
-		trace("restored");
 	}
 
 	public function dispose():Void {
@@ -63,11 +50,11 @@ class LoopManager {
 		updated.dispatch(this);
 	}
 
-	function get_frameRate():Int {
+	function get_targetFrameRate():Int {
 		return Std.int(_stage.frameRate);
 	}
 
-	function set_frameRate(value:Int):Int {
+	function set_targetFrameRate(value:Int):Int {
 		_stage.frameRate = value;
 		return Std.int(_stage.frameRate);
 	}
@@ -93,7 +80,9 @@ class LoopManager {
 			_stage.addChild(_openGLView);
 		}
 		else {
-			trace("WebGL is not supported or use -dom flag in gl project file");
+			#if html5
+			Debug.warning("WebGL is not supported or use -dom flag in gl project file");
+			#end
 		}
 	}
 

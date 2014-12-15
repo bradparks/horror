@@ -1,33 +1,32 @@
 package horror.render;
 
 import horror.memory.ByteArray;
-import horror.render.RenderManager;
+import horror.render.RenderContext;
 
 class Mesh {
 
 	public var vertexStructure(default, null):VertexStructure;
 	public var numTriangles(default, null):Int = 0;
 
-	@:allow(horror.render.RenderManager)
-	var _rawData:RawMesh;
+	var __data:MeshData;
 
 	public function new(vertexStructure:VertexStructure) {
 		this.vertexStructure = vertexStructure;
-		_rawData = RenderManager.driver.createMesh(vertexStructure);
+		__data = RenderContext.__driver.createMesh(vertexStructure);
 	}
 
 	public function dispose():Void {
-		if(_rawData != null) {
-			RenderManager.driver.disposeMesh(_rawData);
-			_rawData = null;
+		if(__data != null) {
+			RenderContext.__driver.disposeMesh(__data);
+			__data = null;
 		}
 	}
 
 	function uploadVertices(data:ByteArrayData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
-		RenderManager.driver.uploadVertices(_rawData, data, bytesLength, bytesOffset);
+		RenderContext.__driver.uploadVertices(__data, data, bytesLength, bytesOffset);
 	}
 
 	function uploadIndices(data:ByteArrayData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
-		RenderManager.driver.uploadIndices(_rawData, data, bytesLength, bytesOffset);
+		RenderContext.__driver.uploadIndices(__data, data, bytesLength, bytesOffset);
 	}
 }

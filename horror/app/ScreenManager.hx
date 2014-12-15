@@ -1,6 +1,8 @@
 package horror.app;
 
 import openfl.system.Capabilities;
+import openfl.display.StageAlign;
+import openfl.display.StageScaleMode;
 import openfl.display.Stage;
 import openfl.events.Event;
 import openfl.Lib;
@@ -26,6 +28,8 @@ class ScreenManager {
 
 	public function new() {
 		_stage = Lib.current.stage;
+		_stage.scaleMode = StageScaleMode.NO_SCALE;
+		_stage.align = StageAlign.TOP_LEFT;
 		_stage.addEventListener(Event.RESIZE, onStageResized);
 		onStageResized(null);
 

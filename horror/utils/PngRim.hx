@@ -5,6 +5,7 @@ import haxe.io.BytesOutput;
 import haxe.io.BytesInput;
 import sys.io.File;
 
+// https://github.com/fgenesis/pngrim
 class PngRim {
 
 	var width:Int;
@@ -17,10 +18,14 @@ class PngRim {
 	public static function processFile(path:String):Void {
 		var p = new PngRim();
 		p.load(path + ".png");
-		p.process();
-		p.save(path + ".png");
 		p.makeOpaque();
-		p.save(path + "_color.png");
+		p.save(path + "_original_color.png");
+
+		p.load(path + ".png");
+		p.process();
+		p.save(path + "_processed.png");
+		p.makeOpaque();
+		p.save(path + "_processed_color.png");
 	}
 
 	public function load(path:String) {
@@ -57,7 +62,6 @@ class PngRim {
 		_solid = new Array<Int>();
 		for(i in 0 ... w * h) _solid.push(0);
 
-		var P = new Array<Pos>();
 		var R = new Array<Pos>();
 		var Q = new Array<Pos>();
 
@@ -80,28 +84,25 @@ class PngRim {
 					}
 
 					if(p.n > 0) {
-						P.push(p);
+						Q.push(p);
 					}
 				}
 			}
 		}
 
-		while(P.length > 0) {
-			trace('P: ' + P.length);
+		var cm = new Map<Int, Int>();
+		var iterations = 1000;
+		while(iterations --> 0 && Q.length > 0) {
+			trace('N: $iterations, Q: ${Q.length}');
 
-			P.sort(sorter);
-			while(P.length > 0) {
-				Q.push(P.pop());
-			}
-
-			trace('Q: ' + Q.length);
+			Q.sort(sorter);
 
 			while(Q.length > 0) {
-				var r = 0;
-				var g = 0;
-				var b = 0;
-				var c = 0;
-				var p = Q.shift();
+				var r = 0.0;
+				var g = 0.0;
+				var b = 0.0;
+				var c = 0.0;
+				var p = Q.pop();
 				if(solid(p.x, p.y)) {
 					continue;
 				}
@@ -113,8 +114,7 @@ class PngRim {
 						for(ox in -1...2) {
 							var x = p.x + ox;
 							if(x >= 0 && x < w) {
-								if(solid(x, y))
-								{
+								if(solid(x, y)) {
 									r += getR(x, y);
 									g += getG(x, y);
 									b += getB(x, y);
@@ -132,8 +132,6 @@ class PngRim {
 				setPixel(p.x, p.y, Std.int(r / c), Std.int(g / c), Std.int(b / c), a);
 			}
 
-			trace('R: ' + R.length);
-
 			while(R.length > 0) {
 				var p = R.pop();
 				if(solid(p.x, p.y)) {
@@ -148,14 +146,15 @@ class PngRim {
 						}
 					}
 				}
-				P.push(p);
+				Q.push(p);
 			}
 		}
 	}
 
 	function sorter(p1:Pos, p2:Pos):Int {
-		return p1.n - p2.n;
+		return p2.n - p1.n;
 	}
+
 	@:extern inline function getB(x:Int, y:Int):Int { return pixels.get(((x + y*width) << 2) + 0); }
 	@:extern inline function getG(x:Int, y:Int):Int { return pixels.get(((x + y*width) << 2) + 1); }
 	@:extern inline function getR(x:Int, y:Int):Int { return pixels.get(((x + y*width) << 2) + 2); }
@@ -168,6 +167,18 @@ class PngRim {
 		pixels.set(p+1, g);
 		pixels.set(p+2, r);
 		pixels.set(p+3, a);
+	}
+
+	@:extern inline function color24(x:Int, y:Int):Int {
+		var p = ((x + y*width) << 2);
+		return (pixels.get(p+2) << 16) | (pixels.get(p+1) << 8) | pixels.get(p);
+	}
+
+	@:extern inline function setColor24(x:Int, y:Int, v:Int) {
+		var p = ((x + y*width) << 2);
+		pixels.set(p+2, (v >> 16) & 0xFF);
+		pixels.set(p+1, (v >> 8) & 0xFF);
+		pixels.set(p  ,  v & 0xFF);
 	}
 }
 

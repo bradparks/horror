@@ -1,32 +1,28 @@
 package;
 
+import horror.render.Texture;
+import horror.render.Material;
+import horror.render.VertexStructure;
+import horror.render.Matrix4;
+import horror.app.Application;
+import horror.render.RenderContext;
 import horror.render.MeshBatcher;
 import horror.loaders.BatchLoader;
-import horror.debug.Debug;
+import horror.utils.Debug;
 import horror.memory.ByteArray;
 import horror.input.MouseEventType;
 import horror.input.MouseEvent;
 
 import horror.loaders.BaseLoader;
 import horror.loaders.BytesLoader;
-import horror.Horror;
 
 import horror.app.ScreenManager;
 import horror.app.LoopManager;
 
 import horror.render.VertexData;
-import horror.render.Mesh;
-import horror.render.RenderManager;
-import horror.render.Matrix4;
-import horror.render.VertexStructure;
-import horror.render.Shader;
-import horror.render.MeshBuffer;
-import horror.render.Texture;
-import horror.render.Material;
 
-class Main {
+class Main extends Application {
 
-	var _render:RenderManager;
 	var _cameraMatrix:Matrix4 = new Matrix4();
 	var _vertexStructure:VertexStructure;
 
@@ -42,10 +38,10 @@ class Main {
 	var _blobs:Array<Blob> = [];
 
 	public function new () {
-		Horror.initialize(start);
+		super();
 	}
 
-	function start() {
+	override public function start() {
 		var loader = new BatchLoader();
 		loader.add(new BytesLoader("assets/rect.png"));
 		loader.add(new BytesLoader("assets/checker.png"));
@@ -54,8 +50,6 @@ class Main {
 	}
 
 	function onLoaded(loader:BatchLoader) {
-		_render = Horror.render;
-
 		_vertexStructure = new VertexStructure();
 		_vertexStructure.add("aVertexPosition", VertexData.FloatN(2));
 		_vertexStructure.add("aTexCoord", VertexData.FloatN(2));
@@ -75,26 +69,18 @@ class Main {
 		_checkerMaterial.shader = _material.shader;
 		_checkerMaterial.texture = _checkerTexture;
 
-		Horror.input.onMouse.add(onMouse);
+		input.onMouse.add(onMouse);
 
 		_cameraMatrix.setTransform2D(0, 0, 1, 0);
 
 		_batcher = new MeshBatcher(_vertexStructure);
 
-		Horror.loop.updated.add(update);
-		Horror.screen.resized.add(resize);
-		resize(Horror.screen);
+		loop.updated.add(update);
 
 		for(i in 0...10) {
 			_blobs.push(new Blob());
 		}
 	}
-
-	function resize(screen:ScreenManager) {
-		_render.setOrtho2D(0, 0, screen.width, screen.height);
-		trace('resize: ${screen.width}x${screen.height}');
-	}
-
 
 	function update(loop:LoopManager) {
 		var dt = loop.deltaTime;
@@ -103,8 +89,8 @@ class Main {
 		_cameraMatrix.setTransform2D(0, 0, 1.0 + 0.2* Math.sin(_time*5), 0);
 
 		// shows that clear is actually worked and frames updated
-		_render.clear(0.2 + 0.2 * Math.sin(_time), 0.2, 0.3);
-		_render.begin();
+		context.clear(0.2 + 0.2 * Math.sin(_time), 0.2, 0.3);
+		context.begin();
 
 		_batcher.begin();
 
@@ -130,7 +116,7 @@ class Main {
 
 		_batcher.end();
 
-		_render.end();
+		context.end();
 	}
 
 	function onMouse(e:MouseEvent) {

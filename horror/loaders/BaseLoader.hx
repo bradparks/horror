@@ -1,7 +1,7 @@
 package horror.loaders;
 
-import horror.debug.Debug;
 import horror.signals.Signal1;
+import horror.utils.Debug;
 
 class BaseLoader {
 
@@ -78,7 +78,7 @@ class BaseLoader {
 
 	public function getContent<T>(type:Class<T>):T {
 		if(!Std.is(content, type)) {
-			Debug.logWarning('"$url" has ${Type.getClass(content)}, but $type requested');
+			Debug.warning('"$url" has ${Type.getClass(content)}, but $type requested');
 			return null;
 		}
 
