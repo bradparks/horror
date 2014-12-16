@@ -9,9 +9,17 @@ __WARNING!__ There is NO canvas/displaylists fallbacks! While Horror is a GPU fr
 
 Supports all OpenFL targets. I do regulary tests on targets: `flash`, `html5`, `mac`.
 
-Includes essential utilities: `debug` and `singals`
+Includes essential utilities: `debug` and `singals` in `horror.std` package
+
+## Requirements
+
+- Haxe 3 git version (the latest builds)
+- `openfl` (the latest one)
+- `hxcpp` (the latest one)
+- `format`
 
 ## Install
+
 ```
 git clone https://github.com/eliasku/horror.git
 haxelib dev horror horror
