@@ -1,6 +1,6 @@
 package horror.utils;
 
-import horror.debug.Debug;
+import horror.std.Debug;
 
 using horror.utils.ArrayUtil;
 

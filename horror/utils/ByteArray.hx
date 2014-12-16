@@ -1,4 +1,4 @@
-package horror.memory;
+package horror.utils;
 
 import haxe.io.BytesData;
 import haxe.io.Bytes;

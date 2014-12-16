@@ -14,6 +14,8 @@ class BytesLoader extends BaseLoader
 {
     var _loader:URLLoader;
 
+	public var bytes(default, null):Bytes;
+
     public function new(url:String = null) {
         super(url);
     }
@@ -55,12 +57,14 @@ class BytesLoader extends BaseLoader
 		var byteArray = cast (_loader.data, ByteArray);
 
 		#if js
-		content = Bytes.ofData(byteArray.byteView);
+		bytes = Bytes.ofData(byteArray.byteView);
 		#elseif flash
-		content = Bytes.ofData(byteArray);
+		bytes = Bytes.ofData(byteArray);
 		#else
-		content = byteArray;
+		bytes = byteArray;
 		#end
+
+		content = bytes;
 
 		cleanup();
         performComplete();

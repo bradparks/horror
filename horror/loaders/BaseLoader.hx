@@ -15,6 +15,8 @@ class BaseLoader {
 
 	var _progress:Float = 0.0;
 
+	var _startTime:Float;
+
 	public function new(url:String = null) {
 		this.url = url;
 	}
@@ -25,6 +27,7 @@ class BaseLoader {
 	}
 
 	public function load():Void {
+		_startTime = haxe.Timer.stamp();
 		error = null;
 		completed = false;
 		loading = true;
@@ -47,6 +50,9 @@ class BaseLoader {
 	}
 
 	function performComplete():Void {
+		var sec = haxe.Timer.stamp() - _startTime;
+		Debug.log('"$url" completed: $sec');
+
 		completed = true;
 		loading = false;
 		loaded.dispatch(this);

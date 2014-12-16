@@ -1,6 +1,6 @@
 package horror.utils;
 
-import horror.debug.Debug;
+import horror.std.Debug;
 
 class ArrayUtil {
 	public static function shuffle<T>(a:Array<T>):Void

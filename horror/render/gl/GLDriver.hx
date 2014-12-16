@@ -9,7 +9,6 @@ import openfl.gl.GLShader;
 import openfl.display.OpenGLView;
 
 import horror.render.VertexStructure;
-import horror.memory.ByteArray;
 
 /*** CONTEXT ***/
 class GLDriver {
