@@ -22,7 +22,7 @@ I do regulary tests on targets: `flash`, `html5`, `mac`.
 
 ### Quick start
 
-#### Prequisites
+#### Prerequisites
 
 Horror is developing with the latest Haxe Toolkit version, cuz no right BytesData support for `js` target in stable 3.1.3 version.
 
