@@ -2,7 +2,7 @@ package ;
 
 import horror.app.Application;
 import horror.render.Color32;
-import horror.render.MeshBuffer;
+import horror.renderex.MeshBuffer;
 
 class Blob {
 

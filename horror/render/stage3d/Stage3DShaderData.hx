@@ -1,9 +1,8 @@
 package horror.render.stage3d;
 
-import flash.display3D.Context3DProgramType;
-import flash.display3D.Context3DProgramType;
 import flash.display3D.Context3D;
 import flash.display3D.Program3D;
+import flash.display3D.Context3DProgramType;
 import flash.utils.ByteArray in FlashByteArray;
 
 class Stage3DShaderData {

@@ -1,5 +1,7 @@
 package ;
-import horror.render.MeshBuffer;
+
+import horror.renderex.MeshBuffer;
+
 class Quad {
 
 	public static function draw(buffer:MeshBuffer, x:Int, y:Int, width:Int, height:Int, color:Int = 0xffffffff) {

@@ -1,9 +1,14 @@
-package horror.render;
+package horror.renderex;
 
-import horror.utils.DisposeUtil;
+import horror.render.VertexStructure;
+import horror.render.Color32;
+import horror.render.Mesh;
+
 import horror.memory.FastIO;
 import horror.memory.FastMemory;
-import horror.utils.Debug;
+
+import horror.std.DisposeUtil;
+import horror.std.Debug;
 
 // init: set vertex structure
 // 1. 'begin' the buffer

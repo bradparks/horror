@@ -1,8 +1,13 @@
-package horror.render;
+package horror.renderex;
 
-import horror.Horror;
-import horror.utils.DisposeUtil;
-import horror.utils.Debug;
+import horror.render.Matrix4;
+import horror.render.Material;
+import horror.render.Mesh;
+import horror.render.VertexStructure;
+import horror.render.RenderContext;
+
+import horror.std.DisposeUtil;
+import horror.std.Debug;
 
 class MeshBatcher {
 

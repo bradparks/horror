@@ -1,9 +1,9 @@
 package horror.render;
 
-import horror.memory.ByteArray;
-import horror.app.ScreenManager;
-import horror.utils.Debug;
-import horror.utils.DisposeUtil;
+import haxe.io.Bytes;
+
+import horror.std.Debug;
+import horror.std.DisposeUtil;
 
 #if flash
 
@@ -74,7 +74,7 @@ class RenderContext {
 			_cbOnReady = null;
 		}
 
-		blankTexture = Texture.createFromColor(1, 1, 0xffffffff);
+		blankTexture = Texture.createWhiteBlank(1, 1);
 	}
 
 	function onDriverRestored():Void {
@@ -175,10 +175,6 @@ class RenderContext {
 
 	function setMesh(mesh:Mesh):Void {
 		__driver.setMesh(mesh.__data);
-	}
-
-	function onScreenResized(screen:ScreenManager):Void {
-		resize(screen.width, screen.height);
 	}
 
 	inline function get_isLost():Bool {

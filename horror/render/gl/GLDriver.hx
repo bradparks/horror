@@ -1,10 +1,12 @@
 package horror.render.gl;
 
-import openfl.gl.GLShader;
-import openfl.Lib;
-import openfl.display.OpenGLView;
+import haxe.io.BytesData;
+import haxe.io.Bytes;
 
+import openfl.Lib;
 import openfl.gl.GL;
+import openfl.gl.GLShader;
+import openfl.display.OpenGLView;
 
 import horror.render.VertexStructure;
 import horror.memory.ByteArray;
@@ -88,12 +90,12 @@ class GLDriver {
 
 	/*** TEXTURES ***/
 
-	public function createTextureFromByteArray(width:Int, height:Int, pixels:ByteArrayData):GLTextureData {
+	public function createTextureFromBytes(width:Int, height:Int, bytesData:BytesData):GLTextureData {
 		var texture = GL.createTexture ();
 		GL.bindTexture (GL.TEXTURE_2D, texture);
 		GL.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
 		GL.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
-		GL.texImage2D (GL.TEXTURE_2D, 0, GL.RGBA, width, height, 0, GL.RGBA, GL.UNSIGNED_BYTE, GLTypes.getMemoryRange(pixels));
+		GL.texImage2D (GL.TEXTURE_2D, 0, GL.RGBA, width, height, 0, GL.RGBA, GL.UNSIGNED_BYTE, GLTypes.getMemoryRange(bytesData));
 		GL.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR);
 		GL.texParameteri (GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR);
 		GL.bindTexture (GL.TEXTURE_2D, null);
@@ -167,25 +169,25 @@ class GLDriver {
 		return new GLMeshData(vertexStructure);
 	}
 
-	public function uploadVertices(mesh:GLMeshData, data:ByteArrayData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
+	public function uploadVertices(mesh:GLMeshData, bytesData:BytesData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
 		GL.bindBuffer(GL.ARRAY_BUFFER, mesh.vertexBuffer);
 		if(bytesLength > mesh.vertexBufferLength) {
-			GL.bufferData(GL.ARRAY_BUFFER, GLTypes.getMemoryRange(data, bytesLength, bytesOffset), MESH_UPLOAD_TECHNIQUE);
+			GL.bufferData(GL.ARRAY_BUFFER, GLTypes.getMemoryRange(bytesData, bytesLength, bytesOffset), MESH_UPLOAD_TECHNIQUE);
 			mesh.vertexBufferLength = bytesLength;
 		}
 		else {
-			GL.bufferSubData(GL.ARRAY_BUFFER, 0, GLTypes.getMemoryRange(data, bytesLength, bytesOffset));
+			GL.bufferSubData(GL.ARRAY_BUFFER, 0, GLTypes.getMemoryRange(bytesData, bytesLength, bytesOffset));
 		}
 	}
 
-	public function uploadIndices(mesh:GLMeshData, data:ByteArrayData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
+	public function uploadIndices(mesh:GLMeshData, bytesData:BytesData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
 		GL.bindBuffer(GL.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
 		if(bytesLength > mesh.indexBufferLength) {
-			GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, GLTypes.getMemoryRange(data, bytesLength, bytesOffset), MESH_UPLOAD_TECHNIQUE);
+			GL.bufferData(GL.ELEMENT_ARRAY_BUFFER, GLTypes.getMemoryRange(bytesData, bytesLength, bytesOffset), MESH_UPLOAD_TECHNIQUE);
 			mesh.indexBufferLength = bytesLength;
 		}
 		else {
-			GL.bufferSubData(GL.ELEMENT_ARRAY_BUFFER, 0, GLTypes.getMemoryRange(data, bytesLength, bytesOffset));
+			GL.bufferSubData(GL.ELEMENT_ARRAY_BUFFER, 0, GLTypes.getMemoryRange(bytesData, bytesLength, bytesOffset));
 		}
 	}
 

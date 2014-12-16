@@ -3,8 +3,9 @@ package horror.app;
 import horror.render.RenderContext;
 import horror.audio.AudioManager;
 import horror.input.InputManager;
-import horror.utils.DisposeUtil;
-import horror.utils.Debug;
+
+import horror.std.DisposeUtil;
+import horror.std.Debug;
 
 class Application {
 

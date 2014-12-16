@@ -1,15 +1,14 @@
 package horror.loaders;
 
-import horror.memory.ByteArray;
-import openfl.Assets;
+import haxe.io.Bytes;
+
 import openfl.net.URLLoader;
 import openfl.net.URLRequest;
 import openfl.net.URLLoaderDataFormat;
 import openfl.events.Event;
 import openfl.events.IOErrorEvent;
 import openfl.events.ProgressEvent;
-
-import horror.memory.ByteArray;
+import openfl.utils.ByteArray;
 
 class BytesLoader extends BaseLoader
 {
@@ -53,7 +52,16 @@ class BytesLoader extends BaseLoader
     }
 
     function onComplete(_):Void {
-		content = ByteArray.fromData(_loader.data);
+		var byteArray = cast (_loader.data, ByteArray);
+
+		#if js
+		content = Bytes.ofData(byteArray.byteView);
+		#elseif flash
+		content = Bytes.ofData(byteArray);
+		#else
+		content = byteArray;
+		#end
+
 		cleanup();
         performComplete();
     }

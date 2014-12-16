@@ -1,6 +1,6 @@
 package horror.render;
 
-import horror.utils.Debug;
+import horror.std.Debug;
 
 #if flash
 

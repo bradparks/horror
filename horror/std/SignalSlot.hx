@@ -1,4 +1,4 @@
-package horror.signals;
+package horror.std;
 
 class SignalSlot<TListener> {
 

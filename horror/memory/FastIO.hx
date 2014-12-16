@@ -4,7 +4,7 @@ package horror.memory;
 *   Underliying data for efficiently data access
 **/
 
-#if html5
+#if js
 typedef FastIOInner = horror.memory.JsBytesWrapper;
 
 #elseif flash
@@ -13,10 +13,8 @@ typedef FastIOInner = Int;
 #elseif cpp
 typedef FastIOInner = haxe.io.BytesData;
 
-#else
-typedef FastIOInner = horror.memory.ByteArray.ByteArrayData;
-
 #end
+
 
 /**
 *   Class provides efficiently typed access in fixed memory snapshot

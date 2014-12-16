@@ -1,9 +1,10 @@
 package horror.render.gl;
 
-import openfl.utils.ArrayBufferView;
-import openfl.gl.GL;
+import haxe.io.BytesData;
 
-import horror.memory.ByteArray;
+import openfl.gl.GL;
+import openfl.utils.ArrayBufferView;
+
 import horror.render.BlendFactor;
 
 class GLTypes {
@@ -35,25 +36,38 @@ class GLTypes {
 
 	}
 
-	#if html5
+	#if js
 
-	inline public static function getMemoryRange(data:ByteArrayData, length:Int = 0, offset:Int = 0):ArrayBufferView {
-		if((length == 0 || data.byteView.length == length) && offset == 0) {
-			return data.byteView;
+	inline public static function getMemoryRange(bytesData:BytesData, length:Int = 0, offset:Int = 0):ArrayBufferView {
+		if((length == 0 || bytesData.length == length) && offset == 0) {
+			return bytesData;
 		}
-		return data.byteView.subarray(offset, offset+length);
+		return bytesData.subarray(offset, offset+length);
 	}
 
 	#else
 
-	static var MEMORY_RANGE:ArrayBufferView = untyped new ArrayBufferView(0);
+	static var MEMORY_RANGE:ArrayBufferView = untyped new ArrayBufferView(1);
 
-	inline public static function getMemoryRange(data:ByteArrayData, length:Int = 0, offset:Int = 0):ArrayBufferView {
-		length = length > 0 ? length : data.byteLength;
+	public static function getMemoryRange(bytesData:BytesData, length:Int = 0, offset:Int = 0):ArrayBufferView {
+		var bytesTotal = bytesData.length;
+		length = length > 0 ? length : bytesTotal;
+
 		var mr = MEMORY_RANGE;
-		untyped mr.buffer = data;
+
+		// memory range
 		untyped mr.byteLength = length;
 		untyped mr.byteOffset = offset;
+
+		// ByteArray's Bytes modification
+		untyped mr.buffer.b = bytesData;
+		untyped mr.buffer.length = bytesTotal;
+
+		// extra, not needed:
+		//untyped mr.buffer.bytesAvailable = totalLength;
+		//untyped mr.buffer.byteLength = totalLength;
+		//untyped mr.bytes = bytesData;
+
 		return mr;
 	}
 

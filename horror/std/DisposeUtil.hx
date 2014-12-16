@@ -1,4 +1,4 @@
-package horror.utils;
+package horror.std;
 
 // I don't use IDisposable pattern, cuz it's waste of time. Just implement dispose yourself
 // and generate inlined dispose-pattern code-block. It's haxe advantages, let's use them!

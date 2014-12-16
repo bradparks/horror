@@ -1,7 +1,7 @@
 package horror.input;
 
-import horror.utils.DisposeUtil;
-import horror.signals.Signal1;
+import horror.std.DisposeUtil;
+import horror.std.Signal1;
 
 import openfl.Lib;
 import openfl.display.Stage;

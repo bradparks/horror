@@ -1,16 +1,16 @@
-package horror.signals;
+package horror.std;
 
-import horror.signals.BaseSignal;
-import horror.signals.SignalSlot;
+import horror.std.BaseSignal;
+import horror.std.SignalSlot;
 
-@:access(horror.signals.BaseSignal)
-class Signal2<A, B> extends BaseSignal<A -> B -> Void> {
+@:access(horror.std.BaseSignal)
+class Signal0 extends BaseSignal<Void->Void> {
 
 	public function new(name:String = null) {
 		super(name);
 	}
 
-	public function dispatch(a:A, b:B):Void {
+	public function dispatch():Void {
 		var slots = _slots;
 		var len:Int = _slots.length;
 		if(len == 0) {
@@ -20,8 +20,8 @@ class Signal2<A, B> extends BaseSignal<A -> B -> Void> {
 		_slotsNeedCopying = true;
 
 		for(i in 0...len) {
-			var f:SignalSlot<A -> B -> Void> = slots[i];
-			f.listener(a, b);
+			var f:SignalSlot<Void->Void> = slots[i];
+			f.listener();
 			if(f.once) {
 				remove(f.listener);
 			}

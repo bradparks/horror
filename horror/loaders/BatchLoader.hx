@@ -1,7 +1,7 @@
 package horror.loaders;
 
-import horror.signals.Signal1;
-import horror.utils.Debug;
+import horror.std.Signal1;
+import horror.std.Debug;
 
 class BatchLoader {
 

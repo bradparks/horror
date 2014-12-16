@@ -1,6 +1,6 @@
 package horror.memory;
 
-#if html5
+#if js
 
 import js.html.Uint8Array;
 import js.html.Float32Array;
@@ -28,10 +28,17 @@ class JsBytesWrapper
 		data = value;
 		io.data = value;
 
-		var buffer = value.buffer;
-		arrayUShort = new Uint16Array(buffer);
-		arrayUInt = new Uint32Array(buffer);
-		arrayFloat = new Float32Array(buffer);
+		if(value != null) {
+			var buffer = value.buffer;
+			arrayUShort = new Uint16Array(buffer);
+			arrayUInt = new Uint32Array(buffer);
+			arrayFloat = new Float32Array(buffer);
+		}
+		else {
+			arrayUShort = null;
+			arrayUInt = null;
+			arrayFloat = null;
+		}
 
         return value;
     }

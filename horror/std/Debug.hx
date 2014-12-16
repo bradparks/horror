@@ -1,4 +1,4 @@
-package horror.utils;
+package horror.std;
 
 import haxe.PosInfos;
 

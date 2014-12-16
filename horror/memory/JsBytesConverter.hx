@@ -1,6 +1,9 @@
 package horror.memory;
 
-#if html5
+#if js
+
+import horror.std.Debug;
+
 import js.html.DataView;
 import js.html.Float32Array;
 import js.html.Uint32Array;
@@ -9,7 +12,6 @@ import js.html.Uint16Array;
 import js.html.Uint8Array;
 import js.html.ArrayBuffer;
 
-@:extern
 class JsBytesConverter
 {
     public var data:Uint8Array;
@@ -27,34 +29,22 @@ class JsBytesConverter
         _f32 = new Float32Array(_buffer);
     }
 
-    public static function __init__()
-    {
-        function littleEndian():Bool {
-            var buffer = new ArrayBuffer(2);
-            new DataView(buffer).setInt16(0, 256, true);
-            return new Int16Array(buffer)[0] == 256;
-        }
-        if(!littleEndian()) {
-            throw "Hey! This is big-endian commons. Could we run correctly? Just delete me if it works!";
-        }
-    }
-
-    public inline function getUInt8(pos:Int):Int {
+	@:extern inline public function getUInt8(pos:Int):Int {
         return data[pos];
     }
 
-    public inline function getFloat32(pos:Int) : Float {
+	@:extern inline public function getFloat32(pos:Int) : Float {
         _ui32[0] = getUInt32(pos);
         return _f32[0];
     }
 
-    public inline function getUInt16(pos:Int) : Int {
+	@:extern inline public function getUInt16(pos:Int) : Int {
         _ui8[0] = getUInt8(pos);
         _ui8[1] = getUInt8(pos + 1);
         return _ui16[0];
     }
 
-    public inline function getUInt32(pos:Int):Int {
+	@:extern inline public function getUInt32(pos:Int):Int {
         _ui8[0] = getUInt8(pos);
         _ui8[1] = getUInt8(pos + 1);
         _ui8[2] = getUInt8(pos + 2);
@@ -62,11 +52,11 @@ class JsBytesConverter
         return _ui32[0];
     }
 
-    public inline function setUInt8(pos:Int, v:Int):Void {
+	@:extern inline public function setUInt8(pos:Int, v:Int):Void {
         data[pos] = v;
     }
 
-    public inline function setFloat32(pos:Int, v:Float) : Void
+	@:extern inline public function setFloat32(pos:Int, v:Float) : Void
     {
         _f32[0] = v;
         setUInt8(pos    , _ui8[0]);
@@ -75,14 +65,14 @@ class JsBytesConverter
         setUInt8(pos + 3, _ui8[3]);
     }
 
-    public inline function setUInt16(pos:Int, v:Int) : Void
+	@:extern inline public function setUInt16(pos:Int, v:Int) : Void
     {
         _ui16[0] = v;
         setUInt8(pos    , _ui8[0]);
         setUInt8(pos + 1, _ui8[1]);
     }
 
-    public inline function setUInt32(pos:Int, v:Int) : Void
+	@:extern inline public function setUInt32(pos:Int, v:Int) : Void
     {
         _ui32[0] = v;
         setUInt8(pos    , _ui8[0]);
@@ -90,5 +80,19 @@ class JsBytesConverter
         setUInt8(pos + 2, _ui8[2]);
         setUInt8(pos + 3, _ui8[3]);
     }
+
+	static function isLittleEndian() {
+		var buffer = new ArrayBuffer(2);
+		new DataView(buffer).setInt16(0, 256, true);
+		return new Int16Array(buffer)[0] == 256;
+	}
+
+	public static function isAvailable():Bool {
+		if(!isLittleEndian()) {
+			Debug.warning("Hey! This is big-endian commons. Could we run correctly? Just delete me if it works!");
+			return false;
+		}
+		return true;
+	}
 }
 #end

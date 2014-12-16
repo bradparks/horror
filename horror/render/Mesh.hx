@@ -1,6 +1,7 @@
 package horror.render;
 
-import horror.memory.ByteArray;
+import haxe.io.BytesData;
+
 import horror.render.RenderContext;
 
 class Mesh {
@@ -22,11 +23,11 @@ class Mesh {
 		}
 	}
 
-	function uploadVertices(data:ByteArrayData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
-		RenderContext.__driver.uploadVertices(__data, data, bytesLength, bytesOffset);
+	public function uploadVertices(bytesData:BytesData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
+		RenderContext.__driver.uploadVertices(__data, bytesData, bytesLength, bytesOffset);
 	}
 
-	function uploadIndices(data:ByteArrayData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
-		RenderContext.__driver.uploadIndices(__data, data, bytesLength, bytesOffset);
+	public function uploadIndices(bytesData:BytesData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
+		RenderContext.__driver.uploadIndices(__data, bytesData, bytesLength, bytesOffset);
 	}
 }

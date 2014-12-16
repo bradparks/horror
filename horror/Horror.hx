@@ -1,5 +1,0 @@
-package horror;
-
-class Horror {
-
-}

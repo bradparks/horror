@@ -7,8 +7,8 @@ import openfl.display.Stage;
 import openfl.events.Event;
 import openfl.Lib;
 
-import horror.utils.DisposeUtil;
-import horror.signals.Signal1;
+import horror.std.DisposeUtil;
+import horror.std.Signal1;
 
 class ScreenManager {
 

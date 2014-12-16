@@ -1,15 +1,18 @@
 package;
 
+import haxe.io.Bytes;
+import horror.app.Application;
+
 import horror.render.Texture;
 import horror.render.Material;
 import horror.render.VertexStructure;
 import horror.render.Matrix4;
-import horror.app.Application;
+import horror.render.VertexData;
 import horror.render.RenderContext;
-import horror.render.MeshBatcher;
-import horror.loaders.BatchLoader;
-import horror.utils.Debug;
-import horror.memory.ByteArray;
+
+import horror.renderex.TextureUtil;
+import horror.renderex.MeshBatcher;
+
 import horror.input.MouseEventType;
 import horror.input.MouseEvent;
 
@@ -19,7 +22,11 @@ import horror.loaders.BytesLoader;
 import horror.app.ScreenManager;
 import horror.app.LoopManager;
 
-import horror.render.VertexData;
+import horror.loaders.BatchLoader;
+
+import horror.memory.ByteArray;
+
+import horror.std.Debug;
 
 class Main extends Application {
 
@@ -56,10 +63,8 @@ class Main extends Application {
 		_vertexStructure.add("aColorMult", VertexData.PackedColor);
 		_vertexStructure.compile();
 
-		_texture = new Texture();
-		_texture.loadPngFromBytes(loader.get("assets/rect.png", ByteArray));
-		_checkerTexture = new Texture();
-		_checkerTexture.loadPngFromBytes(loader.get("assets/checker.png", ByteArray));
+		_texture = TextureUtil.createFromPng(loader.get("assets/rect.png", Bytes));
+		_checkerTexture = TextureUtil.createFromPng(loader.get("assets/checker.png", Bytes));
 
 		_material= new Material();
 		_material.shader = SimpleShader.create();

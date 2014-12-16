@@ -1,7 +1,9 @@
 package horror.render;
 
+import haxe.io.Bytes;
+
 import horror.render.RenderContext;
-import horror.memory.ByteArray;
+import horror.std.Debug;
 
 class Texture {
 
@@ -14,24 +16,12 @@ class Texture {
 	public function new() {
 	}
 
-	public function loadFromBytes(width:Int, height:Int, pixels:ByteArray) {
+	public function loadFromBytes(width:Int, height:Int, pixels:Bytes) {
 		dispose();
+		__checkSize(width, height);
 		this.width = width;
 		this.height = height;
-		__data = RenderContext.__driver.createTextureFromByteArray(width, height, pixels.data);
-	}
-
-	public function loadPngFromBytes(bytes:ByteArray) {
-		dispose();
-
-		var png:PngFormat = new PngFormat();
-		if(png.decode(bytes)) {
-			loadFromBytes(png.width, png.height, png.imageBytes);
-		}
-		else {
-			trace("[Texture.loadPngFromBytes] Cant decode PNG bytes");
-		}
-		png.dispose();
+		__data = RenderContext.__driver.createTextureFromBytes(width, height, pixels.getData());
 	}
 
 	public function dispose() {
@@ -43,16 +33,23 @@ class Texture {
 		}
 	}
 
-	public static function createFromColor(width:Int, height:Int, color:Int):Texture {
-		var texture = new Texture();
-		var bytes = new ByteArray(width*height*4);
-		for(i in 0...width*height) {
-			bytes.writeUInt32(color);
-		}
-		texture.loadFromBytes(1, 1, bytes);
-		bytes.clear();
-		return texture;
+	public static function createFromBytes(width:Int, height:Int, pixels:Bytes):Texture {
+		__checkSize(width, height);
+		var t = new Texture();
+		t.loadFromBytes(width, height, pixels);
+		return t;
 	}
 
+	public static function createWhiteBlank(width:Int = 1, height:Int = 1):Texture {
+		__checkSize(width, height);
+		var len = width*height*4;
+		var whiteBytes = Bytes.alloc(len);
+		whiteBytes.fill(0, len, 0xFF);
+		return createFromBytes(width, height, whiteBytes);
+	}
+
+	static function __checkSize(w:Int, h:Int) {
+		Debug.assert(w > 0 && h > 0 && w <= 4096 && h <= 4096);
+	}
 
 }

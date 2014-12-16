@@ -155,15 +155,8 @@ class ByteArray {
 	}
 
 	public inline function toBytes():Bytes {
-		// HTML5: very expensive :(
 		#if html5
-			var bytesData:BytesData = new BytesData();
-			var byteView = data.byteView;
-			for(i in 0 ... byteView.length) {
-				bytesData.push(byteView[i]);
-			}
-			return Bytes.ofData(bytesData);
-			//return Bytes.ofData(data.byteView);
+		return Bytes.ofData(data.byteView);
 		#elseif flash
 		return Bytes.ofData(data);
 		#else
@@ -174,8 +167,10 @@ class ByteArray {
     public inline function toBytesData():BytesData {
         #if flash
 		return data;
-        #else
-        return toBytes().getData();
+        #elseif html5
+		return data.byteView;
+		#else
+        return data.getData();
         #end
     }
 }

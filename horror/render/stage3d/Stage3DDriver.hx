@@ -1,5 +1,7 @@
 package horror.render.stage3d;
 
+import haxe.io.BytesData;
+
 import flash.Lib;
 import flash.events.Event;
 import flash.geom.Matrix3D in FlashMatrix3D;
@@ -22,8 +24,7 @@ import flash.display3D.Program3D;
 import flash.display3D.textures.Texture;
 
 import horror.render.VertexStructure;
-import horror.memory.ByteArray;
-import horror.utils.Debug;
+import horror.std.Debug;
 
 using StringTools;
 
@@ -162,9 +163,9 @@ class Stage3DDriver {
 
 	/*** TEXTURES ***/
 
-	public function createTextureFromByteArray(width:Int, height:Int, pixels:ByteArrayData):Stage3DTextureData {
+	public function createTextureFromBytes(width:Int, height:Int, bytesData:BytesData):Stage3DTextureData {
 		var texture = _context.createTexture(width, height, Context3DTextureFormat.BGRA, false); // 0 - streamingLevel
-		texture.uploadFromByteArray(pixels, 0, 0);
+		texture.uploadFromByteArray(bytesData, 0, 0);
 		return texture;
 	}
 
@@ -177,14 +178,14 @@ class Stage3DDriver {
 		return new Stage3DMeshData(vertexStructure);
 	}
 
-	public function uploadVertices(mesh:Stage3DMeshData, data:ByteArrayData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
+	public function uploadVertices(mesh:Stage3DMeshData, bytesData:BytesData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
 		mesh.resizeVertexBuffer(_context, bytesLength);
-		mesh.vertexBuffer.uploadFromByteArray(data, bytesOffset, 0, Std.int(mesh.vertexBytesLength / mesh.vertexStructure.stride));
+		mesh.vertexBuffer.uploadFromByteArray(bytesData, bytesOffset, 0, Std.int(mesh.vertexBytesLength / mesh.vertexStructure.stride));
 	}
 
-	public function uploadIndices(mesh:Stage3DMeshData, data:ByteArrayData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
+	public function uploadIndices(mesh:Stage3DMeshData, bytesData:BytesData, bytesLength:Int = 0, bytesOffset:Int = 0):Void {
 		mesh.resizeIndexBuffer(_context, bytesLength);
-		mesh.indexBuffer.uploadFromByteArray(data, bytesOffset, 0, mesh.indexBytesLength >> 1);
+		mesh.indexBuffer.uploadFromByteArray(bytesData, bytesOffset, 0, mesh.indexBytesLength >> 1);
 	}
 
 	public function disposeMesh(mesh:Stage3DMeshData):Void {

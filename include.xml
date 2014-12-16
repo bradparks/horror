@@ -11,6 +11,11 @@
 
 	<haxelib name="openfl" />
 	<haxelib name="format" />
+	<section id="vars">
+		<set name="hxcpp_api_level" value="311" if="cpp" />
+	</section>
+<!--
+	<flag value='-DHXCPP_API_LEVEL=311' if="cpp" />-->
 
 	<sample path="samples" if="create" />
 

@@ -1,10 +1,10 @@
 package horror.app;
 
-import horror.utils.Debug;
 import haxe.Timer;
 
-import horror.utils.DisposeUtil;
-import horror.signals.Signal1;
+import horror.std.Debug;
+import horror.std.DisposeUtil;
+import horror.std.Signal1;
 
 import openfl.Lib;
 import openfl.events.Event;

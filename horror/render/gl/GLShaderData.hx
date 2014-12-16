@@ -1,9 +1,9 @@
 package horror.render.gl;
 
-import openfl.gl.GLShader;
 import openfl.gl.GL;
-import openfl.gl.GLUniformLocation;
+import openfl.gl.GLShader;
 import openfl.gl.GLProgram;
+import openfl.gl.GLUniformLocation;
 
 class GLShaderData {
 

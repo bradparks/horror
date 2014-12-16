@@ -1,61 +1,6 @@
-package horror.utils;
+package utils;
 /*
-import haxe.io.Bytes;
-import haxe.io.BytesOutput;
-import haxe.io.BytesInput;
-import sys.io.File;
-
-// https://github.com/fgenesis/pngrim
-class PngRim {
-
-	var width:Int;
-	var height:Int;
-	var pixels:Bytes;
-
-	var _solid:Array<Int>;
-
-	public function new () {}
-
-	public static function processFile(path:String):Void {
-		var p = new PngRim();
-		p.load(path + ".png");
-		p.makeOpaque();
-		p.save(path + "_original_color.png");
-
-		p.load(path + ".png");
-		p.process();
-		p.save(path + "_processed.png");
-		p.makeOpaque();
-		p.save(path + "_processed_color.png");
-	}
-
-	public function load(path:String) {
-		var bytes = File.getBytes(path);
-		var byteInput = new BytesInput (bytes, 0, bytes.length);
-		var reader = new format.png.Reader(byteInput);
-		var d = reader.read();
-		var hdr = format.png.Tools.getHeader(d);
-		pixels = format.png.Tools.extract32(d);
-		width = hdr.width;
-		height = hdr.height;
-	}
-
-	public function save(path:String) {
-		var d = format.png.Tools.build32BGRA(width, height, pixels);
-		var byteOut = new BytesOutput();
-		var writer = new format.png.Writer(byteOut);
-		writer.write(d);
-		File.saveBytes(path, byteOut.getBytes());
-	}
-
-	public function makeOpaque() {
-		var p = 3;
-		for(i in 0...width*height) {
-			pixels.set(p, 255);
-			p += 4;
-		}
-	}
-
+class ImageSolidify {
 	public function process() {
 		var w = width;
 		var h = height;
@@ -152,6 +97,46 @@ class PngRim {
 		}
 	}
 
+	function sorter(p1:Pos, p2:Pos):Int {
+		return p2.n - p1.n;
+	}
 
+	@:extern inline function getB(x:Int, y:Int):Int { return pixels.get(((x + y*width) << 2) + 0); }
+	@:extern inline function getG(x:Int, y:Int):Int { return pixels.get(((x + y*width) << 2) + 1); }
+	@:extern inline function getR(x:Int, y:Int):Int { return pixels.get(((x + y*width) << 2) + 2); }
+	@:extern inline function getA(x:Int, y:Int):Int { return pixels.get(((x + y*width) << 2) + 3); }
+	@:extern inline function solid(x:Int, y:Int):Bool { return _solid[x + y*width] > 0; }
+	@:extern inline function setSolid(x:Int, y:Int, v:Int):Void { _solid[x + y*width] = v; }
+	@:extern inline function setPixel(x:Int, y:Int, r:Int, g:Int, b:Int, a:Int) {
+		var p = ((x + y*width) << 2);
+		pixels.set(p+0, b);
+		pixels.set(p+1, g);
+		pixels.set(p+2, r);
+		pixels.set(p+3, a);
+	}
+
+	@:extern inline function color24(x:Int, y:Int):Int {
+		var p = ((x + y*width) << 2);
+		return (pixels.get(p+2) << 16) | (pixels.get(p+1) << 8) | pixels.get(p);
+	}
+
+	@:extern inline function setColor24(x:Int, y:Int, v:Int) {
+		var p = ((x + y*width) << 2);
+		pixels.set(p+2, (v >> 16) & 0xFF);
+		pixels.set(p+1, (v >> 8) & 0xFF);
+		pixels.set(p  ,  v & 0xFF);
+	}
 }
-*/
+
+private class Pos {
+
+	public var x:Int;
+	public var y:Int;
+	public var n:Int;
+
+	public function new(x:Int, y:Int, n:Int) {
+		this.x = x;
+		this.y = y;
+		this.n = n;
+	}
+}*/
