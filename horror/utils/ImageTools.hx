@@ -2,20 +2,15 @@ package horror.utils;
 
 class ImageTools {
 
+	// https://github.com/fgenesis/pngrim
 	public static function solidify(image:ImageBytes, iterations:Int = 4):Void {
+
 		image.lock();
 		var w = image.width;
 		var h = image.height;
+		var solidMap = new BitMask(w, h);
+		solidMap.outerFlag = true;
 
-		var solidArray = new Array<Int>();
-		for(i in 0 ... w * h) solidArray.push(0);
-
-		function solid(x:Int, y:Int):Bool {
-			return solidArray[x + y*w] > 0;
-		}
-		function setSolid(x:Int, y:Int, v:Int):Void {
-			solidArray[x + y*w] = v;
-		}
 		function sorter(p1:Pos, p2:Pos):Int {
 			return p2.n - p1.n;
 		}
@@ -26,11 +21,11 @@ class ImageTools {
 		for(y in 0...h) {
 			for(x in 0...w) {
 				if(image.a(x, y) > 0) {
-					setSolid(x, y, 1);
+					solidMap.set(x, y, true);
 				}
 				else {
 					var p = new Pos(x, y, 0);
-					setSolid(x, y, 0);
+					solidMap.set(x, y, false);
 					for(oy in -1...2) {
 						for(ox in -1...2) {
 							var xn = x + ox;
@@ -59,7 +54,7 @@ class ImageTools {
 				var b = 0.0;
 				var c = 0.0;
 				var p = Q.pop();
-				if(solid(p.x, p.y)) {
+				if(solidMap.get(p.x, p.y)) {
 					continue;
 				}
 
@@ -70,7 +65,7 @@ class ImageTools {
 						for(ox in -1...2) {
 							var x = p.x + ox;
 							if(x >= 0 && x < w) {
-								if(solid(x, y)) {
+								if(solidMap.get(x, y)) {
 									r += image.r(x, y);
 									g += image.g(x, y);
 									b += image.b(x, y);
@@ -84,20 +79,20 @@ class ImageTools {
 					}
 				}
 
-				setSolid(p.x, p.y, 1);
+				solidMap.set(p.x, p.y, true);
 				image.setPixel(p.x, p.y, Std.int(r / c), Std.int(g / c), Std.int(b / c), a);
 			}
 
 			while(R.length > 0) {
 				var p = R.pop();
-				if(solid(p.x, p.y)) {
+				if(solidMap.get(p.x, p.y)) {
 					continue;
 				}
 				for(oy in -1...2) {
 					for(ox in -1...2) {
 						var xn = p.x + ox;
 						var yn = p.y + oy;
-						if(xn < w && yn < h && solid(xn, yn)) {
+						if(xn < w && yn < h && solidMap.get(xn, yn)) {
 							++p.n;
 						}
 					}
