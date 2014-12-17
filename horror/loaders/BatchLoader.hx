@@ -1,7 +1,7 @@
 package horror.loaders;
 
 import horror.std.Signal1;
-import horror.std.Debug;
+import horror.std.Horror;
 
 class BatchLoader {
 
@@ -77,19 +77,19 @@ class BatchLoader {
 
 	public function get<T>(url:String, type:Class<T>):T {
 		if(url == null || !lookup.exists(url)) {
-			Debug.warning('"$url" not found');
+			Horror.warning('"$url" not found');
 			return null;
 		}
 
 		var loader = lookup.get(url);
 		if(loader == null) {
-			Debug.warning('"$url" loader not found');
+			Horror.warning('"$url" loader not found');
 			return null;
 		}
 
 		var content = loader.getContent(type);
 		if(content == null) {
-			Debug.warning('"$url" has empty content');
+			Horror.warning('"$url" has empty content');
 			return null;
 		}
 

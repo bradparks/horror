@@ -7,8 +7,7 @@ import horror.render.Mesh;
 import horror.memory.FastIO;
 import horror.memory.FastMemory;
 
-import horror.std.DisposeUtil;
-import horror.std.Debug;
+import horror.std.Horror;
 
 // init: set vertex structure
 // 1. 'begin' the buffer
@@ -40,9 +39,9 @@ class MeshBuffer {
 	var _indexBytesTotal:Int;
 
 	public function new(maxVertexSize:Int = 24, maxVertices:Int = 0xFFFF, maxIndices:Int = 0x100000) {
-		Debug.assert(maxVertexSize > 0 && maxVertexSize % 4 == 0);
-		Debug.assert(maxVertices <= 0xFFFF && maxVertices > 0);
-		Debug.assert(maxIndices <= 0x100000 && maxIndices > 0);
+		Horror.assert(maxVertexSize > 0 && maxVertexSize % 4 == 0);
+		Horror.assert(maxVertices <= 0xFFFF && maxVertices > 0);
+		Horror.assert(maxIndices <= 0x100000 && maxIndices > 0);
 
 		_vertexBytesTotal = maxVertices * maxVertexSize;
 		_indexBytesTotal = maxIndices << 1;
@@ -51,14 +50,14 @@ class MeshBuffer {
 	}
 
 	public function dispose():Void {
-		Debug.assert(_mem != null);
+		Horror.assert(_mem != null);
 
-		DisposeUtil.dispose(_mem, true);
+		Horror.dispose(_mem, true);
 		io = FastIO.NULL;
 	}
 
 	public function begin():Void {
-		Debug.assert(isStarted == false);
+		Horror.assert(isStarted == false);
 
 		io = _mem.lock();
 		isStarted = true;
@@ -70,7 +69,7 @@ class MeshBuffer {
 	}
 
 	inline public function end():Void {
-		Debug.assert(isStarted == true);
+		Horror.assert(isStarted == true);
 
 		isStarted = false;
 		_mem.unlock();
@@ -91,7 +90,7 @@ class MeshBuffer {
 	}
 
 	public function flush(mesh:Mesh):Void {
-		Debug.assert(isStarted == false && mesh.vertexStructure.stride == stride);
+		Horror.assert(isStarted == false && mesh.vertexStructure.stride == stride);
 
 		var bytesData = _mem.data;
 		var indexStartPosition = getIndexStartPosition();
@@ -155,7 +154,7 @@ class MeshBuffer {
 	}
 
 	public function setVertexStructure(vs:VertexStructure):Void {
-		Debug.assert(vs != null && vs.stride > 0);
+		Horror.assert(vs != null && vs.stride > 0);
 		stride = vs.stride;
 	}
 }

@@ -1,6 +1,7 @@
 package horror.input;
 
-import horror.std.DisposeUtil;
+import horror.std.Module;
+import horror.std.Horror;
 import horror.std.Signal1;
 
 import openfl.Lib;
@@ -9,7 +10,7 @@ import openfl.events.MouseEvent in FlashMouseEvent;
 import openfl.events.KeyboardEvent in FlashKeyboardEvent;
 import openfl.events.TouchEvent in FlashTouchEvent;
 
-class InputManager {
+class InputManager extends Module {
 
 	public var onMouse(default, null):Signal1<MouseEvent> = new Signal1<MouseEvent>("Mouse Event");
 	public var onKeyboard(default, null):Signal1<KeyboardEvent> = new Signal1<KeyboardEvent>("Keyboard Event");
@@ -22,6 +23,8 @@ class InputManager {
 	var _currentKeys:Map<Int, Bool> = new Map<Int, Bool>();
 
 	public function new() {
+		super();
+
 		_stage = Lib.current.stage;
 
 		_stage.addEventListener(FlashMouseEvent.MOUSE_DOWN, handleMouseEvent);
@@ -35,7 +38,9 @@ class InputManager {
 		_keyboardEvent.manager = this;
 	}
 
-	public function dispose():Void {
+	public override function dispose():Void {
+		super.dispose();
+
 		if(_stage != null) {
 			_stage.removeEventListener(FlashMouseEvent.MOUSE_DOWN, handleMouseEvent);
 			_stage.removeEventListener(FlashMouseEvent.MOUSE_UP, handleMouseEvent);
@@ -51,8 +56,8 @@ class InputManager {
 			_keyboardEvent = null;
 		}
 
-		DisposeUtil.dispose(onMouse);
-		DisposeUtil.dispose(onKeyboard);
+		Horror.dispose(onMouse);
+		Horror.dispose(onKeyboard);
 	}
 
 	function handleMouseEvent(e:FlashMouseEvent):Void {

@@ -1,10 +1,7 @@
 package horror.std;
 
-import horror.std.BaseSignal;
-import horror.std.SignalSlot;
-
-@:access(horror.std.BaseSignal)
-class Signal0 extends BaseSignal<Void->Void> {
+@:access(horror.std.SignalBase)
+class Signal0 extends SignalBase<Void->Void> {
 
 	public function new(name:String = null) {
 		super(name);

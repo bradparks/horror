@@ -3,7 +3,7 @@ package horror.render;
 import haxe.io.Bytes;
 
 import horror.render.RenderContext;
-import horror.std.Debug;
+import horror.std.Horror;
 
 class Texture {
 
@@ -49,7 +49,7 @@ class Texture {
 	}
 
 	static function __checkSize(w:Int, h:Int) {
-		Debug.assert(w > 0 && h > 0 && w <= 4096 && h <= 4096);
+		Horror.assert(w > 0 && h > 0 && w <= 4096 && h <= 4096);
 	}
 
 }

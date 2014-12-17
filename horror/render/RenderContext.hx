@@ -1,9 +1,7 @@
 package horror.render;
 
-import haxe.io.Bytes;
-
-import horror.std.Debug;
-import horror.std.DisposeUtil;
+import horror.std.Module;
+import horror.std.Horror;
 
 #if flash
 
@@ -24,14 +22,12 @@ typedef ShaderData = horror.render.gl.GLShaderData;
 @:access(horror.render.Texture)
 @:access(horror.render.Shader)
 @:access(horror.render.Mesh)
-class RenderContext {
+class RenderContext extends Module {
 
 	@:allow(horror.render.Texture)
 	@:allow(horror.render.Shader)
 	@:allow(horror.render.Mesh)
 	static var __driver(default, null):RenderDriver;
-
-	public static var current(default, null):RenderContext;
 
 	public var width(default, null):Int = 0;
 	public var height(default, null):Int = 0;
@@ -54,12 +50,13 @@ class RenderContext {
 	var _needToUploadMVP:Bool = true;
 
 	public function new() {
+		super();
+
 		__driver = new RenderDriver();
-		current = this;
 	}
 
 	public function initialize(onReady: Void -> Void):Void {
-		Debug.assert(isInitialized == false);
+		Horror.assert(isInitialized == false);
 		_cbOnReady = onReady;
 		__driver.onInitialize = onDriverInitialized;
 		__driver.onRestore = onDriverRestored;
@@ -81,10 +78,11 @@ class RenderContext {
 
 	}
 
-	public function dispose():Void {
-		DisposeUtil.dispose(__driver);
+	public override function dispose():Void {
+		super.dispose();
+
+		Horror.dispose(__driver);
 		isInitialized = false;
-		current = null;
 	}
 
 	public function clear(r:Float, g:Float, b:Float):Void {
@@ -123,7 +121,7 @@ class RenderContext {
 	}
 
 	public function drawMesh(mesh:Mesh, material:Material):Void {
-		Debug.assert(mesh != null && mesh.numTriangles > 0 && material != null);
+		Horror.assert(mesh != null && mesh.numTriangles > 0 && material != null);
 
 		setMaterial(material);
 		setModelViewProjection();

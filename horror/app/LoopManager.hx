@@ -2,8 +2,8 @@ package horror.app;
 
 import haxe.Timer;
 
-import horror.std.Debug;
-import horror.std.DisposeUtil;
+import horror.std.Module;
+import horror.std.Horror;
 import horror.std.Signal1;
 
 import openfl.Lib;
@@ -11,7 +11,7 @@ import openfl.events.Event;
 import openfl.display.Stage;
 import openfl.display.OpenGLView;
 
-class LoopManager {
+class LoopManager extends Module {
 
 	public var timeStamp(default, null):Float = 0.0;
 	public var deltaTime(default, null):Float = 0.001;
@@ -23,19 +23,23 @@ class LoopManager {
 	var _stage:Stage;
 
 	public function new():Void {
+		super();
+
 		_stage = Lib.current.stage;
 
 		initLoop();
 		timeStamp = getTimeStamp();
 	}
 
-	public function dispose():Void {
+	public override function dispose():Void {
+		super.dispose();
+
 		if(_stage != null) {
 			termLoop();
 			_stage = null;
 		}
 
-		DisposeUtil.dispose(updated);
+		Horror.dispose(updated);
 	}
 
 	inline function getTimeStamp():Float {
@@ -81,7 +85,7 @@ class LoopManager {
 		}
 		else {
 			#if html5
-			Debug.warning("WebGL is not supported or use -dom flag in gl project file");
+			Horror.warning("WebGL is not supported or use -dom flag in gl project file");
 			#end
 		}
 	}

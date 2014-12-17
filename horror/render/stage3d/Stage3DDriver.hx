@@ -24,7 +24,7 @@ import flash.display3D.Program3D;
 import flash.display3D.textures.Texture;
 
 import horror.render.VertexStructure;
-import horror.std.Debug;
+import horror.std.Horror;
 
 using StringTools;
 
@@ -111,7 +111,7 @@ class Stage3DDriver {
 	}
 
 	public function drawIndexedTriangles(triangles:Int):Void {
-		Debug.assert(_currentIndexBuffer != null);
+		Horror.assert(_currentIndexBuffer != null);
 		_context.drawTriangles(_currentIndexBuffer, 0, triangles);
 	}
 

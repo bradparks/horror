@@ -7,10 +7,11 @@ import openfl.display.Stage;
 import openfl.events.Event;
 import openfl.Lib;
 
-import horror.std.DisposeUtil;
+import horror.std.Horror;
+import horror.std.Module;
 import horror.std.Signal1;
 
-class ScreenManager {
+class ScreenManager extends Module {
 
 	// Viewport
 	public var x(default, null):Int = 0;
@@ -27,6 +28,8 @@ class ScreenManager {
 	var _stage:Stage;
 
 	public function new() {
+		super();
+
 		_stage = Lib.current.stage;
 		_stage.scaleMode = StageScaleMode.NO_SCALE;
 		_stage.align = StageAlign.TOP_LEFT;
@@ -38,13 +41,15 @@ class ScreenManager {
 		dpi = Std.int(Capabilities.screenDPI);
 	}
 
-	public function dispose():Void {
+	public override function dispose():Void {
+		super.dispose();
+
 		if(_stage != null) {
 			_stage.removeEventListener(Event.RESIZE, onStageResized);
 			_stage = null;
 		}
 
-		DisposeUtil.dispose(resized);
+		Horror.dispose(resized);
 	}
 
 	function onStageResized(e:Event):Void {

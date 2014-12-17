@@ -1,6 +1,6 @@
 package horror.render;
 
-import horror.std.Debug;
+import horror.std.Horror;
 
 #if flash
 
@@ -36,7 +36,7 @@ class Matrix4 implements ArrayAccess<Float> {
 	}
 
 	public function copyFromArray(data:Array<Float>) {
-		Debug.assert(data.length >= 16);
+		Horror.assert(data.length >= 16);
 		for(i in 0...16) {
 			rawData[i] = data[i];
 		}
@@ -57,7 +57,7 @@ class Matrix4 implements ArrayAccess<Float> {
 	}
 
 	public static function multiply(left:Matrix4, right:Matrix4, destination:Matrix4):Matrix4 {
-		Debug.assert(left != null && right != null && destination != null);
+		Horror.assert(left != null && right != null && destination != null);
 
 		var m1 = right.rawData;
 		var m2 = left.rawData;

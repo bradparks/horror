@@ -1,11 +1,17 @@
 package horror.audio;
 
-class AudioManager {
+import horror.std.Module;
+
+class AudioManager extends Module {
 
 	public function new() {
+		super();
+
+
 	}
 
-	public function dispose():Void {
+	public override function dispose():Void {
+		super.dispose();
 
 	}
 }

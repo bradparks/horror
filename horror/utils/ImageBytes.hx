@@ -4,8 +4,7 @@ import haxe.io.Bytes;
 
 import horror.memory.FastMemory;
 import horror.memory.FastIO;
-import horror.std.DisposeUtil;
-import horror.std.Debug;
+import horror.std.Horror;
 
 class ImageBytes {
 
@@ -18,8 +17,8 @@ class ImageBytes {
 	var _fastIO:FastIO;
 
 	public function new(width:Int, height:Int, bytes:Bytes) {
-		Debug.assert(width > 0 && height > 0);
-		Debug.assert(bytes != null && bytes.length >= width*height*4);
+		Horror.assert(width > 0 && height > 0);
+		Horror.assert(bytes != null && bytes.length >= width*height*4);
 
 		this.width = width;
 		this.height = height;
@@ -40,7 +39,7 @@ class ImageBytes {
 	}
 
 	public function dispose():Void {
-		DisposeUtil.dispose(_fastMem);
+		Horror.dispose(_fastMem);
 	}
 
 	@:extern inline function _addr(x:Int, y:Int):Int {

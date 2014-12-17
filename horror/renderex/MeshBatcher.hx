@@ -6,8 +6,7 @@ import horror.render.Mesh;
 import horror.render.VertexStructure;
 import horror.render.RenderContext;
 
-import horror.std.DisposeUtil;
-import horror.std.Debug;
+import horror.std.Horror;
 
 class MeshBatcher {
 
@@ -26,7 +25,7 @@ class MeshBatcher {
 	var _modelViewMatrix:Matrix4;
 
 	public function new(vs:VertexStructure) {
-		context = RenderContext.current;
+		context = Horror.get(RenderContext);
 		buffer = new MeshBuffer(vs.stride);
 		buffer.setVertexStructure(vs);
 		vertexStructure = vs;
@@ -38,7 +37,7 @@ class MeshBatcher {
 		if(isStarted) {
 			end();
 		}
-		DisposeUtil.dispose(buffer);
+		Horror.dispose(buffer);
 		for(mesh in _meshes) {
 			mesh.dispose();
 		}
@@ -48,7 +47,7 @@ class MeshBatcher {
 	}
 
 	public function begin():Void {
-		Debug.assert(isStarted == false);
+		Horror.assert(isStarted == false);
 		isStarted = true;
 
 		_currentMeshIndex = 0;
@@ -60,7 +59,7 @@ class MeshBatcher {
 	}
 
 	public function end():Void {
-		Debug.assert(isStarted == true);
+		Horror.assert(isStarted == true);
 
 		renderBatch(false);
 		if(buffer.isStarted) {

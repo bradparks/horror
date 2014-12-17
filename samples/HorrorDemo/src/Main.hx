@@ -1,7 +1,6 @@
 package;
 
 import haxe.io.Bytes;
-import horror.app.Application;
 
 import horror.render.Texture;
 import horror.render.Material;
@@ -16,17 +15,9 @@ import horror.renderex.MeshBatcher;
 import horror.input.MouseEventType;
 import horror.input.MouseEvent;
 
-import horror.loaders.BaseLoader;
 import horror.loaders.BytesLoader;
-
-import horror.app.ScreenManager;
-import horror.app.LoopManager;
-
 import horror.loaders.BatchLoader;
 
-import horror.memory.ByteArray;
-
-import horror.std.Debug;
 
 class Main extends Application {
 
@@ -48,7 +39,7 @@ class Main extends Application {
 		super();
 	}
 
-	override public function start() {
+	override public function initialize() {
 		var loader = new BatchLoader();
 		loader.add(new BytesLoader("assets/rect.png"));
 		loader.add(new BytesLoader("assets/checker.png"));
@@ -80,15 +71,14 @@ class Main extends Application {
 
 		_batcher = new MeshBatcher(_vertexStructure);
 
-		loop.updated.add(update);
-
 		for(i in 0...10) {
 			_blobs.push(new Blob());
 		}
+
+		start();
 	}
 
-	function update(loop:LoopManager) {
-		var dt = loop.deltaTime;
+	public override function update(dt:Float) {
 		_time += dt;
 
 		_cameraMatrix.setTransform2D(0, 0, 1.0 + 0.2* Math.sin(_time*5), 0);

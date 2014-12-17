@@ -2,7 +2,7 @@ package horror.memory;
 
 #if js
 
-import horror.std.Debug;
+import horror.std.Horror;
 
 import js.html.DataView;
 import js.html.Float32Array;
@@ -89,7 +89,7 @@ class JsBytesConverter
 
 	public static function isAvailable():Bool {
 		if(!isLittleEndian()) {
-			Debug.warning("Hey! This is big-endian commons. Could we run correctly? Just delete me if it works!");
+			Horror.warning("Hey! This is big-endian commons. Could we run correctly? Just delete me if it works!");
 			return false;
 		}
 		return true;

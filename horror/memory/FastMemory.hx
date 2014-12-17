@@ -9,7 +9,7 @@ import openfl.utils.Endian;
 import flash.system.ApplicationDomain;
 #end
 
-import horror.std.Debug;
+import horror.std.Horror;
 
 /**
 *
@@ -26,7 +26,6 @@ import horror.std.Debug;
 *
 **/
 
-@:access(horror.memory.ByteArray)
 class FastMemory {
 
     public var length(get, never):Int;
@@ -38,11 +37,11 @@ class FastMemory {
     public function new(bytesData:BytesData) {
 #if debug
 		if(!_availabilityChecked) {
-			Debug.assert(isAvailable, "FastMemory is not available.");
+			Horror.assert(isAvailable, "FastMemory is not available.");
 			_availabilityChecked = true;
 		}
 #end
-		Debug.assert(bytesData != null);
+		Horror.assert(bytesData != null);
 
         data = bytesData;
 
@@ -66,7 +65,7 @@ class FastMemory {
 
 	// unlock, deselect memory
 	public function dispose(clearBuffer:Bool = false):Void {
-		Debug.assert(data != null);
+		Horror.assert(data != null);
 
 		if(_current == this) {
 			unlock();

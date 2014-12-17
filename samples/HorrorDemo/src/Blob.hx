@@ -1,6 +1,7 @@
 package ;
 
-import horror.app.Application;
+import horror.app.ScreenManager;
+import horror.std.Horror;
 import horror.render.Color32;
 import horror.renderex.MeshBuffer;
 
@@ -17,8 +18,9 @@ class Blob {
 	var t:Float = 0.;
 
 	public function new() {
-		x = Math.random() * Application.current.screen.width;
-		y = Math.random() * Application.current.screen.height;
+		var screen = Horror.get(ScreenManager);
+		x = Math.random() * screen.width;
+		y = Math.random() * screen.height;
 		vx = 100. - 200. * Math.random();
 		vy = 100. - 200. * Math.random();
 		color = Math.random() > 0.5 ? 0xff00ff00 : 0xffff0000;
@@ -53,7 +55,7 @@ class Blob {
 	}
 
 	public function checkBounds():Void {
-		var screen = Application.current.screen;
+		var screen = Horror.get(ScreenManager);
 
 		if(x > screen.width) {
 			vx = -vx;

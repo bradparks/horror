@@ -1,7 +1,7 @@
 package horror.loaders;
 
+import horror.std.Horror;
 import horror.std.Signal1;
-import horror.std.Debug;
 
 class BaseLoader {
 
@@ -51,7 +51,7 @@ class BaseLoader {
 
 	function performComplete():Void {
 		var sec = haxe.Timer.stamp() - _startTime;
-		Debug.log('"$url" completed: $sec');
+		Horror.log('"$url" completed: $sec');
 
 		completed = true;
 		loading = false;
@@ -84,7 +84,7 @@ class BaseLoader {
 
 	public function getContent<T>(type:Class<T>):T {
 		if(!Std.is(content, type)) {
-			Debug.warning('"$url" has ${Type.getClass(content)}, but $type requested');
+			Horror.warning('"$url" has ${Type.getClass(content)}, but $type requested');
 			return null;
 		}
 

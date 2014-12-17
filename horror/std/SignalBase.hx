@@ -2,7 +2,7 @@ package horror.std;
 
 import Reflect;
 
-class BaseSignal<T> {
+class SignalBase<T> {
 
 	var _name:String = null;
 	var _slots:Array<SignalSlot<T>> = new Array<SignalSlot<T>>();
