@@ -5,6 +5,8 @@ import haxe.io.Bytes;
 
 #if (flash || openfl)
 typedef ByteArrayData = flash.utils.ByteArray;
+#elseif lime
+typedef ByteArrayData = lime.utils.ByteArray;
 #elseif snow
 typedef ByteArrayData = snow.utils.ByteArray;
 #end

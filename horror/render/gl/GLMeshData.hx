@@ -5,6 +5,18 @@ package horror.render.gl;
 import openfl.gl.GL;
 import openfl.gl.GLBuffer;
 
+#elseif lime
+
+import lime.graphics.opengl.GL;
+import lime.graphics.opengl.GLBuffer;
+
+#elseif snow
+
+import snow.render.opengl.GL;
+import snow.render.opengl.GL.GLBuffer;
+
+#end
+
 class GLMeshData {
 
 	public var vertexStructure:VertexStructure;
@@ -24,4 +36,3 @@ class GLMeshData {
 		GL.deleteBuffer(vertexBuffer);
 	}
 }
-#end

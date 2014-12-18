@@ -66,6 +66,7 @@ class BaseLoader {
 
 	function setProgress(pr:Float):Void {
 		_progress = pr;
+		trace('pr $url : $pr');
 	}
 
 	function resolveProgress():Float {

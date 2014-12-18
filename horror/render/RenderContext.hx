@@ -10,19 +10,12 @@ typedef MeshData = horror.render.stage3d.Stage3DMeshData;
 typedef TextureData = horror.render.stage3d.Stage3DTextureData;
 typedef ShaderData = horror.render.stage3d.Stage3DShaderData;
 
-#elseif openfl
+#elseif (openfl || lime || snow)
 
 typedef RenderDriver = horror.render.gl.GLDriver;
 typedef MeshData = horror.render.gl.GLMeshData;
 typedef TextureData = horror.render.gl.GLTextureData;
 typedef ShaderData = horror.render.gl.GLShaderData;
-
-#elseif snow
-
-typedef RenderDriver = horror.render.snow.GLDriver;
-typedef MeshData = horror.render.snow.GLMeshData;
-typedef TextureData = horror.render.snow.GLTextureData;
-typedef ShaderData = horror.render.snow.GLShaderData;
 
 #end
 

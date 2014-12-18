@@ -34,6 +34,7 @@ class BatchLoader {
 	}
 
 	public function load():Void {
+
 		isCompleted = false;
 		isLoading = true;
 		loadersTotal = loaders.length;
@@ -46,12 +47,15 @@ class BatchLoader {
 	}
 
 	function loaderLoaded(sender:BaseLoader):Void {
+
 		++loadersCompleted;
 		checkComplete();
 	}
 
 	function checkComplete():Void {
+
 		if(isLoading && !isCompleted && loadersCompleted >= loadersTotal) {
+
 			isCompleted = true;
 			isLoading = false;
 			loaded.dispatch(this);

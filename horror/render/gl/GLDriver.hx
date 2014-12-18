@@ -1,14 +1,27 @@
 package horror.render.gl;
 
-#if openfl
-
 import haxe.io.BytesData;
 import haxe.io.Bytes;
+
+#if openfl
 
 import openfl.Lib;
 import openfl.gl.GL;
 import openfl.gl.GLShader;
 import openfl.display.OpenGLView;
+
+#elseif lime
+
+import lime.graphics.Renderer;
+import lime.graphics.opengl.GL;
+import lime.graphics.opengl.GLShader;
+
+#elseif snow
+
+import snow.render.opengl.GL;
+import snow.render.opengl.GL.GLShader;
+
+#end
 
 import horror.render.VertexStructure;
 
@@ -21,15 +34,33 @@ class GLDriver {
 	public var onRestore:Void->Void;
 	public var onInitialize:Void->Void;
 
+	#if openfl
 	var _stage:openfl.display.Stage;
+	#end
+
 	var _currentShader:GLShaderData;
 
 	public function new() {}
 
 	public function initialize():Void {
+		#if openfl
+
 		_stage = Lib.current.stage;
 		_stage.addEventListener(OpenGLView.CONTEXT_LOST, __onContextLost);
 		_stage.addEventListener(OpenGLView.CONTEXT_RESTORED, __onContextRestored);
+
+		#elseif lime
+
+		Renderer.onRenderContextLost.add(__onContextLost);
+		Renderer.onRenderContextRestored.add(__onContextRestored);
+
+		#elseif snow
+
+		// TODO:
+		//Renderer.onRenderContextLost.add(__onContextLost);
+		//Renderer.onRenderContextRestored.add(__onContextRestored);
+
+		#end
 
 		//GL.colorMask (true, true, true, false);
 		GL.cullFace(GL.FRONT_AND_BACK);
@@ -53,9 +84,24 @@ class GLDriver {
 	}
 
 	public function dispose():Void {
+		#if openfl
+
 		_stage.removeEventListener(OpenGLView.CONTEXT_LOST, __onContextLost);
 		_stage.removeEventListener(OpenGLView.CONTEXT_RESTORED, __onContextRestored);
 		_stage = null;
+
+		#elseif lime
+
+		Renderer.onRenderContextLost.remove(__onContextLost);
+		Renderer.onRenderContextRestored.remove(__onContextRestored);
+
+		#elseif snow
+
+		// TODO:
+		//Renderer.onRenderContextLost.remove(__onContextLost);
+		//Renderer.onRenderContextRestored.remove(__onContextRestored);
+
+		#end
 
 		onRestore = null;
 		onInitialize = null;
@@ -200,7 +246,7 @@ class GLDriver {
 
 
 	/*** Context lost/restored events ***/
-	function __onContextLost(_) {
+	function __onContextLost(#if openfl _ #end) {
 		isLost = true;
 	}
 
@@ -211,5 +257,3 @@ class GLDriver {
 		}
 	}
 }
-
-#end

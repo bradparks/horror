@@ -31,6 +31,7 @@ class FlashDriver {
 
 	public var resized:Void->Void;
 	public var updated:Void->Void;
+	public var render:Void->Void;
 	public var mouse:Int->Int->MouseEventType->MouseEventButton->Void;
 	public var keys:UInt->KeyboardEventType->Void;
 
@@ -141,6 +142,7 @@ class FlashDriver {
 
 	function onUpdate(args):Void {
 		updated();
+		render();
 	}
 
 	function onStageResized(_) {

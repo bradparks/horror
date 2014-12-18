@@ -10,6 +10,10 @@ typedef Matrix3D_Data = flash.Vector<Float>;
 
 typedef Matrix3D_Data = lime.utils.Float32Array;
 
+#elseif openfl
+
+typedef Matrix3D_Data = openfl.utils.Float32Array;
+
 #elseif snow
 
 typedef Matrix3D_Data = snow.utils.Float32Array;

@@ -23,7 +23,7 @@ mov v0, va1
 mov v1, va2
 ";
 
-	#elseif openfl
+	#elseif (snow || openfl || lime)
 	private static var FRAGMENT_CODE:String =
 	"varying vec2 vTexCoord;
 			varying vec4 vColorMult;

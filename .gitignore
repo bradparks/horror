@@ -1,5 +1,7 @@
 .DS_Store
 export/
+export_lime/
+export_snow/
 out/
 .idea/
 /*.iml

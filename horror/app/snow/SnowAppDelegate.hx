@@ -4,9 +4,9 @@ import snow.App;
 import snow.types.Types;
 
 @:allow(horror.app.snow.SnowDriver)
-class SnowBaseApp extends App {
+class SnowAppDelegate extends App {
 
-	static var __instance:SnowBaseApp;
+	static var __instance:SnowAppDelegate;
 
 	static var __keyDown:Int->Void;
 	static var __keyUp:Int->Void;
@@ -29,7 +29,11 @@ class SnowBaseApp extends App {
 
 		app.window.onevent = handleWindowEvent;
 		app.window.onrender = __onRender;
+
+		__startHorrorApp();
 	}
+
+	function __startHorrorApp():Void {}
 
 	override function update( delta:Float ) {
 		if(__update == null) return;

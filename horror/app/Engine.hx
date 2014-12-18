@@ -1,5 +1,6 @@
 package horror.app;
 
+import horror.std.Signal0;
 import horror.audio.AudioManager;
 import horror.input.InputManager;
 import horror.render.RenderContext;
@@ -8,8 +9,10 @@ import horror.std.Horror;
 import horror.std.Signal1;
 import horror.std.Module;
 
-#if flash
+#if (flash || openfl)
 private typedef ApplicationDriver = horror.app.flash.FlashDriver;
+#elseif lime
+private typedef ApplicationDriver = horror.app.lime.LimeDriver;
 #elseif snow
 private typedef ApplicationDriver = horror.app.snow.SnowDriver;
 #end
@@ -27,9 +30,9 @@ class Engine extends Module {
 	public var targetFrameRate(get, set):Int;
 
 	// Events
-	public var resized(default, null):Signal1<Engine> = new Signal1<Engine>("Resize Event");
-	public var updated(default, null):Signal1<Float> = new Signal1<Float>("Update Event");
-	public var renderFrame(default, null):Signal1<RenderContext> = new Signal1<RenderContext>("Render Event");
+	public var onUpdate(default, null):Signal1<Float> = new Signal1<Float>("Update Event");
+	public var onRender(default, null):Signal0 = new Signal0("Render Event");
+	public var onResize(default, null):Signal0 = new Signal0("Resize Event");
 
 	// Managers
 	public var input(default, null):InputManager;
@@ -51,9 +54,9 @@ class Engine extends Module {
 		audio = new AudioManager();
 
 		_driver = new ApplicationDriver();
-		_driver.updated = onUpdate;
-		_driver.resized = onResize;
-		_driver.render = onRender;
+		_driver.updated = handleUpdate;
+		_driver.resized = handleResize;
+		_driver.render = handleRender;
 		_driver.mouse = input.handleMouseEvent;
 		_driver.keys = input.handleKeyboardEvent;
 
@@ -62,8 +65,10 @@ class Engine extends Module {
 
 	public override function dispose() {
 		Horror.dispose(_driver);
-		Horror.dispose(updated);
-		Horror.dispose(resized);
+
+		Horror.dispose(onUpdate);
+		Horror.dispose(onResize);
+		Horror.dispose(onRender);
 
 		Horror.dispose(audio);
 		Horror.dispose(render);
@@ -85,7 +90,7 @@ class Engine extends Module {
 
 	function onRenderContextReady():Void {
 		timeStamp = time();
-		onResize();
+		handleResize();
 
 		if(_cbReady != null) {
 			_cbReady();
@@ -93,34 +98,29 @@ class Engine extends Module {
 		}
 	}
 
-	function onUpdate():Void {
+	function handleUpdate():Void {
 		var now:Float = time();
 		deltaTime = now - timeStamp;
 		timeStamp = now;
 
 		input.update();
 
-		updated.dispatch(deltaTime);
+		onUpdate.dispatch(deltaTime);
 	}
 
-	function onRender():Void {
-		renderFrame.dispatch(render);
+	function handleRender():Void {
+		onRender.dispatch();
 	}
 
-	function onResize():Void {
+	function handleResize():Void {
 		width = _driver.getWidth();
 		height = _driver.getHeight();
 		if(render.isInitialized) {
 			render.resize(width, height);
 			render.setOrtho2D(0, 0, width, height);
 		}
-		resized.dispatch(this);
+		onResize.dispatch();
 		trace('resized: $width x $height');
 	}
-
-	function doResize() {
-
-	}
-
 
 }

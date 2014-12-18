@@ -7,6 +7,22 @@ import openfl.gl.GLShader;
 import openfl.gl.GLProgram;
 import openfl.gl.GLUniformLocation;
 
+#elseif lime
+
+import lime.graphics.opengl.GL;
+import lime.graphics.opengl.GLShader;
+import lime.graphics.opengl.GLProgram;
+import lime.graphics.opengl.GLUniformLocation;
+
+#elseif snow
+
+import snow.render.opengl.GL;
+import snow.render.opengl.GL.GLShader;
+import snow.render.opengl.GL.GLProgram;
+import snow.render.opengl.GL.GLUniformLocation;
+
+#end
+
 class GLShaderData {
 
 	public var vertexAttributes:Array<Int> = [];
@@ -80,5 +96,3 @@ class GLShaderData {
 	}
 
 }
-
-#end

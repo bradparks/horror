@@ -23,7 +23,7 @@ class SnowDriver {
 	var _window:Window;
 
 	public function new() {
-		_app = untyped SnowBaseApp.__instance;
+		_app = untyped SnowAppDelegate.__instance;
 		_window = _app.app.window;
 		init();
 	}
@@ -60,18 +60,25 @@ class SnowDriver {
 	}
 
 	function init():Void {
-		SnowBaseApp.__resize = onWindowResize;
-		SnowBaseApp.__update = onUpdate;
-		SnowBaseApp.__render = onRender;
-		SnowBaseApp.__keyDown = onKeyDown;
-		SnowBaseApp.__keyUp = onKeyUp;
-		SnowBaseApp.__mouseDown = onMouseDown;
-		SnowBaseApp.__mouseUp = onMouseUp;
-		SnowBaseApp.__mouseMove = onMouseMove;
+		SnowAppDelegate.__resize = onWindowResize;
+		SnowAppDelegate.__update = onUpdate;
+		SnowAppDelegate.__render = onRender;
+		SnowAppDelegate.__keyDown = onKeyDown;
+		SnowAppDelegate.__keyUp = onKeyUp;
+		SnowAppDelegate.__mouseDown = onMouseDown;
+		SnowAppDelegate.__mouseUp = onMouseUp;
+		SnowAppDelegate.__mouseMove = onMouseMove;
 	}
 
 	function term():Void {
-		// TODO: clear delegates
+		SnowAppDelegate.__resize = null;
+		SnowAppDelegate.__update = null;
+		SnowAppDelegate.__render = null;
+		SnowAppDelegate.__keyDown = null;
+		SnowAppDelegate.__keyUp = null;
+		SnowAppDelegate.__mouseDown = null;
+		SnowAppDelegate.__mouseUp = null;
+		SnowAppDelegate.__mouseMove = null;
 	}
 
 	function onUpdate():Void {
