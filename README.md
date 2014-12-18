@@ -9,16 +9,20 @@ Horror provides low-level GPU render API based on classic dynamic batching and a
 
 ### Platforms
 
-Now based on OpenFL and support all his targets, but will be switched to Lime in the near future (when Lime will provide all needed API and it's architecture will be stable). Plan implement other backends (for example `snow`).
-
 - Flash (Stage3D)
 - HTML5 (WebGL)
 - Mac/Windows/Linux (OpenGL)
 - iOS/Android (OpenGL ES)
 
-__WARNING!__ There is NO canvas/displaylists fallbacks! While Horror is a GPU framework, it's running on Stage3D / WebGL / GL / GLES platforms only.
+Now implemented for OpenFL/Lime/Snow libraries and supports all his targets + clean Flash!
 
-I do regulary tests on targets: `flash`, `html5`, `mac`.
+__Native__ and __Web__ builds are compiled with `snow` or `lime` or `openfl`.
+
+__Flash__ build is compiled with `flash` or `lime` or `openfl`
+
+I regulary test `flash`, `html5` and `mac` builds produced from different libraries.
+
+__WARNING!__ There is NO canvas/displaylists fallbacks! While Horror is a GPU framework, it's running on Stage3D / WebGL / GL / GLES platforms only.
 
 ### Quick start
 
@@ -28,8 +32,12 @@ Horror is developing with the latest Haxe Toolkit version, cuz no right BytesDat
 
 - Haxe & Neko & Haxelib (the latest from git)
 - `hxcpp` (the latest from git)
-- `openfl`, `lime2.0.1` (the latest)
 - `format`
+
+Optional:
+- `openfl`, `lime2.0.1` (the latest)
+- `snow`, `flow`
+
 
 #### Install
 ```
@@ -40,15 +48,21 @@ haxelib dev horror horror
 #### Run Sample
 ```
 cd horror/samples/HorrorDemo
+
 lime test flash
 lime test html5
 lime test mac
+
+lime test html5 -Dhorror_lime
+
+flow run
+flow run web
 ```
 Happy coding with Haxe!
 
 ### TODO
 - [x] ImageBytes wrapper for fast image pixels manipulation by FastMemory API
-- [ ] BitMask
+- [x] BitMask
 - [x] Solidify filter (non-premultiplied alpha troubles: fix png color channel in 0 alpha, fix halo on borders, etc)
 - [ ] Auto/Manual lost context handling
 - [ ] Native images (textures and loading)
