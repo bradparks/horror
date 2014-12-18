@@ -1,5 +1,6 @@
 package;
 
+import horror.render.Color32;
 import haxe.io.Bytes;
 
 import horror.render.Texture;
@@ -7,7 +8,6 @@ import horror.render.Material;
 import horror.render.VertexStructure;
 import horror.render.Matrix4;
 import horror.render.VertexData;
-import horror.render.RenderContext;
 
 import horror.renderex.TextureUtil;
 import horror.renderex.MeshBatcher;
@@ -19,7 +19,7 @@ import horror.loaders.BytesLoader;
 import horror.loaders.BatchLoader;
 
 
-class Main extends Application {
+class Main extends BasicApp {
 
 	var _cameraMatrix:Matrix4 = new Matrix4();
 	var _vertexStructure:VertexStructure;
@@ -65,7 +65,7 @@ class Main extends Application {
 		_checkerMaterial.shader = _material.shader;
 		_checkerMaterial.texture = _checkerTexture;
 
-		input.onMouse.add(onMouse);
+		engine.input.onMouse.add(onMouse);
 
 		_cameraMatrix.setTransform2D(0, 0, 1, 0);
 
@@ -84,8 +84,8 @@ class Main extends Application {
 		_cameraMatrix.setTransform2D(0, 0, 1.0 + 0.2* Math.sin(_time*5), 0);
 
 		// shows that clear is actually worked and frames updated
-		context.clear(0.2 + 0.2 * Math.sin(_time), 0.2, 0.3);
-		context.begin();
+		engine.render.clear(0.2 + 0.2 * Math.sin(_time), 0.2, 0.3, 1.0);
+		engine.render.begin();
 
 		_batcher.begin();
 
@@ -111,17 +111,12 @@ class Main extends Application {
 
 		_batcher.end();
 
-		context.end();
+		engine.render.end();
 	}
 
 	function onMouse(e:MouseEvent) {
 		if(e.type == MouseEventType.DOWN) {
 			_material.texture = _material.texture == _texture ? null : _texture;
 		}
-
-		/*if(e.type == MouseEventType.UP) {
-			Horror.dispose();
-			openfl.system.System.exit(0);
-		}*/
 	}
 }

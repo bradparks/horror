@@ -29,12 +29,14 @@ class GLDriver {
 		_stage.addEventListener(OpenGLView.CONTEXT_LOST, __onContextLost);
 		_stage.addEventListener(OpenGLView.CONTEXT_RESTORED, __onContextRestored);
 
+		//GL.colorMask (true, true, true, false);
 		GL.cullFace(GL.FRONT_AND_BACK);
 		GL.depthMask(false);
 		GL.enable (GL.BLEND);
 		GL.disable(GL.DEPTH_TEST);
 		GL.disable(GL.STENCIL_TEST);
 		GL.disable(GL.DITHER);
+		GL.disable(GL.CULL_FACE);
 		//GL.disable(GL.FOG);
 		//GL.disable(GL.ALPHA_TEST);
 		//GL.pixelZoom(1, 1);
@@ -62,8 +64,8 @@ class GLDriver {
 		GL.viewport (0, 0, width, height);
 	}
 
-	public function clear(r:Float = 1, g:Float = 1, b:Float = 1):Void {
-		GL.clearColor (r, g, b, 1.0);
+	public function clear(r:Float = 1, g:Float = 1, b:Float = 1, a:Float = 1):Void {
+		GL.clearColor (r, g, b, a);
 		GL.clear (GL.COLOR_BUFFER_BIT);
 	}
 

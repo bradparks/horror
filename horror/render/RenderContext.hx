@@ -33,6 +33,7 @@ class RenderContext extends Module {
 	public var height(default, null):Int = 0;
 	public var isLost(get, never):Bool;
 
+	//public var backgroundColor:Color32;
 	public var blankTexture(default, null):Texture;
 
 	public var isInitialized(default, null):Bool = false;
@@ -66,12 +67,12 @@ class RenderContext extends Module {
 	function onDriverInitialized():Void {
 		isInitialized = true;
 
+		blankTexture = Texture.createWhiteBlank(1, 1);
+
 		if(_cbOnReady != null) {
 			_cbOnReady();
 			_cbOnReady = null;
 		}
-
-		blankTexture = Texture.createWhiteBlank(1, 1);
 	}
 
 	function onDriverRestored():Void {
@@ -85,17 +86,19 @@ class RenderContext extends Module {
 		isInitialized = false;
 	}
 
-	public function clear(r:Float, g:Float, b:Float):Void {
-		__driver.clear(r, g, b);
+	public function clear(r:Float, g:Float, b:Float, a:Float):Void {
+		__driver.clear(r, g, b, a);
 	}
 
 	public function begin():Void {
+		__resetFrameStats();
+
 		_currentShader = null;
 		_currentTexture = null;
 		_currentMesh = null;
 		_currentBlendModeHash = 0;
+
 		__driver.begin();
-		__resetFrameStats();
 	}
 
 	public function end():Void {

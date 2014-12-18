@@ -1,0 +1,4 @@
+-v
+-cmd "lime build flash -v"
+-cmd "lime build html5 -v"
+-cmd "lime build mac -v"

@@ -97,8 +97,8 @@ class Stage3DDriver {
 		}
 	}
 
-	public function clear(r:Float = 1, g:Float = 1, b:Float = 1):Void {
-		_context.clear(r, g, b, 1, 1, 0, Context3DClearMask.COLOR);
+	public function clear(r:Float = 1, g:Float = 1, b:Float = 1, a:Float = 1):Void {
+		_context.clear(r, g, b, a, 1, 0, Context3DClearMask.COLOR);
 	}
 
 	public function begin():Void {

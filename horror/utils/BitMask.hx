@@ -5,6 +5,7 @@ import haxe.io.Bytes;
 import horror.std.Horror;
 
 class BitMask {
+
 	public var width(default, null):Int;
 	public var height(default, null):Int;
 	public var bytes(default, null):Bytes;
@@ -27,7 +28,7 @@ class BitMask {
 
 	public function get(x:Int, y:Int):Bool {
 		if (x >= 0 && x < width && y >= 0 && y < height) {
-			var addres = (y*width + x);
+			var addres = y * width + x;
 			var offset = addres >> 3;
 			var mask = 1 << (addres & 0x7);
 			return (bytes.get(offset) & mask) > 0;
@@ -37,13 +38,21 @@ class BitMask {
 
 	public function set(x:Int, y:Int, flag:Bool):Bool {
 		if (x >= 0 && x < width && y >= 0 && y < height) {
-			var addres = (y*width + x);
+			var addres = y * width + x;
 			var offset = addres >> 3;
 			var mask = 1 << (addres & 0x7);
 			bytes.set(offset, flag ? (bytes.get(offset) | mask) : (bytes.get(offset) & (~mask)));
 			return flag;
 		}
 		return outerFlag;
+	}
+
+	public function resize(width:Int, height:Int):Void {
+		throw 'not implemented';
+	}
+
+	public function clear():Void {
+		throw 'not implemented';
 	}
 
 	static function calcBytesLength(width:Int, height:Int):Int {

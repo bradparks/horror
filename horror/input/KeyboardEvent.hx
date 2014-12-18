@@ -3,8 +3,6 @@ package horror.input;
 @:allow(horror.input.InputManager)
 class KeyboardEvent {
 
-	public var manager(default, null):InputManager;
-
 	public var type(default, null):KeyboardEventType = KeyboardEventType.NONE;
 
 	public var keyCode(default, null):UInt = 0;
