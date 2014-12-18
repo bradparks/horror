@@ -1,4 +1,9 @@
 -v
 -cmd "lime build flash -v"
--cmd "lime build html5 -v"
--cmd "lime build mac -v"
+-cmd "lime build html5 -minify -v"
+#-cmd "lime build mac -v"
+-cmd "lime build flash -v -Dhorror_lime"
+-cmd "lime build html5 -minify -v -Dhorror_lime"
+#-cmd "lime build mac -v -Dhorror_lime"
+-cmd "flow build mac -v"
+-cmd "flow build web -v"

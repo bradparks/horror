@@ -8,6 +8,11 @@
 		app : {
 			name : 'HorrorDemo',
 			package : 'com.eliasku.horror.samples',
+			output : 'export_snow',
+			main: 'Main',
+			web : {
+				min : true
+			}
 		},
 
 		build : {

@@ -9,7 +9,7 @@
 
 	<source path="src" />
 
-	<set name="horror_lime" value="true" />
+	<!--<set name="horror_lime" value="true" />-->
 	<app path="export_lime" if="horror_lime" />
 
 	<haxelib name="horror" />
@@ -19,9 +19,9 @@
 
 	<certificate path="path_to_your_key" alias="your_login" password="your_password" if="android" unless="debug"/>
 
-	<set name="total_debug" value="true" />
+	<!--<set name="total_debug" value="true" />
 	<haxedef name="HXCPP_DEBUGGER" />
-	<haxedef name="HXCPP_STACK_TRACE" if="cpp debug" />
+	<haxedef name="HXCPP_STACK_TRACE" if="cpp debug" />-->
 	<haxedef name="no_debug" unless="debug || total_debug" />
 
 	<haxeflag name="-dce full" unless="debug" />
