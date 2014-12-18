@@ -49,7 +49,7 @@ abstract FastIO(FastIOInner) from FastIOInner {
     public inline function setFloat32(pos:Int, x:Float):Void {
 #if cpp
 		untyped __global__.__hxcpp_memory_set_float(this, pos, x);
-#elseif html5
+#elseif js
         this.setFloat32(pos, x);
 #elseif flash
 		flash.Memory.setFloat(pos, x);
@@ -62,7 +62,7 @@ abstract FastIO(FastIOInner) from FastIOInner {
     public inline function setUInt32(pos:Int, x:Int):Void {
 #if cpp
 		untyped __global__.__hxcpp_memory_set_ui32(this, pos, x);
-#elseif html5
+#elseif js
         this.setUInt32(pos, x);
 #elseif flash
 		flash.Memory.setI32(pos, x);
@@ -75,7 +75,7 @@ abstract FastIO(FastIOInner) from FastIOInner {
     public inline function setUInt16(pos:Int, x:Int):Void {
 #if cpp
 		untyped __global__.__hxcpp_memory_set_ui16(this, pos, x);
-#elseif html5
+#elseif js
         this.setUInt16(pos, x);
 #elseif flash
 		flash.Memory.setI16(pos, x);
@@ -88,7 +88,7 @@ abstract FastIO(FastIOInner) from FastIOInner {
     public inline function setUInt8(pos:Int, x:Int):Void {
 #if cpp
 		untyped this[pos] = x;
-#elseif html5
+#elseif js
         this.setUInt8(pos, x);
 #elseif flash
 		flash.Memory.setByte(pos, x);
@@ -101,7 +101,7 @@ abstract FastIO(FastIOInner) from FastIOInner {
     public inline function getFloat32(pos:Int):Float {
 #if cpp
 		return untyped __global__.__hxcpp_memory_get_float(this, pos);
-#elseif html5
+#elseif js
         return this.getFloat32(pos);
 #elseif flash
 	    return flash.Memory.getFloat(pos);
@@ -114,7 +114,7 @@ abstract FastIO(FastIOInner) from FastIOInner {
     public inline function getUInt32(pos:Int):Int {
 #if cpp
 		return untyped __global__.__hxcpp_memory_get_ui32(this, pos);
-#elseif html5
+#elseif js
         return this.getUInt32(pos);
 #elseif flash
 	    return flash.Memory.getI32(pos);
@@ -127,7 +127,7 @@ abstract FastIO(FastIOInner) from FastIOInner {
     public inline function getUInt16(pos:Int):Int {
 #if cpp
 		return untyped __global__.__hxcpp_memory_get_ui16(this, pos);
-#elseif html5
+#elseif js
         return this.getUInt16(pos);
 #elseif flash
 	    return flash.Memory.getUI16(pos);
@@ -140,7 +140,7 @@ abstract FastIO(FastIOInner) from FastIOInner {
     public inline function getUInt8(pos:Int):Int {
 #if cpp
 		return untyped this[pos];
-#elseif html5
+#elseif js
         return this.getUInt8(pos);
 #elseif flash
 	    return flash.Memory.getByte(pos);

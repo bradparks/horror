@@ -17,6 +17,13 @@ typedef MeshData = horror.render.gl.GLMeshData;
 typedef TextureData = horror.render.gl.GLTextureData;
 typedef ShaderData = horror.render.gl.GLShaderData;
 
+#elseif snow
+
+typedef RenderDriver = horror.render.snow.GLDriver;
+typedef MeshData = horror.render.snow.GLMeshData;
+typedef TextureData = horror.render.snow.GLTextureData;
+typedef ShaderData = horror.render.snow.GLShaderData;
+
 #end
 
 @:access(horror.render.Texture)

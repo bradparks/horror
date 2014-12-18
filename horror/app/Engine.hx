@@ -8,8 +8,10 @@ import horror.std.Horror;
 import horror.std.Signal1;
 import horror.std.Module;
 
-#if (flash || openfl)
+#if flash
 private typedef ApplicationDriver = horror.app.flash.FlashDriver;
+#elseif snow
+private typedef ApplicationDriver = horror.app.snow.SnowDriver;
 #end
 
 class Engine extends Module {
@@ -27,6 +29,7 @@ class Engine extends Module {
 	// Events
 	public var resized(default, null):Signal1<Engine> = new Signal1<Engine>("Resize Event");
 	public var updated(default, null):Signal1<Float> = new Signal1<Float>("Update Event");
+	public var renderFrame(default, null):Signal1<RenderContext> = new Signal1<RenderContext>("Render Event");
 
 	// Managers
 	public var input(default, null):InputManager;
@@ -50,6 +53,7 @@ class Engine extends Module {
 		_driver = new ApplicationDriver();
 		_driver.updated = onUpdate;
 		_driver.resized = onResize;
+		_driver.render = onRender;
 		_driver.mouse = input.handleMouseEvent;
 		_driver.keys = input.handleKeyboardEvent;
 
@@ -81,7 +85,7 @@ class Engine extends Module {
 
 	function onRenderContextReady():Void {
 		timeStamp = time();
-		syncRenderSize(width, height);
+		onResize();
 
 		if(_cbReady != null) {
 			_cbReady();
@@ -99,23 +103,23 @@ class Engine extends Module {
 		updated.dispatch(deltaTime);
 	}
 
-	function onResize():Void {
-		var w:Int = _driver.getWidth();
-		var h:Int = _driver.getHeight();
-		if (w != width || h != height) {
-			width = w;
-			height = h;
-			syncRenderSize(w, h);
-			resized.dispatch(this);
-			trace('resized: $w x $h');
-		}
+	function onRender():Void {
+		renderFrame.dispatch(render);
 	}
 
-	function syncRenderSize(w:Int, h:Int) {
+	function onResize():Void {
+		width = _driver.getWidth();
+		height = _driver.getHeight();
 		if(render.isInitialized) {
-			render.resize(w, h);
-			render.setOrtho2D(0, 0, w, h);
+			render.resize(width, height);
+			render.setOrtho2D(0, 0, width, height);
 		}
+		resized.dispatch(this);
+		trace('resized: $width x $height');
+	}
+
+	function doResize() {
+
 	}
 
 

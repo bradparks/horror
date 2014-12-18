@@ -2,13 +2,15 @@ package horror.loaders;
 
 import haxe.io.Bytes;
 
-import openfl.net.URLLoader;
-import openfl.net.URLRequest;
-import openfl.net.URLLoaderDataFormat;
-import openfl.events.Event;
-import openfl.events.IOErrorEvent;
-import openfl.events.ProgressEvent;
-import openfl.utils.ByteArray;
+#if (openfl || flash)
+
+import flash.net.URLLoader;
+import flash.net.URLRequest;
+import flash.net.URLLoaderDataFormat;
+import flash.events.Event;
+import flash.events.IOErrorEvent;
+import flash.events.ProgressEvent;
+import flash.utils.ByteArray;
 
 class BytesLoader extends BaseLoader
 {
@@ -90,3 +92,45 @@ class BytesLoader extends BaseLoader
 		performFail(e.toString());
     }
 }
+
+#elseif snow
+
+import snow.assets.AssetBytes;
+import horror.app.snow.SnowBaseApp;
+
+class BytesLoader extends BaseLoader
+{
+	public var bytes(default, null):Bytes;
+
+	public function new(url:String = null) {
+		super(url);
+	}
+
+	public override function dispose() {
+		super.dispose();
+	}
+
+	override function performLoad():Void {
+		untyped SnowBaseApp.__instance.app.assets.bytes(url, {async:true, onload: onComplete});
+	}
+
+	override public function performCancel():Void {
+		performComplete();
+	}
+
+	function onComplete(ba:AssetBytes):Void {
+		#if js
+		bytes = Bytes.ofData(ba.bytes.byteView);
+		#else
+		bytes = ba.bytes;
+		#end
+
+		content = bytes;
+
+		performComplete();
+	}
+
+}
+
+
+#end

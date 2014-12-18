@@ -6,9 +6,13 @@ import horror.std.Horror;
 
 typedef Matrix3D_Data = flash.Vector<Float>;
 
-#elseif openfl
+#elseif lime
 
-typedef Matrix3D_Data = openfl.utils.Float32Array;
+typedef Matrix3D_Data = lime.utils.Float32Array;
+
+#elseif snow
+
+typedef Matrix3D_Data = snow.utils.Float32Array;
 
 #end
 

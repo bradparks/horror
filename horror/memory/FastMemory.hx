@@ -3,9 +3,8 @@ package horror.memory;
 import haxe.io.BytesData;
 import haxe.io.Bytes;
 
-import openfl.utils.Endian;
-
 #if flash
+import flash.utils.Endian;
 import flash.system.ApplicationDomain;
 #end
 

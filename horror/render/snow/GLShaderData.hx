@@ -1,11 +1,9 @@
-package horror.render.gl;
+package horror.render.snow;
 
-#if openfl
-
-import openfl.gl.GL;
-import openfl.gl.GLShader;
-import openfl.gl.GLProgram;
-import openfl.gl.GLUniformLocation;
+import snow.render.opengl.GL;
+import snow.render.opengl.GL.GLShader;
+import snow.render.opengl.GL.GLProgram;
+import snow.render.opengl.GL.GLUniformLocation;
 
 class GLShaderData {
 
@@ -80,5 +78,3 @@ class GLShaderData {
 	}
 
 }
-
-#end

@@ -9,7 +9,6 @@
 		"eliasku"
 	],
 	"dependencies" : {
-		"openfl" : "",
 		"format" : ""
 	}
 }

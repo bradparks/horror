@@ -1,10 +1,9 @@
-package horror.render.gl;
-#if openfl
+package horror.render.snow;
 
 import haxe.io.BytesData;
 
-import openfl.gl.GL;
-import openfl.utils.ArrayBufferView;
+import snow.render.opengl.GL;
+import snow.utils.ArrayBufferView;
 
 import horror.render.BlendFactor;
 
@@ -75,4 +74,3 @@ class GLTypes {
 	#end
 
 }
-#end

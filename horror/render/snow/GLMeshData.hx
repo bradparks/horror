@@ -1,9 +1,7 @@
-package horror.render.gl;
+package horror.render.snow;
 
-#if openfl
-
-import openfl.gl.GL;
-import openfl.gl.GLBuffer;
+import snow.render.opengl.GL;
+import snow.render.opengl.GL.GLBuffer;
 
 class GLMeshData {
 
@@ -24,4 +22,3 @@ class GLMeshData {
 		GL.deleteBuffer(vertexBuffer);
 	}
 }
-#end

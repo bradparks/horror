@@ -3,9 +3,11 @@ package horror.utils;
 import haxe.io.BytesData;
 import haxe.io.Bytes;
 
-import openfl.utils.Endian;
-
-typedef ByteArrayData = openfl.utils.ByteArray;
+#if (flash || openfl)
+typedef ByteArrayData = flash.utils.ByteArray;
+#elseif snow
+typedef ByteArrayData = snow.utils.ByteArray;
+#end
 
 class ByteArray {
 
@@ -102,11 +104,11 @@ class ByteArray {
 	}
 
     inline function get_bigEndian():Bool {
-        return data.endian == Endian.BIG_ENDIAN;
+        return data.endian == "bigEndian";
     }
 
     inline function set_bigEndian(value:Bool):Bool {
-		data.endian = cast (value ? Endian.BIG_ENDIAN : Endian.LITTLE_ENDIAN);
+		data.endian = cast (value ? "bigEndian" : "littleEndian");
         return value;
     }
 

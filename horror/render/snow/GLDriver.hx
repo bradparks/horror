@@ -1,14 +1,10 @@
-package horror.render.gl;
-
-#if openfl
+package horror.render.snow;
 
 import haxe.io.BytesData;
 import haxe.io.Bytes;
 
-import openfl.Lib;
-import openfl.gl.GL;
-import openfl.gl.GLShader;
-import openfl.display.OpenGLView;
+import snow.render.opengl.GL;
+import snow.render.opengl.GL.GLShader;
 
 import horror.render.VertexStructure;
 
@@ -21,15 +17,16 @@ class GLDriver {
 	public var onRestore:Void->Void;
 	public var onInitialize:Void->Void;
 
-	var _stage:openfl.display.Stage;
+	//var _app:Application;
 	var _currentShader:GLShaderData;
 
 	public function new() {}
 
 	public function initialize():Void {
-		_stage = Lib.current.stage;
-		_stage.addEventListener(OpenGLView.CONTEXT_LOST, __onContextLost);
-		_stage.addEventListener(OpenGLView.CONTEXT_RESTORED, __onContextRestored);
+		//_app = untyped Application.__instance;
+
+		//Renderer.onRenderContextLost.add(__onContextLost);
+		//Renderer.onRenderContextRestored.add(__onContextRestored);
 
 		//GL.colorMask (true, true, true, false);
 		GL.cullFace(GL.FRONT_AND_BACK);
@@ -53,9 +50,8 @@ class GLDriver {
 	}
 
 	public function dispose():Void {
-		_stage.removeEventListener(OpenGLView.CONTEXT_LOST, __onContextLost);
-		_stage.removeEventListener(OpenGLView.CONTEXT_RESTORED, __onContextRestored);
-		_stage = null;
+		//Renderer.onRenderContextLost.remove(__onContextLost);
+		//Renderer.onRenderContextRestored.remove(__onContextRestored);
 
 		onRestore = null;
 		onInitialize = null;
@@ -200,7 +196,7 @@ class GLDriver {
 
 
 	/*** Context lost/restored events ***/
-	function __onContextLost(_) {
+	function __onContextLost() {
 		isLost = true;
 	}
 
@@ -211,5 +207,3 @@ class GLDriver {
 		}
 	}
 }
-
-#end

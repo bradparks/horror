@@ -1,0 +1,25 @@
+{
+
+	project : {
+		name : 'HorrorDemo',
+		version : '0.0.1',
+		author : 'eliasku',
+
+		app : {
+			name : 'HorrorDemo',
+			package : 'com.eliasku.horror.samples',
+		},
+
+		build : {
+			dependencies : {
+				horror : '*',
+				snow : '*',
+			}
+		},
+
+		files : {
+			config : 'config.json',
+			assets : 'assets/'
+		}
+	}
+}

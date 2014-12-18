@@ -9,7 +9,9 @@
 
 	<source path="src" />
 
-	<haxelib name="horror"/>
+	<haxelib name="lime" />
+	<haxelib name="format" />
+	<haxelib name="horror" />
 
 	<assets path="assets" embed="false" exclude="lime.svg" />
 	<!-- <icon path="assets/lime.svg" unless="debug" /> -->

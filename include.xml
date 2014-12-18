@@ -5,10 +5,10 @@
 	<haxedef name="horror" />
 
 	<!-- openfl native urlloader not completed -->
-	<set name="openfl_next" unless="cpp" />
+	<!--<set name="openfl_next" unless="cpp" />-->
 
-	<haxelib name="openfl" />
-	<haxelib name="format" />
+	<!--<haxelib name="openfl" />
+	<haxelib name="format" />-->
 
 	<window hardware="true" allow-shaders="true" require-shaders="true" depth-buffer="false" stencil-buffer="false" antialiasing="0" fullscreen="false" />
 
