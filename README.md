@@ -11,10 +11,10 @@ Horror provides low-level GPU render API based on classic dynamic batching and a
 
 - Flash (Stage3D)
 - HTML5 (WebGL)
-- Mac/Windows/Linux (OpenGL)
-- iOS/Android (OpenGL ES)
+- Mac / Windows / Linux (OpenGL)
+- iOS / Android (OpenGL ES)
 
-Now implemented for OpenFL/Lime/Snow libraries and supports all his targets + clean Flash!
+Now implemented for OpenFL / Lime / Snow libraries and supports all his targets + clean Flash!
 
 __Native__ and __Web__ builds are compiled with `snow` or `lime` or `openfl`.
 
