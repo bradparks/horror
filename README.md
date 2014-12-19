@@ -3,7 +3,9 @@ Horror
 
 ### About
 
-Horror is a low-level _gpu-accelerated_ framework for 2D games development in Haxe, which hides all complex underlying API.
+If you are going to develop 2d game with GPU renderer, but you don't know what framework is better for your purposes, or you still need Flash support.
+
+Horror is a mid-level _gpu-accelerated_ framework-adapter for 2D games development in Haxe, which hides all complex underlying API.
 
 Horror provides low-level GPU render API based on classic dynamic batching and applicable mostly for 2D games. High performance is provided by filling mesh buffers up with optimized `horror.memory` package. FastMemory implementation is based on TypedArrays for HTML5, MemoryDomain for Flash, and HXCPP magic for native targets.
 
@@ -22,7 +24,11 @@ __Flash__ build is compiled with `flash` or `lime` or `openfl`
 
 I regulary test `flash`, `html5` and `mac` builds produced from different libraries.
 
-__WARNING!__ There is NO canvas/displaylists fallbacks! While Horror is a GPU framework, it's running on Stage3D / WebGL / GL / GLES platforms only.
+> __WARNING!__ There is NO canvas/displaylists fallbacks! While Horror is a GPU framework, it's running on Stage3D / WebGL / GL / GLES platforms only.
+
+#### Critical Issues
+
+`lime` for native targets still has problems.
 
 ### Quick start
 
