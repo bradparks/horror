@@ -1,20 +1,20 @@
 package horror.render.gl;
 
-#if openfl
+#if hrr_openfl
 
 import openfl.gl.GL;
 import openfl.gl.GLShader;
 import openfl.gl.GLProgram;
 import openfl.gl.GLUniformLocation;
 
-#elseif lime
+#elseif hrr_lime
 
 import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLShader;
 import lime.graphics.opengl.GLProgram;
 import lime.graphics.opengl.GLUniformLocation;
 
-#elseif snow
+#elseif hrr_snow
 
 import snow.render.opengl.GL;
 import snow.render.opengl.GL.GLShader;

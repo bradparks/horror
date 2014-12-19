@@ -3,14 +3,14 @@ package horror.render;
 import horror.std.Module;
 import horror.std.Horror;
 
-#if flash
+#if hrr_stage3d
 
 typedef RenderDriver = horror.render.stage3d.Stage3DDriver;
 typedef MeshData = horror.render.stage3d.Stage3DMeshData;
 typedef TextureData = horror.render.stage3d.Stage3DTextureData;
 typedef ShaderData = horror.render.stage3d.Stage3DShaderData;
 
-#elseif (openfl || lime || snow)
+#elseif hrr_gl
 
 typedef RenderDriver = horror.render.gl.GLDriver;
 typedef MeshData = horror.render.gl.GLMeshData;

@@ -3,15 +3,24 @@ package horror.utils;
 import haxe.io.BytesData;
 import haxe.io.Bytes;
 
-#if (flash || openfl)
+#if hrr_flash
+
 typedef ByteArrayData = flash.utils.ByteArray;
-#elseif lime
+
+#elseif hrr_lime
+
 typedef ByteArrayData = lime.utils.ByteArray;
-#elseif snow
+
+#elseif hrr_snow
+
 typedef ByteArrayData = snow.utils.ByteArray;
+
 #end
 
 class ByteArray {
+
+	static inline var BIG_ENDIAN : String = "bigEndian";
+	static inline var LITTLE_ENDIAN : String = "littleEndian";
 
 	public var data(default, null):ByteArrayData;
     public var bigEndian(get, set):Bool;
@@ -20,7 +29,7 @@ class ByteArray {
 
 	public function new(size:Int = 0) {
 		if(size >= 0) {
-#if flash
+#if (flash || snow)
 			setData(new ByteArrayData());
 			data.length = size;
 #else
@@ -106,11 +115,11 @@ class ByteArray {
 	}
 
     inline function get_bigEndian():Bool {
-        return data.endian == "bigEndian";
+        return data.endian == BIG_ENDIAN;
     }
 
     inline function set_bigEndian(value:Bool):Bool {
-		data.endian = cast (value ? "bigEndian" : "littleEndian");
+		data.endian = cast (value ? BIG_ENDIAN : LITTLE_ENDIAN);
         return value;
     }
 
@@ -141,7 +150,7 @@ class ByteArray {
 
 	function setData(data:ByteArrayData):Void {
 		this.data = data;
-		this.data.endian = Endian.LITTLE_ENDIAN;
+		this.bigEndian = false;
 	}
 
 	public inline static function fromData(data:ByteArrayData):ByteArray {
@@ -159,7 +168,7 @@ class ByteArray {
 	}
 
 	public inline function toBytes():Bytes {
-		#if html5
+		#if js
 		return Bytes.ofData(data.byteView);
 		#elseif flash
 		return Bytes.ofData(data);
@@ -171,7 +180,7 @@ class ByteArray {
     public inline function toBytesData():BytesData {
         #if flash
 		return data;
-        #elseif html5
+        #elseif js
 		return data.byteView;
 		#else
         return data.getData();

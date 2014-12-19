@@ -4,17 +4,17 @@ import haxe.io.BytesData;
 
 import horror.render.BlendFactor;
 
-#if openfl
+#if hrr_openfl
 
 import openfl.gl.GL;
 import openfl.utils.ArrayBufferView;
 
-#elseif lime
+#elseif hrr_lime
 
 import lime.graphics.opengl.GL;
 import lime.utils.ArrayBufferView;
 
-#elseif snow
+#elseif hrr_snow
 
 import snow.render.opengl.GL;
 import snow.utils.ArrayBufferView;

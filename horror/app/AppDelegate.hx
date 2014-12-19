@@ -1,12 +1,19 @@
 package horror.app;
 
 import horror.std.Horror;
-#if ((flash || openfl) && !horror_lime)
+
+#if hrr_flash
+
 private typedef AppDelegateBase = horror.app.flash.FlashAppDelegate;
-#elseif lime
+
+#elseif hrr_lime
+
 private typedef AppDelegateBase = horror.app.lime.LimeAppDelegate;
-#elseif snow
+
+#elseif hrr_snow
+
 private typedef AppDelegateBase = horror.app.snow.SnowAppDelegate;
+
 #end
 
 class AppDelegate extends AppDelegateBase {

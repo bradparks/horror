@@ -5,11 +5,28 @@
 	<haxedef name="horror" />
 
 	<!-- openfl native urlloader not completed -->
-	<set name="openfl_next" unless="cpp || horror_lime" />
-	<set name="horror_openfl" unless="horror_lime" />
+	<set name="openfl_next" unless="cpp || use_lime" />
+
+	<set name="horror_openfl" unless="use_lime" />
+	<set name="horror_lime" if="use_lime" />
+
+	<set name="horror_gl" unless="flash" />
+	<set name="horror_stage3d" if="flash" />
+
+	<haxedef name="hrr_flash" unless="horror_lime" />
+
+	<haxedef name="hrr_openfl" if="horror_openfl" />
+	<haxedef name="hrr_lime" if="horror_lime" />
+
+	<haxedef name="hrr_glsl" if="horror_gl" />
+	<haxedef name="hrr_agal" if="horror_stage3d" />
+
+	<haxedef name="hrr_gl" if="horror_gl" />
+	<haxedef name="hrr_stage3d" if="horror_stage3d" />
 
 	<haxelib name="openfl" if="horror_openfl" />
 	<haxelib name="lime" if="horror_lime" />
+
 	<haxelib name="format" />
 
 	<window hardware="true" allow-shaders="true" require-shaders="true" depth-buffer="false" stencil-buffer="false" antialiasing="0" fullscreen="false" />

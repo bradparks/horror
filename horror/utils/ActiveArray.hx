@@ -1,6 +1,6 @@
 package horror.utils;
 
-import horror.std.Debug;
+import horror.std.Horror;
 
 using horror.utils.ArrayUtil;
 
@@ -18,7 +18,7 @@ class ActiveArray<T> {
 	}
 
 	public function begin():T {
-        Debug.assert(!isWalking, "Walking already started, only single walk in time supported");
+		Horror.assert(!isWalking, "Walking already started, only single walk in time supported");
 		if(_buffer.length > 0) {
 			_iterator = 0;
 			_length = _buffer.length;
@@ -28,7 +28,7 @@ class ActiveArray<T> {
 	}
 
 	public function end():Void {
-		Debug.assert(isWalking);
+		Horror.assert(isWalking);
 		_iterator = -1;
 		_step = 1;
 		_length = 0;
@@ -56,7 +56,7 @@ class ActiveArray<T> {
 	}
 
 	public inline function next():T {
-		Debug.assert(isWalking);
+		Horror.assert(isWalking);
 		var i:Int = (_iterator += _step);
 		_step = 1;
 		if(i < _length) {
@@ -78,7 +78,7 @@ class ActiveArray<T> {
 			return;
 		}
 		var index:Int = _buffer.indexOf(element);
-		Debug.assert(index >= 0);
+		Horror.assert(index >= 0);
 		if(index < i) {
 			--_iterator;
 		}
@@ -92,7 +92,7 @@ class ActiveArray<T> {
 	}
 
 	public function removeAt(index:Int):Void {
-		Debug.assert(index >= 0 && index < _buffer.length);
+		Horror.assert(index >= 0 && index < _buffer.length);
 		var i:Int = _iterator;
 		if(i >= 0) {
 			if(index < i) {
@@ -120,7 +120,7 @@ class ActiveArray<T> {
 	}
 
 	public function removeCurrent(removeNext:Bool = false) {
-		Debug.assert(isWalking);
+		Horror.assert(isWalking);
 		if (_step == 0 && !removeNext) {
 			return;
 		}

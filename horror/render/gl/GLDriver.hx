@@ -3,20 +3,20 @@ package horror.render.gl;
 import haxe.io.BytesData;
 import haxe.io.Bytes;
 
-#if openfl
+#if hrr_openfl
 
 import openfl.Lib;
 import openfl.gl.GL;
 import openfl.gl.GLShader;
 import openfl.display.OpenGLView;
 
-#elseif lime
+#elseif hrr_lime
 
 import lime.graphics.Renderer;
 import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLShader;
 
-#elseif snow
+#elseif hrr_snow
 
 import snow.render.opengl.GL;
 import snow.render.opengl.GL.GLShader;
@@ -28,13 +28,13 @@ import horror.render.VertexStructure;
 /*** CONTEXT ***/
 class GLDriver {
 
-	inline static var MESH_UPLOAD_TECHNIQUE:Int = GL.DYNAMIC_DRAW;
+	inline static var MESH_UPLOAD_TECHNIQUE:Int = GL.STREAM_DRAW;
 
 	public var isLost(default, null) = false;
 	public var onRestore:Void->Void;
 	public var onInitialize:Void->Void;
 
-	#if openfl
+	#if hrr_openfl
 	var _stage:openfl.display.Stage;
 	#end
 
@@ -43,18 +43,18 @@ class GLDriver {
 	public function new() {}
 
 	public function initialize():Void {
-		#if openfl
+		#if hrr_openfl
 
 		_stage = Lib.current.stage;
 		_stage.addEventListener(OpenGLView.CONTEXT_LOST, __onContextLost);
 		_stage.addEventListener(OpenGLView.CONTEXT_RESTORED, __onContextRestored);
 
-		#elseif lime
+		#elseif hrr_lime
 
 		Renderer.onRenderContextLost.add(__onContextLost);
 		Renderer.onRenderContextRestored.add(__onContextRestored);
 
-		#elseif snow
+		#elseif hrr_snow
 
 		// TODO:
 		//Renderer.onRenderContextLost.add(__onContextLost);
@@ -73,7 +73,7 @@ class GLDriver {
 		//GL.disable(GL.FOG);
 		//GL.disable(GL.ALPHA_TEST);
 		//GL.pixelZoom(1, 1);
-		#if (web || html5)
+		#if hrr_web
 		GL.pixelStorei(GL.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
 		#end
 
@@ -84,18 +84,18 @@ class GLDriver {
 	}
 
 	public function dispose():Void {
-		#if openfl
+		#if hrr_openfl
 
 		_stage.removeEventListener(OpenGLView.CONTEXT_LOST, __onContextLost);
 		_stage.removeEventListener(OpenGLView.CONTEXT_RESTORED, __onContextRestored);
 		_stage = null;
 
-		#elseif lime
+		#elseif hrr_lime
 
 		Renderer.onRenderContextLost.remove(__onContextLost);
 		Renderer.onRenderContextRestored.remove(__onContextRestored);
 
-		#elseif snow
+		#elseif hrr_snow
 
 		// TODO:
 		//Renderer.onRenderContextLost.remove(__onContextLost);
@@ -246,7 +246,7 @@ class GLDriver {
 
 
 	/*** Context lost/restored events ***/
-	function __onContextLost(#if openfl _ #end) {
+	function __onContextLost(#if hrr_openfl _ #end) {
 		isLost = true;
 	}
 

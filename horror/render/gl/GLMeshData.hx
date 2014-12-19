@@ -1,16 +1,16 @@
 package horror.render.gl;
 
-#if openfl
+#if hrr_openfl
 
 import openfl.gl.GL;
 import openfl.gl.GLBuffer;
 
-#elseif lime
+#elseif hrr_lime
 
 import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLBuffer;
 
-#elseif snow
+#elseif hrr_snow
 
 import snow.render.opengl.GL;
 import snow.render.opengl.GL.GLBuffer;

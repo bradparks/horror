@@ -1,0 +1,29 @@
+{
+	project : {
+
+		name : 'horror',
+		version : '0.0.1',
+		author : 'eliasku',
+
+		build : {
+
+			dependencies : {
+				snow : '*',
+				format : '*',
+			},
+
+			defines : ['hrr_snow', 'hrr_gl', 'hrr_glsl']
+
+		}
+	},
+
+	if : {
+		web : {
+			build : {
+				defines : ['hrr_web']
+			}
+		}
+	}
+
+
+}

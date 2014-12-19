@@ -10,7 +10,7 @@ class SimpleShader {
 		return shader;
 	}
 
-	#if flash
+	#if hrr_agal
 
 	private static var FRAGMENT_CODE:String =
 	"tex ft0, v0, fs0 <ignoresampler>
@@ -23,7 +23,8 @@ mov v0, va1
 mov v1, va2
 ";
 
-	#elseif (snow || openfl || lime)
+	#elseif hrr_glsl
+
 	private static var FRAGMENT_CODE:String =
 	"varying vec2 vTexCoord;
 			varying vec4 vColorMult;

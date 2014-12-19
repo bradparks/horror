@@ -1,14 +1,14 @@
 package horror.render.gl;
 
-#if openfl
+#if hrr_openfl
 
 typedef GLTextureData = openfl.gl.GLTexture;
 
-#elseif lime
+#elseif hrr_lime
 
 typedef GLTextureData = lime.graphics.opengl.GLTexture;
 
-#elseif snow
+#elseif hrr_snow
 
 typedef GLTextureData = snow.render.opengl.GL.GLTexture;
 

@@ -1,7 +1,5 @@
 package horror.app.snow;
 
-#if snow
-
 import snow.App;
 import snow.window.Window;
 
@@ -122,5 +120,3 @@ class SnowDriver {
 	public function onTouchMove (x:Float, y:Float, id:Int):Void { }
 	public function onTouchStart (x:Float, y:Float, id:Int):Void { }
 }
-
-#end

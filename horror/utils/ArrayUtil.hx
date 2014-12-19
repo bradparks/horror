@@ -1,11 +1,11 @@
 package horror.utils;
 
-import horror.std.Debug;
+import horror.std.Horror;
 
 class ArrayUtil {
 	public static function shuffle<T>(a:Array<T>):Void
 	{
-		Debug.assert(a != null);
+		Horror.assert(a != null);
 
 		var s = a.length;
 		var m = Math;
@@ -37,7 +37,7 @@ class ArrayUtil {
 
     // for some platforms where Array.join too much native (like js)
     public static function join<T:Stringable>(a:Array<T>, separator:String = "\n"):String {
-		Debug.assert(a != null && separator != null);
+		Horror.assert(a != null && separator != null);
 
         var str = "";
         for(i in 0...a.length) {

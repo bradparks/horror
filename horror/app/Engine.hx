@@ -1,5 +1,6 @@
 package horror.app;
 
+import horror.loaders.Assets;
 import horror.std.Signal0;
 import horror.audio.AudioManager;
 import horror.input.InputManager;
@@ -9,12 +10,18 @@ import horror.std.Horror;
 import horror.std.Signal1;
 import horror.std.Module;
 
-#if (flash || openfl)
+#if hrr_flash
+
 private typedef ApplicationDriver = horror.app.flash.FlashDriver;
-#elseif lime
+
+#elseif hrr_lime
+
 private typedef ApplicationDriver = horror.app.lime.LimeDriver;
-#elseif snow
+
+#elseif hrr_snow
+
 private typedef ApplicationDriver = horror.app.snow.SnowDriver;
+
 #end
 
 class Engine extends Module {
@@ -38,6 +45,7 @@ class Engine extends Module {
 	public var input(default, null):InputManager;
 	public var render(default, null):RenderContext;
 	public var audio(default, null):AudioManager;
+	public var assets(default, null):Assets;
 
 	var _driver:ApplicationDriver;
 	var _cbReady:Void->Void;
@@ -52,6 +60,7 @@ class Engine extends Module {
 		render = new RenderContext();
 		input = new InputManager();
 		audio = new AudioManager();
+		assets = new Assets();
 
 		_driver = new ApplicationDriver();
 		_driver.updated = handleUpdate;
@@ -70,6 +79,7 @@ class Engine extends Module {
 		Horror.dispose(onResize);
 		Horror.dispose(onRender);
 
+		Horror.dispose(assets);
 		Horror.dispose(audio);
 		Horror.dispose(render);
 		Horror.dispose(input);

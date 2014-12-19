@@ -1,7 +1,5 @@
 package horror.app.flash;
 
-#if (flash || openfl)
-
 import haxe.Timer;
 
 import flash.Lib;
@@ -17,7 +15,7 @@ import flash.events.TouchEvent in FlashTouchEvent;
 
 import flash.system.Capabilities;
 
-#if openfl
+#if hrr_openfl
 import openfl.display.OpenGLView;
 #end
 
@@ -85,7 +83,7 @@ class FlashDriver {
 		_stage.removeEventListener(Event.ENTER_FRAME, onUpdate);
 	}
 
-	#elseif openfl
+	#elseif hrr_openfl
 
 	var _openGLView:OpenGLView;
 
@@ -198,5 +196,3 @@ class FlashDriver {
 	}
 
 }
-
-#end

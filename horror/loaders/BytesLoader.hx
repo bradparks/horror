@@ -2,7 +2,7 @@ package horror.loaders;
 
 import haxe.io.Bytes;
 
-#if (openfl || flash)
+#if (hrr_openfl || flash)
 
 import flash.net.URLLoader;
 import flash.net.URLRequest;
@@ -91,7 +91,7 @@ class BytesLoader extends BaseLoader
     }
 }
 
-#elseif lime
+#elseif hrr_lime
 
 import lime.net.URLLoader;
 import lime.net.URLRequest;
@@ -170,7 +170,7 @@ class BytesLoader extends BaseLoader
 	}
 }
 
-#elseif snow
+#elseif hrr_snow
 
 
 import snow.assets.AssetBytes;
