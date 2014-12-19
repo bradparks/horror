@@ -73,7 +73,7 @@ class GLDriver {
 		//GL.disable(GL.FOG);
 		//GL.disable(GL.ALPHA_TEST);
 		//GL.pixelZoom(1, 1);
-		#if html5
+		#if (web || html5)
 		GL.pixelStorei(GL.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 0);
 		#end
 

@@ -1,6 +1,7 @@
 package horror.app;
 
-#if ((flash || openfl) && !lime)
+import horror.std.Horror;
+#if ((flash || openfl) && !horror_lime)
 private typedef AppDelegateBase = horror.app.flash.FlashAppDelegate;
 #elseif lime
 private typedef AppDelegateBase = horror.app.lime.LimeAppDelegate;
@@ -15,13 +16,24 @@ class AppDelegate extends AppDelegateBase {
 
 	public function new(factory:Void->Dynamic) {
 		__clientFactory = factory;
+		Horror.log("Application delegate created...");
 		super();
 	}
 
 	override function __startHorrorApp():Void {
+		Horror.log("Create client application");
 		//Timer.delay(
 		//	function ():Void {
-				__clientInstance = __clientFactory();
+			__createHorrorApp();
 		//	}, 1);
+	}
+
+	function __createHorrorApp():Void {
+		if(__clientFactory != null) {
+			__clientInstance = __clientFactory();
+		}
+		else {
+			Horror.error("Bad application factory!");
+		}
 	}
 }

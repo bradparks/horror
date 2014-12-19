@@ -6,14 +6,15 @@
 
 	<!-- openfl native urlloader not completed -->
 	<set name="openfl_next" unless="cpp || horror_lime" />
+	<set name="horror_openfl" unless="horror_lime" />
 
-	<haxelib name="openfl" unless="horror_lime" />
+	<haxelib name="openfl" if="horror_openfl" />
 	<haxelib name="lime" if="horror_lime" />
 	<haxelib name="format" />
 
 	<window hardware="true" allow-shaders="true" require-shaders="true" depth-buffer="false" stencil-buffer="false" antialiasing="0" fullscreen="false" />
 
-	<haxedef name="dom" if="html5 !horror_lime" />
+	<haxedef name="dom" if="html5 horror_openfl" />
 	<haxedef name="haxe3" />
 
 	<sample path="samples" if="create" />
