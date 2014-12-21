@@ -39,9 +39,11 @@ class GLShaderData {
 		var fragmentShader = _compileShader(fragmentShaderCode, GL.FRAGMENT_SHADER);
 
 		program = GL.createProgram();
-		GL.attachShader (program, vertexShader);
-		GL.attachShader (program, fragmentShader);
-		GL.linkProgram (program);
+		GL.attachShader(program, vertexShader);
+		GL.attachShader(program, fragmentShader);
+		GL.linkProgram(program);
+		GL.deleteShader(vertexShader);
+		GL.deleteShader(fragmentShader);
 
 		if (GL.getProgramParameter (program, GL.LINK_STATUS) == 0) {
 			throw "Unable to initialize the shader program.";
