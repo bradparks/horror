@@ -5,6 +5,10 @@
 		version : '0.0.1',
 		author : 'eliasku',
 
+		app : {
+			output : 'export_snow',
+		},
+
 		build : {
 
 			dependencies : {

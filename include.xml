@@ -36,4 +36,8 @@
 
 	<sample path="samples" if="create" />
 
+	<!-- default export path -->
+	<app path="export" unless="use_lime" />
+	<app path="export_lime" if="use_lime" />
+
 </extension>
